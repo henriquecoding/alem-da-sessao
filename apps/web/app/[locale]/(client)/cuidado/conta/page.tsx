@@ -1,10 +1,5 @@
-import { ComingSoon } from "@/components/coming-soon";
+import { ClientAccountWorkspace } from "@/components/client-workspaces";
 
 export default function ClientAccountPage() {
-  return (
-    <ComingSoon
-      title="Conta e privacidade"
-      description="Sessões ativas, preferências, consentimentos, exportação e pedidos de direitos."
-    />
-  );
+  return <ClientAccountWorkspace />;
 }

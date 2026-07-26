@@ -57,9 +57,11 @@ export default async function ClientTodayPage({
                   Online
                 </span>
               </div>
-              <Button className="mt-auto w-fit" variant="secondary">
-                <CalendarDays className="size-4" />
-                Ver detalhes da sessão
+              <Button asChild className="mt-auto w-fit" variant="secondary">
+                <Link href={localPath(segment, "/cuidado/sessoes")}>
+                  <CalendarDays className="size-4" />
+                  Ver detalhes da sessão
+                </Link>
               </Button>
             </div>
             <div className="flex min-w-44 flex-col justify-between rounded-3xl bg-[var(--muted)] p-5">
@@ -74,24 +76,22 @@ export default async function ClientTodayPage({
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden bg-[#202e29] text-white">
+        <Card className="overflow-hidden bg-[var(--pastel-lilac)]">
           <CardContent className="flex min-h-[300px] flex-col p-6 sm:p-8">
             <div className="flex items-start justify-between">
-              <span className="grid size-11 place-items-center rounded-2xl bg-white/8 text-[var(--accent)]">
+              <span className="bg-white/72 grid size-11 place-items-center rounded-2xl text-[var(--primary)]">
                 <Sparkles className="size-5" />
               </span>
-              <Badge className="bg-white/8 text-white/65">
-                {messages.client.privateByDefault}
-              </Badge>
+              <Badge tone="accent">{messages.client.privateByDefault}</Badge>
             </div>
             <h2 className="mt-7 text-2xl font-bold tracking-[-0.04em]">
               Estruturas de Carga
             </h2>
-            <p className="mt-3 text-sm leading-6 text-white/58">
+            <p className="mt-3 text-sm leading-6 text-[var(--muted-foreground)]">
               Observe o que sustenta, como a estrutura responde e onde o apoio
               pode ser redistribuído.
             </p>
-            <Button asChild variant="quiet" className="mt-auto w-fit">
+            <Button asChild className="mt-auto w-fit">
               <Link
                 href={localPath(
                   segment,

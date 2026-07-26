@@ -63,7 +63,7 @@ export default async function ProfessionalTodayPage({
                 <Badge className="bg-white/12 text-white">
                   {messages.professional.nextSession}
                 </Badge>
-                <Badge className="bg-[var(--accent)] text-white">Confirmada</Badge>
+                <Badge tone="accent">Confirmada</Badge>
               </div>
               <div className="mt-8">
                 <p className="text-3xl font-bold tracking-[-0.045em]">
@@ -102,7 +102,7 @@ export default async function ProfessionalTodayPage({
               </div>
             </div>
 
-            <div className="flex min-w-40 flex-col justify-between rounded-3xl bg-white/8 p-5">
+            <div className="bg-white/8 flex min-w-40 flex-col justify-between rounded-3xl p-5">
               <LockKeyhole className="size-5 text-[var(--accent)]" />
               <div>
                 <p className="text-xs font-bold">Antes da sessão</p>
@@ -143,10 +143,12 @@ export default async function ProfessionalTodayPage({
                   </p>
                   <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
                     {formatTime(appointment.startsAt, locale)} ·{" "}
-                    {appointment.modality === "online" ? "Online" : "Presencial"}
+                    {appointment.modality === "online"
+                      ? "Online"
+                      : "Presencial"}
                   </p>
                 </div>
-                <UserRound className="size-4 text-[var(--muted-foreground)]/55" />
+                <UserRound className="text-[var(--muted-foreground)]/55 size-4" />
               </div>
             ))}
           </CardContent>

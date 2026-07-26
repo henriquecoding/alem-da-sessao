@@ -1,8 +1,5 @@
 export type ToolStatus =
-  | "draft"
-  | "clinical-review"
-  | "published"
-  | "retired";
+  "draft" | "clinical-review" | "demo-ready" | "published" | "retired";
 
 export type ToolManifest = {
   id: string;
@@ -42,8 +39,8 @@ export const toolRegistry = [
   {
     id: "load-structures",
     slug: "estruturas-de-carga",
-    version: "0.1.0",
-    status: "clinical-review",
+    version: "0.2.0",
+    status: "demo-ready",
     title: {
       "pt-PT": "Estruturas de Carga",
       "pt-BR": "Estruturas de Carga",
@@ -77,8 +74,8 @@ export const toolRegistry = [
   {
     id: "session-inventory",
     slug: "inventario-da-sessao",
-    version: "0.1.0",
-    status: "draft",
+    version: "0.2.0",
+    status: "demo-ready",
     title: {
       "pt-PT": "Inventário da Sessão",
       "pt-BR": "Inventário da Sessão",

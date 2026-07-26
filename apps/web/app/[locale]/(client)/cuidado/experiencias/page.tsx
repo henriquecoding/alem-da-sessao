@@ -25,20 +25,24 @@ export default async function ClientExperiencesPage({
         {toolRegistry.map((tool, index) => (
           <Card
             key={tool.id}
-            className={index === 0 ? "overflow-hidden bg-[#202e29] text-white" : ""}
+            className={
+              index === 0
+                ? "overflow-hidden bg-[var(--pastel-lilac)]"
+                : "overflow-hidden bg-[var(--pastel-blue)]"
+            }
           >
             <CardContent className="flex min-h-[330px] flex-col p-6 sm:p-8">
               <div className="flex items-start justify-between">
                 <span
                   className={`grid size-12 place-items-center rounded-2xl ${
                     index === 0
-                      ? "bg-white/8 text-[var(--accent)]"
-                      : "bg-[var(--accent-soft)] text-[var(--accent-foreground)]"
+                      ? "bg-white/72 text-[var(--primary)]"
+                      : "bg-white/72 text-[var(--info)]"
                   }`}
                 >
                   <Sparkles className="size-5" />
                 </span>
-                <Badge className={index === 0 ? "bg-white/8 text-white/60" : ""}>
+                <Badge tone="accent">
                   <LockKeyhole className="mr-1 size-3" />
                   Privado
                 </Badge>
@@ -46,24 +50,16 @@ export default async function ClientExperiencesPage({
               <h2 className="mt-8 text-2xl font-bold tracking-[-0.04em]">
                 {tool.title[locale]}
               </h2>
-              <p
-                className={`mt-3 text-sm leading-7 ${
-                  index === 0 ? "text-white/58" : "text-[var(--muted-foreground)]"
-                }`}
-              >
+              <p className="mt-3 text-sm leading-7 text-[var(--muted-foreground)]">
                 {tool.summary[locale]}
               </p>
-              <p
-                className={`mt-4 inline-flex items-center gap-2 text-xs ${
-                  index === 0 ? "text-white/42" : "text-[var(--muted-foreground)]"
-                }`}
-              >
+              <p className="mt-4 inline-flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
                 <Clock3 className="size-3.5" />
                 Cerca de {tool.estimatedMinutes} minutos
               </p>
               <Button
                 asChild
-                variant={index === 0 ? "quiet" : "secondary"}
+                variant={index === 0 ? "default" : "secondary"}
                 className="mt-auto w-fit"
               >
                 <Link

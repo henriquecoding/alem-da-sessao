@@ -1,10 +1,5 @@
-import { ComingSoon } from "@/components/coming-soon";
+import { ReportsWorkspace } from "@/components/professional-workspaces";
 
 export default function ReportsPage() {
-  return (
-    <ComingSoon
-      title="Relatórios"
-      description="Indicadores operacionais sem score emocional, diagnóstico ou comparação entre clientes."
-    />
-  );
+  return <ReportsWorkspace />;
 }

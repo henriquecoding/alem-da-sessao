@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Clock3, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Clock3,
+  LockKeyhole,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { toolRegistry } from "@alem-da-sessao/tool-registry";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,38 +40,32 @@ export default async function PublicExperiencesPage({
         {toolRegistry.map((tool, index) => (
           <Card
             key={tool.id}
-            className={index === 0 ? "overflow-hidden bg-[#202e29] text-white" : ""}
+            className={
+              index === 0
+                ? "overflow-hidden bg-[var(--pastel-lilac)]"
+                : "overflow-hidden bg-[var(--pastel-blue)]"
+            }
           >
             <CardContent className="flex min-h-[390px] flex-col p-7 sm:p-9">
               <div className="flex items-start justify-between">
                 <span
-                  className={`grid size-13 place-items-center rounded-3xl ${
+                  className={`size-13 grid place-items-center rounded-3xl ${
                     index === 0
-                      ? "bg-white/8 text-[var(--accent)]"
-                      : "bg-[var(--accent-soft)] text-[var(--accent-foreground)]"
+                      ? "bg-white/72 text-[var(--primary)]"
+                      : "bg-white/72 text-[var(--info)]"
                   }`}
                 >
                   <Sparkles className="size-5" />
                 </span>
-                <Badge tone={tool.status === "draft" ? "warning" : "info"}>
-                  {tool.status === "draft" ? "Em desenho" : "Revisão clínica"}
-                </Badge>
+                <Badge tone="success">Demonstração funcional</Badge>
               </div>
               <h2 className="mt-10 text-3xl font-bold tracking-[-0.045em]">
                 {tool.title[locale]}
               </h2>
-              <p
-                className={`mt-4 text-sm leading-7 ${
-                  index === 0 ? "text-white/60" : "text-[var(--muted-foreground)]"
-                }`}
-              >
+              <p className="mt-4 text-sm leading-7 text-[var(--muted-foreground)]">
                 {tool.summary[locale]}
               </p>
-              <div
-                className={`mt-6 flex flex-wrap gap-4 text-xs ${
-                  index === 0 ? "text-white/45" : "text-[var(--muted-foreground)]"
-                }`}
-              >
+              <div className="mt-6 flex flex-wrap gap-4 text-xs text-[var(--muted-foreground)]">
                 <span className="inline-flex items-center gap-2">
                   <Clock3 className="size-4" />
                   {tool.estimatedMinutes} minutos
@@ -81,7 +81,7 @@ export default async function PublicExperiencesPage({
               </div>
               <Button
                 asChild
-                variant={index === 0 ? "quiet" : "secondary"}
+                variant={index === 0 ? "default" : "secondary"}
                 className="mt-auto w-fit"
               >
                 <Link

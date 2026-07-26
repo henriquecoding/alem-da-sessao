@@ -20,9 +20,11 @@ export default async function ProfessionalExperiencesPage({
         title="Experiências"
         description="Atribua uma versão concreta e reveja apenas o que o cliente decidiu partilhar."
         action={
-          <Button>
-            <Plus className="size-4" />
-            Nova atribuição
+          <Button asChild>
+            <Link href={localPath(segment, "/pro/clientes")}>
+              <Plus className="size-4" />
+              Escolher cliente
+            </Link>
           </Button>
         }
       />
@@ -31,38 +33,32 @@ export default async function ProfessionalExperiencesPage({
         {toolRegistry.map((tool, index) => (
           <Card
             key={tool.id}
-            className={index === 0 ? "overflow-hidden bg-[#202e29] text-white" : ""}
+            className={
+              index === 0
+                ? "overflow-hidden bg-[var(--pastel-lilac)]"
+                : "overflow-hidden bg-[var(--pastel-blue)]"
+            }
           >
             <CardContent className="flex min-h-[310px] flex-col p-6 sm:p-7">
               <div className="flex items-start justify-between gap-4">
                 <span
                   className={`grid size-12 place-items-center rounded-2xl ${
                     index === 0
-                      ? "bg-white/10 text-[var(--accent)]"
-                      : "bg-[var(--accent-soft)] text-[var(--accent-foreground)]"
+                      ? "bg-white/72 text-[var(--primary)]"
+                      : "bg-white/72 text-[var(--info)]"
                   }`}
                 >
                   <Sparkles className="size-5" />
                 </span>
-                <Badge tone={tool.status === "draft" ? "warning" : "info"}>
-                  {tool.status === "draft" ? "Rascunho" : "Revisão clínica"}
-                </Badge>
+                <Badge tone="success">Demonstração funcional</Badge>
               </div>
               <h2 className="mt-8 text-2xl font-bold tracking-[-0.04em]">
                 {tool.title[locale]}
               </h2>
-              <p
-                className={`mt-3 text-sm leading-7 ${
-                  index === 0 ? "text-white/62" : "text-[var(--muted-foreground)]"
-                }`}
-              >
+              <p className="mt-3 text-sm leading-7 text-[var(--muted-foreground)]">
                 {tool.summary[locale]}
               </p>
-              <div
-                className={`mt-5 flex flex-wrap gap-4 text-xs ${
-                  index === 0 ? "text-white/52" : "text-[var(--muted-foreground)]"
-                }`}
-              >
+              <div className="mt-5 flex flex-wrap gap-4 text-xs text-[var(--muted-foreground)]">
                 <span className="inline-flex items-center gap-1.5">
                   <Clock3 className="size-3.5" />
                   {tool.estimatedMinutes} min
@@ -74,7 +70,7 @@ export default async function ProfessionalExperiencesPage({
               </div>
               <Button
                 asChild
-                variant={index === 0 ? "secondary" : "default"}
+                variant={index === 0 ? "default" : "secondary"}
                 className="mt-auto w-fit"
               >
                 <Link

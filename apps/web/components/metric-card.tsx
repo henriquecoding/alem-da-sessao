@@ -14,12 +14,12 @@ export function MetricCard({
   value: string | number;
   detail: string;
   icon: LucideIcon;
-  tone?: "neutral" | "accent" | "green" | "blue" | "lilac" | "lemon";
+  tone?: "neutral" | "accent" | "aqua" | "blue" | "lilac" | "lemon";
 }) {
   const tones = {
     neutral: "bg-[var(--pastel-pink)] text-[#7c4550]",
     accent: "bg-[var(--pastel-peach)] text-[var(--accent-foreground)]",
-    green: "bg-[var(--pastel-mint)] text-[var(--success)]",
+    aqua: "bg-[var(--pastel-aqua)] text-[var(--success)]",
     blue: "bg-[var(--pastel-blue)] text-[var(--info)]",
     lilac: "bg-[var(--pastel-lilac)] text-[#5f4c83]",
     lemon: "bg-[var(--pastel-lemon)] text-[var(--warning)]",
@@ -29,11 +29,16 @@ export function MetricCard({
     <Card>
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
-          <span className={cn("grid size-10 place-items-center rounded-2xl", tones[tone])}>
+          <span
+            className={cn(
+              "grid size-10 place-items-center rounded-2xl",
+              tones[tone],
+            )}
+          >
             <Icon className="size-[18px]" aria-hidden="true" />
           </span>
           <ArrowUpRight
-            className="size-4 text-[var(--muted-foreground)]/45"
+            className="text-[var(--muted-foreground)]/45 size-4"
             aria-hidden="true"
           />
         </div>
