@@ -71,17 +71,25 @@ export default async function SchedulePage({
           </div>
           <div className="relative grid min-h-[570px] grid-cols-[76px_repeat(5,minmax(150px,1fr))]">
             <div className="relative">
-              {["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"].map(
-                (time, index) => (
-                  <span
-                    key={time}
-                    className="absolute right-3 text-[10px] text-[var(--muted-foreground)]"
-                    style={{ top: 18 + index * 62 }}
-                  >
-                    {time}
-                  </span>
-                ),
-              )}
+              {[
+                "08:00",
+                "09:00",
+                "10:00",
+                "11:00",
+                "12:00",
+                "13:00",
+                "14:00",
+                "15:00",
+                "16:00",
+              ].map((time, index) => (
+                <span
+                  key={time}
+                  className="absolute right-3 text-[10px] text-[var(--muted-foreground)]"
+                  style={{ top: 18 + index * 62 }}
+                >
+                  {time}
+                </span>
+              ))}
             </div>
             {days.map((day, dayIndex) => (
               <div
@@ -92,11 +100,11 @@ export default async function SchedulePage({
                   data.appointments.map((appointment, index) => (
                     <div
                       key={appointment.id}
-                      className={`absolute right-2 left-2 rounded-2xl border p-3 ${
+                      className={`absolute left-2 right-2 rounded-2xl border p-3 ${
                         index === 0
                           ? "border-[#e8b5a5] bg-[var(--accent-soft)]"
                           : index === 1
-                            ? "border-[#bcd8cb] bg-[var(--success-soft)]"
+                            ? "border-[#b7cce0] bg-[var(--info-soft)]"
                             : "border-[#bdd1e3] bg-[var(--info-soft)]"
                       }`}
                       style={{
@@ -129,7 +137,7 @@ export default async function SchedulePage({
           <Card key={appointment.id}>
             <CardContent className="flex items-center gap-4 p-4">
               <div
-                className={`grid size-13 shrink-0 place-items-center rounded-2xl ${
+                className={`size-13 grid shrink-0 place-items-center rounded-2xl ${
                   index === 0
                     ? "bg-[var(--accent-soft)]"
                     : index === 1
@@ -150,7 +158,9 @@ export default async function SchedulePage({
                   {appointment.modality === "online" ? "Online" : "Presencial"}
                 </p>
               </div>
-              <Badge tone={appointment.status === "held" ? "warning" : "success"}>
+              <Badge
+                tone={appointment.status === "held" ? "warning" : "success"}
+              >
                 {appointment.status === "held" ? "Reserva" : "Confirmada"}
               </Badge>
             </CardContent>

@@ -1,10 +1,5 @@
-import { ComingSoon } from "@/components/coming-soon";
+import { TeamWorkspace } from "@/components/professional-workspaces";
 
 export default function TeamPage() {
-  return (
-    <ComingSoon
-      title="Equipa"
-      description="Funções, convites, delegações e limites de acesso por organização."
-    />
-  );
+  return <TeamWorkspace />;
 }

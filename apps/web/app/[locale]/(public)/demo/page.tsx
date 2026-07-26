@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Activity, ArrowRight, HeartHandshake, Stethoscope } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  HeartHandshake,
+  Stethoscope,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,7 +47,7 @@ export default async function DemoPage({
       description:
         "Operação, assinaturas e verificações sem uma janela normal para conteúdo clínico.",
       href: "/admin/operacao",
-      tone: "bg-[#dde9e4]",
+      tone: "bg-[var(--pastel-blue)]",
       iconTone: "bg-[var(--primary)] text-white",
     },
   ];
@@ -82,7 +87,9 @@ export default async function DemoPage({
               </p>
               <Button
                 asChild
-                variant={area.tone.includes("text-white") ? "secondary" : "default"}
+                variant={
+                  area.tone.includes("text-white") ? "secondary" : "default"
+                }
                 className="mt-auto w-full"
               >
                 <Link href={localPath(segment, area.href)}>

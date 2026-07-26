@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   ClipboardPenLine,
   LockKeyhole,
-  MoreHorizontal,
   Sparkles,
 } from "lucide-react";
 import { getClientById } from "@alem-da-sessao/db";
@@ -38,15 +37,12 @@ export default async function ClientDetailPage({
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center">
         <Button asChild variant="ghost" size="sm">
           <Link href={localPath(segment, "/pro/clientes")}>
             <ArrowLeft className="size-4" />
             Clientes
           </Link>
-        </Button>
-        <Button variant="secondary" size="icon" aria-label="Mais ações">
-          <MoreHorizontal className="size-4" />
         </Button>
       </div>
 
@@ -67,9 +63,11 @@ export default async function ClientDetailPage({
             </p>
           </div>
         </div>
-        <Button>
-          <CalendarDays className="size-4" />
-          Agendar sessão
+        <Button asChild>
+          <Link href={localPath(segment, "/pro/agenda")}>
+            <CalendarDays className="size-4" />
+            Agendar sessão
+          </Link>
         </Button>
       </section>
 
@@ -161,10 +159,10 @@ export default async function ClientDetailPage({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-2xl bg-white/8 p-4">
+              <div className="bg-white/8 rounded-2xl p-4">
                 <p className="text-xs font-bold">Estruturas de Carga</p>
                 <p className="mt-2 text-xs leading-5 text-white/60">
-                  5 campos · versão 0.1.0 · partilhado hoje
+                  mapa estruturado · versão 0.2.0 · partilhado hoje
                 </p>
               </div>
               <Button variant="secondary" className="mt-4 w-full border-0">

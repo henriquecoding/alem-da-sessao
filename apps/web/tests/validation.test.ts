@@ -2,25 +2,30 @@ import { describe, expect, it } from "vitest";
 import { loadStructuresSchema } from "@alem-da-sessao/validation";
 
 const valid = {
-  responsibility:
-    "Tenho coordenado sozinho os cuidados diários de um familiar.",
-  observableEffects:
-    "Tenho menos tempo livre e adio decisões pessoais importantes.",
-  currentSupport: "Uma amiga ajuda uma tarde por semana.",
-  desiredRedistribution: "Gostaria de dividir tarefas de transporte.",
-  nextSessionFocus: "Quero conversar sobre como pedir ajuda.",
+  loads: [
+    {
+      id: "care-family",
+      label: "Cuidar de alguém",
+      intensity: 3,
+      ownership: "shared",
+      movement: "ask",
+      includeInShare: true,
+    },
+  ],
+  effects: ["No tempo", "No sono"],
+  support: "Dividir uma tarefa",
+  nextSessionNote: "Quero perceber como pedir apoio.",
 };
 
 describe("load structures input", () => {
-  it("accepts a complete reflection without producing a score", () => {
+  it("accepts a structured map without producing a score", () => {
     expect(loadStructuresSchema.safeParse(valid).success).toBe(true);
     expect("score" in loadStructuresSchema.parse(valid)).toBe(false);
   });
 
-  it("rejects an empty core responsibility", () => {
+  it("rejects a map without a selected load", () => {
     expect(
-      loadStructuresSchema.safeParse({ ...valid, responsibility: "curto" })
-        .success,
+      loadStructuresSchema.safeParse({ ...valid, loads: [] }).success,
     ).toBe(false);
   });
 });

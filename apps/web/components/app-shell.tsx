@@ -10,6 +10,7 @@ import {
   ChevronRight,
   CircleDollarSign,
   ClipboardCheck,
+  ChartNoAxesCombined,
   ContactRound,
   HeartHandshake,
   LayoutDashboard,
@@ -37,6 +38,7 @@ const navigation = {
     { label: "Agenda", href: "/pro/agenda", icon: CalendarDays },
     { label: "Clientes", href: "/pro/clientes", icon: ContactRound },
     { label: "Experiências", href: "/pro/experiencias", icon: Sparkles },
+    { label: "Relatórios", href: "/pro/relatorios", icon: ChartNoAxesCombined },
     { label: "Financeiro", href: "/pro/financeiro", icon: CircleDollarSign },
     { label: "Equipa", href: "/pro/equipa", icon: UsersRound },
     { label: "Definições", href: "/pro/definicoes", icon: Settings2 },
@@ -97,7 +99,8 @@ function NavigationItems({
         const href = `/${segment}${item.href}`;
         const active =
           pathname === href ||
-          (item.href !== `/${surface === "admin" ? "admin/operacao" : surface === "professional" ? "pro/hoje" : "cuidado/hoje"}` &&
+          (item.href !==
+            `/${surface === "admin" ? "admin/operacao" : surface === "professional" ? "pro/hoje" : "cuidado/hoje"}` &&
             pathname.startsWith(href));
 
         return (
@@ -108,10 +111,10 @@ function NavigationItems({
             aria-current={active ? "page" : undefined}
             title={collapsed ? item.label : undefined}
             className={cn(
-              "flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white/70",
+              "flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-white/70",
               collapsed && "justify-center px-0",
               active
-                ? "bg-[var(--highlight-lime)] text-[var(--sidebar)] shadow-[0_8px_24px_rgba(204,232,105,.12)]"
+                ? "bg-[var(--highlight-yellow)] text-[var(--sidebar)] shadow-[0_8px_24px_rgba(242,207,99,.16)]"
                 : "text-white/58 hover:bg-white/8 hover:text-white",
             )}
           >
@@ -159,7 +162,9 @@ export function AppShell({
               <p className="truncate text-sm font-bold tracking-[-0.025em]">
                 Além da Sessão
               </p>
-              <p className="mt-0.5 text-[10px] text-white/42">demonstração local</p>
+              <p className="text-white/42 mt-0.5 text-[10px]">
+                demonstração local
+              </p>
             </div>
           )}
         </div>
@@ -173,17 +178,17 @@ export function AppShell({
         <div className="mt-auto">
           <div
             className={cn(
-              "mb-2 flex items-center gap-3 rounded-2xl bg-white/6 p-2",
+              "bg-white/6 mb-2 flex items-center gap-3 rounded-2xl p-2",
               collapsed && "justify-center",
             )}
           >
-            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--accent)] text-xs font-bold text-white">
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--primary)] text-xs font-bold text-white">
               {identity.initials}
             </span>
             {!collapsed && (
               <div className="min-w-0">
                 <p className="truncate text-xs font-bold">{identity.name}</p>
-                <p className="truncate text-[10px] text-white/42">
+                <p className="text-white/42 truncate text-[10px]">
                   {identity.subtitle}
                 </p>
               </div>
@@ -192,7 +197,7 @@ export function AppShell({
           <button
             type="button"
             onClick={() => setCollapsed((value) => !value)}
-            className="flex min-h-11 w-full items-center justify-center rounded-2xl text-white/50 transition-colors hover:bg-white/8 hover:text-white"
+            className="hover:bg-white/8 flex min-h-11 w-full items-center justify-center rounded-2xl text-white/50 transition-colors hover:text-white"
             aria-label={collapsed ? "Expandir navegação" : "Recolher navegação"}
           >
             {collapsed ? (
@@ -205,7 +210,7 @@ export function AppShell({
       </aside>
 
       <div className="min-w-0 flex-1">
-        <div className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--background)]/92 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
+        <div className="bg-[var(--background)]/92 sticky top-0 z-30 border-b border-[var(--border)] px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
           <div className="mx-auto flex max-w-[1420px] items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Button
@@ -221,7 +226,12 @@ export function AppShell({
             </div>
             <div className="flex items-center gap-2">
               <LocaleSwitcher segment={segment} compact />
-              <Button asChild variant="secondary" size="sm" className="hidden sm:flex">
+              <Button
+                asChild
+                variant="secondary"
+                size="sm"
+                className="hidden sm:flex"
+              >
                 <Link href={`/${segment}/demo`}>Mudar de área</Link>
               </Button>
             </div>
@@ -236,7 +246,7 @@ export function AppShell({
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <button
-            className="absolute inset-0 bg-black/42 backdrop-blur-[2px]"
+            className="bg-black/42 absolute inset-0 backdrop-blur-[2px]"
             onClick={() => setMobileOpen(false)}
             aria-label="Fechar navegação"
           />
@@ -247,7 +257,7 @@ export function AppShell({
                 <span className="text-sm font-bold">Além da Sessão</span>
               </div>
               <button
-                className="grid size-11 place-items-center rounded-2xl text-white/65 hover:bg-white/8"
+                className="hover:bg-white/8 grid size-11 place-items-center rounded-2xl text-white/65"
                 onClick={() => setMobileOpen(false)}
                 aria-label="Fechar navegação"
               >
@@ -263,7 +273,7 @@ export function AppShell({
             <div className="mt-auto">
               <Link
                 href={`/${segment}`}
-                className="flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold text-white/58 hover:bg-white/8 hover:text-white"
+                className="text-white/58 hover:bg-white/8 flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold hover:text-white"
               >
                 <LogOut className="size-[18px]" />
                 Sair da demonstração
@@ -275,7 +285,7 @@ export function AppShell({
 
       <nav
         aria-label="Navegação principal mobile"
-        className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[1.35rem] border border-white/8 bg-[var(--sidebar)] p-1.5 text-white shadow-[0_16px_50px_rgba(18,32,27,.35)] lg:hidden"
+        className="border-white/8 fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[1.35rem] border bg-[var(--sidebar)] p-1.5 text-white shadow-[0_16px_50px_rgba(35,30,45,.35)] lg:hidden"
       >
         {mobileItems.map((item) => {
           const href = `/${segment}${item.href}`;
@@ -287,9 +297,9 @@ export function AppShell({
               aria-label={item.label}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold text-white/46",
+                "text-white/46 flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold",
                 active && "bg-white text-[var(--sidebar)]",
-                active && "bg-[var(--highlight-lime)]",
+                active && "bg-[var(--highlight-yellow)]",
               )}
             >
               <item.icon className="size-[17px]" />
@@ -301,7 +311,7 @@ export function AppShell({
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Mais opções"
-          className="flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold text-white/46"
+          className="text-white/46 flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold"
         >
           <Menu className="size-[17px]" />
           <span>Mais</span>

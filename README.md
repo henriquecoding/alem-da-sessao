@@ -11,6 +11,8 @@ qualquer projeto Supabase.
 - `pt-PT` e `pt-BR` como localizações fundadoras;
 - superfícies pública, profissional, cliente e administração;
 - motor de experiências versionado e extensível;
+- duas engines interativas completas em modo local;
+- workspaces funcionais para profissional, cliente e administração;
 - nenhuma integração conceptual ou técnica com o Lost Letters Room;
 - nenhum uso de IA para diagnóstico, prescrição ou substituição profissional.
 
@@ -52,4 +54,5 @@ docs                      decisões, segurança e execução local
 ```
 
 Leia [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md) antes de configurar
-serviços externos.
+serviços externos. A investigação que orienta as engines e a nova paleta está em
+[docs/PRODUCT_RESEARCH_2026-07.md](docs/PRODUCT_RESEARCH_2026-07.md).

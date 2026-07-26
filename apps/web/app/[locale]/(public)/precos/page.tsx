@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Check, FlaskConical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { PricingWaitlist } from "@/components/pricing-waitlist";
 
 export const metadata: Metadata = {
   title: "Preços em validação",
@@ -52,9 +52,7 @@ export default function PricingPage() {
               </p>
             ))}
           </div>
-          <Button className="mt-8 w-full" disabled>
-            Lista de espera ainda não aberta
-          </Button>
+          <PricingWaitlist />
         </CardContent>
       </Card>
     </main>

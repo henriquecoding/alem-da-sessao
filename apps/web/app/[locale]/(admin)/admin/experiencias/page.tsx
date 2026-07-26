@@ -1,10 +1,5 @@
-import { ComingSoon } from "@/components/coming-soon";
+import { AdminExperiencesWorkspace } from "@/components/admin-workspaces";
 
 export default function AdminExperiencesPage() {
-  return (
-    <ComingSoon
-      title="Catálogo de experiências"
-      description="Versões, localizações, revisão clínica, privacidade e publicação."
-    />
-  );
+  return <AdminExperiencesWorkspace />;
 }

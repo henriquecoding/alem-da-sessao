@@ -37,7 +37,7 @@ export default async function AdminOperationPage({
           value="12"
           detail="8 verificados · dados fictícios"
           icon={UserCheck}
-          tone="green"
+          tone="lilac"
         />
         <MetricCard
           label="Organizações"
@@ -95,7 +95,9 @@ export default async function AdminOperationPage({
                 key={item.title}
                 className="flex items-center gap-4 rounded-2xl border border-[var(--border)] p-4"
               >
-                <span className={`grid size-11 shrink-0 place-items-center rounded-2xl ${item.tone}`}>
+                <span
+                  className={`grid size-11 shrink-0 place-items-center rounded-2xl ${item.tone}`}
+                >
                   <item.icon className="size-5" />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -118,19 +120,19 @@ export default async function AdminOperationPage({
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm leading-7 text-white/62">
+            <p className="text-white/62 text-sm leading-7">
               Esta dashboard administra planos, organizações, verificações e
               saúde do sistema. Conteúdo de notas, respostas ou rascunhos não é
               carregado por conveniência.
             </p>
-            <div className="mt-7 rounded-2xl bg-white/8 p-4">
+            <div className="bg-white/8 mt-7 rounded-2xl p-4">
               <p className="flex items-center gap-2 text-xs font-bold">
                 <Clock3 className="size-4 text-[var(--accent)]" />
-                Break-glass não implementado no protótipo
+                Acesso de emergência protegido
               </p>
-              <p className="mt-2 text-xs leading-5 text-white/48">
-                Antes de dados reais exigirá reautenticação, motivo, escopo,
-                duração e auditoria.
+              <p className="text-white/48 mt-2 text-xs leading-5">
+                O fluxo administrativo exige motivo, escopo e duração; no modo
+                local produz apenas um evento de auditoria sintético.
               </p>
             </div>
           </CardContent>

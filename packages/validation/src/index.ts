@@ -11,11 +11,22 @@ export const requestAppointmentSchema = z.object({
 });
 
 export const loadStructuresSchema = z.object({
-  responsibility: z.string().trim().min(10).max(500),
-  observableEffects: z.string().trim().min(10).max(800),
-  currentSupport: z.string().trim().max(500),
-  desiredRedistribution: z.string().trim().max(500),
-  nextSessionFocus: z.string().trim().max(500),
+  loads: z
+    .array(
+      z.object({
+        id: z.string().trim().min(1).max(80),
+        label: z.string().trim().min(1).max(120),
+        intensity: z.number().int().min(1).max(3),
+        ownership: z.enum(["mine", "shared", "inherited", "unclear"]),
+        movement: z.enum(["protect", "ask", "negotiate", "return", "observe"]),
+        includeInShare: z.boolean(),
+      }),
+    )
+    .min(1)
+    .max(6),
+  effects: z.array(z.string().trim().min(1).max(80)).min(1).max(5),
+  support: z.string().trim().min(1).max(80),
+  nextSessionNote: z.string().trim().max(280),
 });
 
 export type LoadStructuresInput = z.infer<typeof loadStructuresSchema>;
