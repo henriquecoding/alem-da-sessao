@@ -71,6 +71,31 @@ famílias de informação. Coral introduz calor em pontos pequenos.
 7. Combinações de texto normal têm contraste mínimo de `4.5:1`; componentes e
    estados interativos têm pelo menos `3:1`.
 
+## Câmara mineral das experiências
+
+Experiências autorais podem abrir uma câmara visual própria dentro da interface,
+sem trocar a identidade do produto inteiro. **Estruturas de Carga** usa esta
+exceção para criar concentração e materialidade:
+
+| Token            | Valor     | Utilização                               |
+| ---------------- | --------- | ---------------------------------------- |
+| Basalto          | `#17191D` | fundo da câmara                          |
+| Estrato          | `#202228` | controlos e superfícies                  |
+| Calcário         | `#F1EDE5` | texto principal                          |
+| Cinza mineral    | `#9DA2AD` | instruções e metadados                   |
+| Ferrugem         | `#D58B57` | ação, progresso e pontos de ancoragem    |
+| Linha estrutural | `#3B3F48` | bordas, divisões e desenho dos monólitos |
+
+Esta paleta começa no hero da experiência e termina com o seu artefacto. A
+biblioteca usa apenas uma amostra dela; agenda, definições e restantes áreas
+continuam a usar “Luz de Intervalo”. Assim, a mudança de atmosfera comunica
+entrada num ritual sem fragmentar o sistema.
+
+Monólitos são diagramas, não ilustrações decorativas: altura representa duração,
+espessura representa alcance e linhas de tensão respondem à proveniência. A
+legenda permanece textual para que a forma nunca seja a única portadora de
+informação.
+
 ## Contrastes verificados
 
 - tinta/fundo: `13.97:1`;

@@ -14,6 +14,15 @@ prontidão clínica.
 - administração comum sem acesso a conteúdo clínico;
 - headers defensivos e `noindex` global enquanto não existe lançamento;
 - nenhuma chave privilegiada importável pelo browser;
+- parede comunitária num plano público separado, sem ligação a registos
+  clínicos;
+- contrato público remove notas, marcas, apoio escolhido e limite de
+  visibilidade;
+- cookie comunitário `HttpOnly` pseudonimizado por HMAC, sem IP bruto
+  persistido;
+- publicação limitada, conteúdo identificável bloqueado, escrita livre sujeita
+  a moderação e estruturas com expiração;
+- apoio sem texto, identidade, perfil ou contacto direto;
 - nenhuma IA clínica, chat, áudio ou vídeo.
 
 ## Antes de dados reais
@@ -25,6 +34,7 @@ prontidão clínica.
 - testes RLS completos contra JWTs reais;
 - cifragem no DAL com gestão e rotação de chaves;
 - rate limit, idempotência, outbox e auditoria operacionais;
+- fila e SLA de moderação, denúncia, ocultação e recurso para conteúdo público;
 - backups, Storage backup e ensaio de restauro;
 - gestão de incidentes e break-glass com segunda autorização;
 - pentest/revisão externa proporcional ao risco.

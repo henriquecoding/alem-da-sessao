@@ -18,6 +18,7 @@
     "check:i18n": "pnpm --filter @alem-da-sessao/web check:i18n",
     "check:privacy": "pnpm --filter @alem-da-sessao/web check:privacy",
     "check": "pnpm lint && pnpm typecheck && pnpm test:run && pnpm check:i18n && pnpm check:privacy",
+    "verify:release": "pnpm check && pnpm build",
     "format:check": "prettier --check .",
     "format": "prettier --write ."
   },

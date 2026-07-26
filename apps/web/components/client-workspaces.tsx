@@ -27,39 +27,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { PageHeading } from "@/components/page-heading";
 import { cn } from "@/lib/utils";
-
-function Toggle({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean;
-  onChange: (value: boolean) => void;
-  label: string;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={() => onChange(!checked)}
-      className={cn(
-        "relative h-7 w-12 rounded-full transition-colors",
-        checked ? "bg-[var(--primary)]" : "bg-[var(--border)]",
-      )}
-    >
-      <span
-        className={cn(
-          "absolute top-1 size-5 rounded-full bg-white shadow-sm transition-transform",
-          checked ? "translate-x-6" : "translate-x-1",
-        )}
-      />
-    </button>
-  );
-}
 
 const upcomingSessions = [
   {
@@ -441,7 +411,7 @@ export function ClientAccountWorkspace() {
                     {description}
                   </p>
                 </div>
-                <Toggle
+                <Switch
                   label={title}
                   checked={preferences[key as keyof typeof preferences]}
                   onChange={(value) =>
