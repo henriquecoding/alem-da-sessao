@@ -15,18 +15,20 @@ export type ToolManifest = {
     "pt-BR": string;
   };
   estimatedMinutes: number;
-  audience: readonly ("client" | "professional")[];
+  audience: readonly ("public" | "client" | "professional")[];
   capabilities: {
     canSelfStart: boolean;
     canAssign: boolean;
     supportsDraftSave: boolean;
     supportsShare: boolean;
+    supportsAnonymousPublication: boolean;
     supportsExport: boolean;
   };
   dataPolicy: {
     draftStorage: "memory";
     savedClassification: "HEALTH_SENSITIVE";
     shareMode: "snapshot";
+    publicProjection: "none" | "moderated-minimal";
     analytics: readonly ("opened" | "completed" | "shared")[];
   };
   review: {
@@ -39,7 +41,7 @@ export const toolRegistry = [
   {
     id: "load-structures",
     slug: "estruturas-de-carga",
-    version: "0.2.0",
+    version: "0.3.0",
     status: "demo-ready",
     title: {
       "pt-PT": "Estruturas de Carga",
@@ -47,23 +49,25 @@ export const toolRegistry = [
     },
     summary: {
       "pt-PT":
-        "Observe o que sustenta, como a estrutura responde e onde o apoio pode ser redistribuído.",
+        "Construa uma planta das responsabilidades que sustenta, meça a compressão e ensaie uma ancoragem possível.",
       "pt-BR":
-        "Observe o que você sustenta, como a estrutura responde e onde o apoio pode ser redistribuído.",
+        "Construa uma planta das responsabilidades que você sustenta, meça a compressão e ensaie uma ancoragem possível.",
     },
-    estimatedMinutes: 8,
-    audience: ["client", "professional"],
+    estimatedMinutes: 12,
+    audience: ["public", "client", "professional"],
     capabilities: {
       canSelfStart: true,
       canAssign: true,
       supportsDraftSave: true,
       supportsShare: true,
+      supportsAnonymousPublication: true,
       supportsExport: false,
     },
     dataPolicy: {
       draftStorage: "memory",
       savedClassification: "HEALTH_SENSITIVE",
       shareMode: "snapshot",
+      publicProjection: "moderated-minimal",
       analytics: ["opened", "completed", "shared"],
     },
     review: {
@@ -87,18 +91,20 @@ export const toolRegistry = [
         "Dê forma ao que ficou claro, ao que permaneceu suspenso e ao que você quer levar à próxima conversa.",
     },
     estimatedMinutes: 6,
-    audience: ["client"],
+    audience: ["public", "client"],
     capabilities: {
       canSelfStart: true,
       canAssign: true,
       supportsDraftSave: true,
       supportsShare: true,
+      supportsAnonymousPublication: false,
       supportsExport: false,
     },
     dataPolicy: {
       draftStorage: "memory",
       savedClassification: "HEALTH_SENSITIVE",
       shareMode: "snapshot",
+      publicProjection: "none",
       analytics: ["opened", "completed", "shared"],
     },
     review: {

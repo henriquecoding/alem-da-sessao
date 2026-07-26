@@ -154,7 +154,8 @@ flowchart TD
 - estado privado por defeito e partilha apenas por snapshot confirmado;
 - progressão e artefactos digitais quando servirem à metáfora da ferramenta;
 - direção visual própria por experiência, sem copiar a linguagem narrativa do Lost Letters Room;
-- valor independente de som, vídeo, IA generativa ou uma comunidade inicial.
+- valor independente de som, vídeo ou IA generativa; a comunidade pública é uma
+  camada de presença anónima, não o mecanismo que torna a engine útil.
 
 #### Espaço profissional
 
@@ -179,6 +180,11 @@ flowchart TD
 - privacidade e exportação.
 
 O cliente pode iniciar uma experiência por vontade própria ou por atribuição profissional. Em ambos os casos, o resultado continua privado até uma decisão explícita. Explorar o catálogo público não cria automaticamente um registo clínico.
+
+No percurso público gratuito, concluir também não publica. A pessoa revê um
+recorte mínimo e decide se o deposita anonimamente na parede específica da
+experiência. Esse artefacto público nunca é um snapshot clínico e não contém
+identificadores de cliente, profissional, assignment ou run.
 
 #### Administração
 

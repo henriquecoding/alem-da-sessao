@@ -104,6 +104,61 @@ Fontes:
 8. Avaliar as engines futuramente com psicólogos e pessoas com experiência
    vivida; a implementação técnica não equivale a validação clínica.
 
+## Adaptação de “O Peso que Carregas”
+
+O documento de conceito enviado introduz uma linguagem de engenharia,
+materialidade mineral e um ritual de deposição. A nova versão de **Estruturas
+de Carga** preserva o que torna esse conceito autoral, mas adapta-o ao contrato
+de uma plataforma de continuidade entre cliente e profissional.
+
+### Preservado
+
+- linguagem estrutural — carga, compressão, proveniência, ancoragem e planta;
+- uma responsabilidade concreta como unidade mínima, limitada a 220 caracteres;
+- duração e alcance como dimensões separadas;
+- monólitos SVG gerados deterministicamente a partir das escolhas;
+- gesto tátil de sustentar para ancorar, com alternativa por teclado;
+- entrada lenta, contraste mineral e acento ferrugem;
+- artefacto final legível, em vez de uma página de resultados.
+
+### Adaptado deliberadamente
+
+- o depósito público tornou-se uma decisão posterior ao rascunho privado e
+  reversível, nunca uma consequência automática de concluir a experiência;
+- a parede recebe apenas a estrutura mínima; notas para a sessão, marcas,
+  apoio escolhido e limite de visibilidade não saem do rascunho;
+- o apoio comunitário é um gesto não textual, sem comentários, perfis,
+  seguidores ou contacto direto;
+- estruturas predefinidas podem ser aprovadas automaticamente; qualquer escrita
+  livre entra em revisão e padrões de contacto são bloqueados;
+- a linguagem evita sugerir diagnóstico, colapso inevitável ou interpretação
+  automática da pessoa;
+- a massa estrutural é explicitamente simbólica e serve apenas para organizar
+  a conversa;
+- a partilha exige pré-visualização, seleção granular e confirmação;
+- nomes de pessoas e empresas são desencorajados na escrita livre;
+- o gesto de sustentação tem alternativa equivalente por `Enter` ou `Espaço`.
+
+O resultado não é uma cópia reduzida do microsite original nem um questionário
+com tema visual. É uma engine com cinco decisões conectadas: assentar, medir,
+identificar proveniência, escolher uma ancoragem e construir a planta. No
+percurso público, a pessoa decide depois se quer depositar um recorte anónimo na
+parede; no percurso terapêutico, pode preparar um snapshot diferente para a
+próxima sessão.
+
+## Padrão de interação
+
+As etapas seguem uma pergunta principal por superfície, progresso simples,
+retorno sem perda de estado e ação explícita para continuar. Perguntas sensíveis
+explicam por que a informação é pedida. Controlos binários usam semântica de
+switch, rótulo estável, estado exposto por `aria-checked` e foco visível.
+
+Fontes:
+[GOV.UK — Question pages](https://design-system.service.gov.uk/patterns/question-pages/),
+[NHS — Asking users for sensitive information](https://service-manual.nhs.uk/design-system/patterns/asking-users-for-sensitive-information)
+e
+[WAI-ARIA — Switch Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/switch/).
+
 ## Anatomia mínima de uma engine
 
 Cada nova experiência precisa de:

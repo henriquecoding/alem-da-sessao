@@ -31,6 +31,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { MetricCard } from "@/components/metric-card";
 import { PageHeading } from "@/components/page-heading";
 import { cn } from "@/lib/utils";
@@ -44,37 +45,6 @@ function LocalNotice({ children }: { children: React.ReactNode }) {
       <Check className="mr-2 inline size-4" />
       {children}
     </p>
-  );
-}
-
-function Toggle({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  label: string;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={() => onChange(!checked)}
-      className={cn(
-        "relative h-7 w-12 shrink-0 rounded-full transition-colors",
-        checked ? "bg-[var(--primary)]" : "bg-[var(--border)]",
-      )}
-    >
-      <span
-        className={cn(
-          "absolute top-1 size-5 rounded-full bg-white shadow-sm transition-transform",
-          checked ? "translate-x-6" : "translate-x-1",
-        )}
-      />
-    </button>
   );
 }
 
@@ -775,7 +745,7 @@ export function ProfessionalSettingsWorkspace() {
                     {description}
                   </p>
                 </div>
-                <Toggle
+                <Switch
                   label={title}
                   checked={settings[key as keyof typeof settings]}
                   onChange={(value) => set(key as keyof typeof settings, value)}
@@ -804,7 +774,7 @@ export function ProfessionalSettingsWorkspace() {
                 key={key}
                 className="flex items-center gap-4 rounded-2xl bg-[var(--background)] p-3"
               >
-                <Toggle
+                <Switch
                   label={label}
                   checked={settings[key as keyof typeof settings]}
                   onChange={(value) => set(key as keyof typeof settings, value)}
@@ -886,7 +856,7 @@ export function ProfessionalSettingsWorkspace() {
                     {description}
                   </p>
                 </div>
-                <Toggle
+                <Switch
                   label={title}
                   checked={settings[key as keyof typeof settings]}
                   onChange={(value) => set(key as keyof typeof settings, value)}
