@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f0e9;
+  --background-deep: #e7e2d9;
+  --foreground: #18201d;
+  --surface: #fffdf8;
+  --surface-strong: #ffffff;
+  --muted: #ebe8e1;
+  --muted-foreground: #626c66;
+  --primary: #2f5b4d;
+  --primary-strong: #21483b;
+  --primary-foreground: #fffdf8;
+  --accent: #df7559;
+  --accent-soft: #f4d7cf;
+  --accent-soft-strong: #efc6b9;
+  --accent-foreground: #82402d;
+  --pastel-lilac: #e5ddf7;
+  --pastel-blue: #dbe8f5;
+  --pastel-mint: #d7ecdf;
+  --pastel-lemon: #f4e4a5;
+  --pastel-pink: #efd1d6;
+  --pastel-peach: #f3d5c8;
+  --highlight-lime: #cce869;
+  --highlight-yellow: #efcf67;
+  --border: #d9d4cb;
+  --ring: #2f5b4d;
+  --success: #2f765b;
+  --success-soft: var(--pastel-mint);
+  --warning: #8b5d18;
+  --warning-soft: var(--pastel-lemon);
+  --info: #3e6388;
+  --info-soft: var(--pastel-blue);
+  --destructive: #b34b42;
+  --destructive-strong: #963d36;
+  --radius-lg: 1.35rem;
+  --sidebar: #17241f;
+  --sidebar-foreground: #f8f6f0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--surface);
+  --color-border: var(--border);
+  --font-sans: var(--font-manrope);
+  --font-serif: var(--font-newsreader);
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 12% -8%, rgba(231, 123, 88, 0.11), transparent 34rem),
+    radial-gradient(circle at 92% 8%, rgba(49, 94, 78, 0.09), transparent 30rem),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent-soft-strong);
+  color: var(--foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.editorial {
+  font-family: var(--font-newsreader), ui-serif, Georgia, serif;
+}
+
+.subtle-grid {
+  background-image:
+    linear-gradient(rgba(49, 94, 78, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(49, 94, 78, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

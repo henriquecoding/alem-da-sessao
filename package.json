@@ -1,0 +1,28 @@
+{
+  "name": "alem-da-sessao",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plataforma local-first de continuidade terapêutica conduzida por profissionais.",
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @alem-da-sessao/web dev",
+    "build": "pnpm --filter @alem-da-sessao/web build",
+    "start": "pnpm --filter @alem-da-sessao/web start",
+    "lint": "pnpm --filter @alem-da-sessao/web lint",
+    "typecheck": "pnpm --filter @alem-da-sessao/web typecheck",
+    "test": "pnpm --filter @alem-da-sessao/web test",
+    "test:run": "pnpm --filter @alem-da-sessao/web test:run",
+    "check:i18n": "pnpm --filter @alem-da-sessao/web check:i18n",
+    "check:privacy": "pnpm --filter @alem-da-sessao/web check:privacy",
+    "check": "pnpm lint && pnpm typecheck && pnpm test:run && pnpm check:i18n && pnpm check:privacy",
+    "format:check": "prettier --check .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14"
+  }
+}

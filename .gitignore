@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+build/
+
+# Test output
+coverage/
+test-results/
+playwright-report/
+
+# Local configuration and secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Supabase local runtime
+supabase/.branches/
+supabase/.temp/
+**/supabase/.branches/
+**/supabase/.temp/
+
+# Vercel remains deliberately unlinked during local development
+.vercel/
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Generated
+*.tsbuildinfo
+next-env.d.ts
+*.log

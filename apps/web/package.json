@@ -1,0 +1,52 @@
+{
+  "name": "@alem-da-sessao/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "check:i18n": "node --import tsx scripts/check-i18n.ts",
+    "check:privacy": "node --import tsx scripts/check-privacy.ts"
+  },
+  "dependencies": {
+    "@alem-da-sessao/authz": "workspace:*",
+    "@alem-da-sessao/db": "workspace:*",
+    "@alem-da-sessao/i18n": "workspace:*",
+    "@alem-da-sessao/tool-registry": "workspace:*",
+    "@alem-da-sessao/validation": "workspace:*",
+    "@fontsource-variable/manrope": "^5.2.6",
+    "@fontsource-variable/newsreader": "^5.2.6",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.57.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.468.0",
+    "next": "16.2.11",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.1.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.11",
+    "jsdom": "^26.0.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.20.5",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
+  }
+}
