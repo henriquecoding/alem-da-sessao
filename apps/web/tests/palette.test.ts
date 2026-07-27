@@ -189,9 +189,14 @@ describe("engine de superfícies", () => {
   const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
   const utils = readFileSync(join(process.cwd(), "lib/utils.ts"), "utf8");
 
+  // Uma receita é um bloco que declara `--surface-bg`. `.surface-edge` não
+  // declara — é um modificador que pinta a aresta com o `--border-strong` da
+  // superfície onde assenta, e não tem de ser exclusivo de nada.
   const declared = [
     ...new Set(
-      [...css.matchAll(/\.surface-([\w-]+)\s*\{/g)].map((match) => match[1]!),
+      [...css.matchAll(/\.surface-([\w-]+)\s*\{([^}]*)\}/g)]
+        .filter((match) => match[2]!.includes("--surface-bg:"))
+        .map((match) => match[1]!),
     ),
   ].sort();
 

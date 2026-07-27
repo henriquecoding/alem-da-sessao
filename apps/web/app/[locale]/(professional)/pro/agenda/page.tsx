@@ -114,9 +114,11 @@ export default async function SchedulePage({
                       // só a aresta esquerda, no tom forte do próprio
                       // pigmento, que é o que se lê como «isto é de alguém».
                       className={cn(
-                        "absolute inset-x-2 overflow-hidden rounded-2xl border-l-[5px] border-l-[var(--border-strong)] p-3",
+                        "absolute inset-x-2 overflow-hidden rounded-2xl p-3",
                         "ease-(--ease-out-quint) transition-[transform,box-shadow] duration-200 hover:-translate-y-px hover:shadow-[var(--shadow-md)]",
                         pigmentSurface(appointment.clientName),
+                        // Depois da superfície: ver a nota em `metric-card`.
+                        "surface-edge-thick",
                       )}
                       style={{
                         top: 48 + index * 115,
@@ -133,7 +135,7 @@ export default async function SchedulePage({
                       {/* O nome e a modalidade continuam escritos: a cor
                           acelera o reconhecimento, nunca o carrega sozinha
                           (WCAG 1.4.1). */}
-                      <Badge className="mt-3 border-0 bg-[var(--surface)] text-[var(--foreground)]">
+                      <Badge className="mt-3 border-0 bg-[var(--surface)] text-[var(--foreground)] shadow-[inset_0_0_0_1px_var(--border-strong)]">
                         {appointment.modality === "online"
                           ? "Online"
                           : "Presencial"}

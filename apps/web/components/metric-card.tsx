@@ -47,8 +47,16 @@ export function MetricCard({
   return (
     <Card
       className={cn(
-        "group/metric ease-(--ease-out-quint) transition-[border-color,box-shadow] duration-300 hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-lg)]",
+        "group/metric ease-(--ease-out-quint) transition-[box-shadow] duration-300 hover:shadow-[var(--shadow-lg)]",
         tones[tone],
+        // **Depois** da superfície, e não antes. A regra de conflito do `cn`
+        // manda uma superfície substituir a cor de borda escrita à frente
+        // dela — que normalmente é o que se quer, porque a borda vem da
+        // superfície. Aqui quer-se o contrário: a aresta é o que carrega o
+        // matiz no tema escuro, onde o painel é subtil de propósito. Um traço
+        // pequeno e saturado lê-se limpo; um painel grande e saturado lê-se
+        // sujo.
+        "surface-edge",
         className,
       )}
       style={style}
@@ -61,8 +69,10 @@ export function MetricCard({
       <CardContent className="p-4">
         <div className="flex items-center gap-2">
           <span
-            // O chip fica na superfície de cima do cartão, para se destacar
-            // do pigmento sem precisar de uma segunda cor.
+            // O ícone fica no texto verificado. O matiz do cartão vive na
+            // aresta esquerda — uma borda é um gráfico, não texto, e assim a
+            // engine não tem de adivinhar variáveis redefinidas dentro do
+            // escopo da superfície, que é coisa que ela não sabe fazer.
             className="grid size-6 shrink-0 place-items-center rounded-[var(--radius-sm)] bg-[var(--surface)] text-[var(--foreground)]"
           >
             <Icon className="size-3.5" aria-hidden="true" />
