@@ -1,4 +1,9 @@
+"use client";
+
+import { useState, type CSSProperties } from "react";
 import type { Locale } from "@alem-da-sessao/i18n";
+import { CountUp } from "@/components/motion/count-up";
+import { useChoreography } from "@/components/motion/use-choreography";
 import { cn } from "@/lib/utils";
 
 /**
@@ -16,6 +21,13 @@ import { cn } from "@/lib/utils";
  *
  * Os EHRs modelam encontros porque encontros faturam. O intervalo não fatura,
  * logo não existe. É isso que está desenhado aqui.
+ *
+ * A figura desenha-se: a régua estende-se, os dois traços da sessão assentam,
+ * o intervalo preenche-se entre eles e só então a percentagem conta. A ordem é
+ * o argumento — quem olha vê primeiro a semana, depois as duas sessões, e por
+ * fim o tamanho do que fica no meio. O traçado é CSS (`.draw-x` / `.draw-y`,
+ * `globals.css`); daqui sai apenas a contagem, que precisa de saber quando a
+ * régua acabou de crescer.
  */
 export function IntervalFigure({
   locale,
@@ -25,6 +37,12 @@ export function IntervalFigure({
   className?: string;
 }) {
   const pt = locale === "pt-PT";
+
+  // A contagem entra depois da régua e dos traços, não ao mesmo tempo: o número
+  // é a conclusão da figura, e uma conclusão que chega antes do argumento não
+  // se lê. `enabled` deixa-a estática para quem pediu menos movimento.
+  const [counting, setCounting] = useState(false);
+  useChoreography((timeline) => timeline.beat(1500, () => setCounting(true)));
 
   const marks = [
     { at: 0, label: pt ? "sessão" : "sessão", align: "items-start" },
@@ -47,18 +65,24 @@ export function IntervalFigure({
       {/* As marcas ficam dentro da régua em vez de a transbordar: `left: 100%`
           empurrava a segunda sessão para fora da caixa. */}
       <div className="relative mt-10 h-10">
+        {/* A semana inteira primeiro: a régua cresce da esquerda para a
+            direita, como o tempo que representa. */}
         <span
           aria-hidden="true"
-          className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[var(--border-strong)]"
+          className="draw-x absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[var(--border-strong)]"
         />
         {/* A faixa do intervalo, tracejada: existe, mas não é sólida em
-            produto nenhum. */}
+            produto nenhum. Preenche-se depois dos traços da sessão — é o que
+            fica entre eles, e chega por último. */}
         <span
           aria-hidden="true"
-          className="absolute inset-x-1 top-1/2 h-px -translate-y-1/2 bg-[repeating-linear-gradient(90deg,var(--accent)_0_5px,transparent_5px_11px)]"
+          className="draw-x absolute inset-x-1 top-1/2 h-px -translate-y-1/2 bg-[repeating-linear-gradient(90deg,var(--accent)_0_5px,transparent_5px_11px)]"
+          // Revelação de etapa (400–600 ms), não formação: o intervalo não se
+          // forma, aparece entre duas coisas que já lá estão.
+          style={{ "--d": 11, animationDuration: "600ms" } as CSSProperties}
         />
 
-        {marks.map((mark) => (
+        {marks.map((mark, index) => (
           <span
             key={mark.at}
             className={cn(
@@ -69,7 +93,13 @@ export function IntervalFigure({
               mark.at === 0 ? { left: 0 } : { right: 0, alignItems: "flex-end" }
             }
           >
-            <span className="h-10 w-[3px] rounded-full bg-[var(--primary)]" />
+            {/* Os dois traços assentam já perto do fim do traçado da régua e um
+                a seguir ao outro, na ordem em que as sessões acontecem — nunca
+                antes de a semana lá ter chegado. */}
+            <span
+              className="draw-y h-10 w-[3px] rounded-full bg-[var(--primary)]"
+              style={{ "--d": 8 + index * 2 } as CSSProperties}
+            />
           </span>
         ))}
       </div>
@@ -83,7 +113,7 @@ export function IntervalFigure({
         </span>
         <span className="text-center text-[var(--accent-foreground)]">
           <strong className="tabular block text-lg font-semibold leading-none">
-            99,5%
+            <CountUp value={99.5} decimals={1} suffix="%" active={counting} />
           </strong>
           <span className="mt-1 block">
             {pt ? "o intervalo" : "o intervalo"}

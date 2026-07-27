@@ -40,13 +40,12 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <head>
-        {/* Without scripting nothing reveals the deferred content, so it has
-            to render in its final state. */}
-        <noscript>
-          <style>{`.reveal{opacity:1!important;transform:none!important}`}</style>
-        </noscript>
-      </head>
+      {/* O `<noscript>` que aqui estava a repor `.reveal` deixou de ser
+          preciso — e nunca chegou para o caso real. Só cobria scripting
+          desligado; não cobria o bundle a falhar nem a CSP a recusá-lo, que é
+          o que de facto acontecia. A garantia passou para a folha de estilos:
+          `.reveal` só esconde dentro de `.js-reveal`, e essa classe é posta
+          por quem sabe voltar a mostrar (`reveal-observer.tsx`). */}
       <body>
         {children}
         <RevealObserver />
