@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 function luminance(hex: string) {
@@ -74,5 +76,96 @@ describe("paleta escura (§6.3)", () => {
     ["shared foreground/shared surface", "#F0C48A", "#33281C"],
   ])("%s meets WCAG AA for normal text", (_, first, second) => {
     expect(contrast(first, second)).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+/**
+ * A engine de tema (§6.3) — regras estruturais, não de gosto.
+ *
+ * Estes testes existem por causa de um defeito real: a paleta escura vivia
+ * num `@media` separado, e um token acrescentado só ao bloco claro produzia
+ * uma caixa clara com texto claro por cima no tema escuro. Nada no build o
+ * apanhava, porque não havia nada que obrigasse os dois blocos a andar a par.
+ *
+ * `light-dark()` transforma esse erro em algo impossível de escrever: a função
+ * exige os dois argumentos na mesma declaração. Estes testes garantem que a
+ * regra não é contornada por distração — quer voltando a abrir um bloco de
+ * tema paralelo, quer declarando um token de cor num tema só.
+ */
+describe("engine de tema", () => {
+  const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
+
+  const rootBlock = (() => {
+    const start = css.indexOf(":root {");
+    return css.slice(start, css.indexOf("\n}", start));
+  })();
+
+  /**
+   * Tokens deliberadamente iguais nos dois temas. Cada um tem uma razão de
+   * desenho: a barra lateral e a superfície editorial são escuras sempre, e o
+   * texto que assenta nelas não pode seguir o tema — seguiria para o lado
+   * errado. Estar nesta lista é uma decisão; estar fora dela por esquecimento
+   * é o que o teste apanha.
+   */
+  const invariant = new Set([
+    "on-shared",
+    "highlight-yellow",
+    "scrim",
+    "sidebar-muted",
+    "sidebar-raised",
+    "sidebar-raised-strong",
+    "sidebar-border",
+    "ink",
+    "ink-raised",
+    "ink-line",
+    "ink-foreground",
+    "ink-muted",
+    "ember",
+    "ember-strong",
+    "shadow-primary",
+    "shadow-primary-strong",
+    "shadow-ember",
+  ]);
+
+  it("declares every themed colour token with both values at once", () => {
+    const singleTheme: string[] = [];
+
+    for (const match of rootBlock.matchAll(/--([\w-]+):\s*([^;]+);/g)) {
+      const name = match[1]!;
+      const value = match[2]!;
+      if (value.includes("light-dark(")) continue;
+      if (invariant.has(name)) continue;
+      // Sombras compõem-se de tokens de cor que já são `light-dark()`, e o
+      // raio não é cor nenhuma.
+      if (value.includes("var(--shadow-")) continue;
+      if (!/#[0-9a-f]{3,8}|rgba?\(/i.test(value)) continue;
+      singleTheme.push(`--${name}: ${value.trim()}`);
+    }
+
+    expect(singleTheme).toEqual([]);
+  });
+
+  it("switches themes through color-scheme alone", () => {
+    expect(css).toMatch(/:root\s*\{\s*color-scheme:\s*light dark;/);
+    expect(css).toMatch(
+      /:root\[data-theme="light"\]\s*\{\s*color-scheme:\s*light;/,
+    );
+    expect(css).toMatch(
+      /:root\[data-theme="dark"\]\s*\{\s*color-scheme:\s*dark;/,
+    );
+  });
+
+  it("keeps no parallel palette that could drift out of sync", () => {
+    const parallel = css
+      .split("\n")
+      .filter((line) => line.includes("prefers-color-scheme"));
+
+    // Um `@media` de tema pode existir para geometria, nunca para cor: é a
+    // duplicação da paleta que produz a divergência.
+    for (const line of parallel) {
+      const start = css.indexOf(line);
+      const body = css.slice(start, css.indexOf("\n}", start));
+      expect(body).not.toMatch(/--[\w-]+:\s*(#|rgba?\()/i);
+    }
   });
 });

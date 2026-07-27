@@ -1,7 +1,8 @@
 import Link from "next/link";
-import type { LocaleSegment } from "@alem-da-sessao/i18n";
+import { localeFromSegment, type LocaleSegment } from "@alem-da-sessao/i18n";
 import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { localPath } from "@/lib/locale";
 
@@ -44,7 +45,12 @@ export function PublicHeader({ segment }: { segment: LocaleSegment }) {
         >
           Experiências
         </Link>
-        <LocaleSwitcher segment={segment} compact />
+        {/* Os dois controlos de apresentação andam sempre juntos e com a
+            mesma forma — são a mesma categoria de decisão. */}
+        <div className="flex items-center gap-1.5">
+          <LocaleSwitcher segment={segment} compact />
+          <ThemeSwitcher locale={localeFromSegment(segment)} />
+        </div>
         <Button asChild size="sm" className="hidden sm:inline-flex">
           <Link href={localPath(segment, "/demo")}>Ver demonstração</Link>
         </Button>

@@ -170,6 +170,66 @@ async function collect(target: string): Promise<string[]> {
   }
 }
 
+/**
+ * Remove comentários antes de procurar padrões proibidos.
+ *
+ * Um comentário que explica *porque* é que `localStorage` não é usado contém
+ * a palavra `localStorage`, e sem isto o check acusa o ficheiro que mais o
+ * respeita. Foi exatamente o que aconteceu com `lib/preferences.ts`.
+ *
+ * O varrimento é feito à mão em vez de por expressão regular porque um `//`
+ * dentro de `https://` não é um comentário, e uma regex ingénua apagaria
+ * metade de cada ficheiro que cita um URL — silenciosamente, que é a pior
+ * forma de um check falhar.
+ */
+function stripComments(source: string): string {
+  let out = "";
+  let i = 0;
+  let quote: string | null = null;
+
+  while (i < source.length) {
+    const c = source[i]!;
+    const next = source[i + 1];
+
+    if (quote) {
+      out += c;
+      if (c === "\\") {
+        out += source[i + 1] ?? "";
+        i += 2;
+        continue;
+      }
+      if (c === quote) quote = null;
+      i += 1;
+      continue;
+    }
+
+    if (c === '"' || c === "'" || c === "`") {
+      quote = c;
+      out += c;
+      i += 1;
+      continue;
+    }
+
+    if (c === "/" && next === "/") {
+      while (i < source.length && source[i] !== "\n") i += 1;
+      continue;
+    }
+
+    if (c === "/" && next === "*") {
+      i += 2;
+      while (i < source.length && !(source[i] === "*" && source[i + 1] === "/"))
+        i += 1;
+      i += 2;
+      continue;
+    }
+
+    out += c;
+    i += 1;
+  }
+
+  return out;
+}
+
 async function main() {
   const failures: string[] = [];
   const show = (file: string) => relative(".", file).replace(/\\/g, "/");
@@ -177,14 +237,32 @@ async function main() {
   // Regras base, em toda a aplicação.
   for (const root of roots) {
     for (const file of await collect(root)) {
-      const source = await readFile(file, "utf8");
+      const raw = await readFile(file, "utf8");
       // O próprio check nomeia os padrões que proíbe.
       if (file.includes("scripts/check-")) continue;
+
+      // Código, sem a prosa que o explica.
+      const source = stripComments(raw);
 
       for (const rule of forbidden) {
         if (rule.pattern.test(source)) {
           failures.push(`${show(file)} — ${rule.reason}`);
         }
+      }
+
+      // O produto escreve exatamente um cookie: a preferência de tema e de
+      // língua, sem identificador e só depois de alguém carregar num botão.
+      // Confinar `document.cookie` a um ficheiro é o que torna essa frase
+      // verificável — sem isto, o segundo cookie entra sem ninguém notar, e o
+      // segundo cookie é sempre o que identifica.
+      if (
+        /\bdocument\.cookie\b/.test(source) &&
+        !file.endsWith("lib/preferences.ts")
+      ) {
+        failures.push(
+          `${show(file)} — só lib/preferences.ts pode escrever cookies (ADR-004). ` +
+            `Use readThemeChoice/writeThemeChoice ou writeLocalePreference.`,
+        );
       }
 
       for (const client of forbiddenClients) {

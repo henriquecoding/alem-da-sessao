@@ -367,7 +367,7 @@ export function AdminOrganizationsWorkspace() {
           >
             <CardContent className="p-6">
               <div className="flex items-start justify-between gap-4">
-                <span className="grid size-12 place-items-center rounded-2xl bg-white/70 text-[var(--primary)]">
+                <span className="grid size-12 place-items-center rounded-2xl bg-[var(--surface)] text-[var(--primary)]">
                   <Building2 className="size-5" />
                 </span>
                 <Badge
@@ -387,7 +387,7 @@ export function AdminOrganizationsWorkspace() {
                 {organization.country} · Plano {organization.plan}
               </p>
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <div className="bg-white/64 rounded-2xl p-4">
+                <div className="bg-[var(--surface)] rounded-2xl p-4">
                   <UsersRound className="size-4 text-[var(--primary)]" />
                   <p className="mt-3 text-xl font-bold">
                     {organization.members}
@@ -396,7 +396,7 @@ export function AdminOrganizationsWorkspace() {
                     Membros
                   </p>
                 </div>
-                <div className="bg-white/64 rounded-2xl p-4">
+                <div className="bg-[var(--surface)] rounded-2xl p-4">
                   <Activity className="size-4 text-[var(--info)]" />
                   <p className="mt-3 text-xl font-bold">
                     {organization.clients}
@@ -598,7 +598,7 @@ export function AdminExperiencesWorkspace() {
                     : "border-[var(--border)]",
                 )}
               >
-                <span className="grid size-10 place-items-center rounded-2xl bg-white/70 text-[var(--primary)]">
+                <span className="grid size-10 place-items-center rounded-2xl bg-[var(--surface)] text-[var(--primary)]">
                   <Sparkles className="size-4" />
                 </span>
                 <div className="min-w-0 flex-1">

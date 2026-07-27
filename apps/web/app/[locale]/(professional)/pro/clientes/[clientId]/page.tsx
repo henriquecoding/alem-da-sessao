@@ -48,7 +48,7 @@ export default async function ClientDetailPage({
 
       <section className="mb-6 flex flex-col gap-5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <span className="grid size-16 place-items-center rounded-3xl bg-[var(--primary)] text-lg font-bold text-white">
+          <span className="grid size-16 place-items-center rounded-3xl bg-[var(--primary)] text-lg font-bold text-[var(--primary-foreground)]">
             {client.initials}
           </span>
           <div>
@@ -87,7 +87,7 @@ export default async function ClientDetailPage({
             type="button"
             className={`min-h-10 shrink-0 rounded-full px-4 text-xs font-bold ${
               index === 0
-                ? "bg-[var(--foreground)] text-white"
+                ? "bg-[var(--sidebar)] text-[var(--sidebar-foreground)]"
                 : "border border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)]"
             }`}
           >
@@ -151,7 +151,7 @@ export default async function ClientDetailPage({
         </Card>
 
         <div className="space-y-5">
-          <Card className="bg-[var(--primary)] text-white">
+          <Card className="bg-[var(--primary)] text-[var(--primary-foreground)]">
             <CardHeader>
               <CardTitle>Partilha pronta para rever</CardTitle>
               <CardDescription className="text-white/60">
@@ -159,7 +159,7 @@ export default async function ClientDetailPage({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="bg-white/8 rounded-2xl p-4">
+              <div className="bg-[var(--sidebar-raised)] rounded-2xl p-4">
                 <p className="text-xs font-bold">Estruturas de Carga</p>
                 <p className="mt-2 text-xs leading-5 text-white/60">
                   mapa estruturado · versão 0.2.0 · partilhado hoje

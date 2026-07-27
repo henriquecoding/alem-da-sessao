@@ -37,7 +37,7 @@ export function CrisisPanel({
       className={cn(
         "group/crisis rounded-2xl border",
         ink
-          ? "border-[#3b3f48] bg-[#181a1f]"
+          ? "border-[#3b3f48] bg-[var(--ink-raised)]"
           : "border-[var(--border)] bg-[var(--surface)]",
         className,
       )}

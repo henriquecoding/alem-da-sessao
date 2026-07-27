@@ -18,54 +18,71 @@
    ========================================================================== */
 
 :root {
-  --background: #f8f6f2;
-  --background-deep: #f0ede5;
-  --foreground: #1c1f22;
-  --surface: #fdfdfc;
-  --surface-strong: #ffffff;
-  --muted: #ebe9e5;
-  --muted-foreground: #5e656e;
-  --primary: #3c6252;
-  --primary-strong: #2e4c40;
-  --primary-foreground: #fbfaf8;
+  --background: light-dark(#f8f6f2, #17191a);
+  --background-deep: light-dark(#f0ede5, #121415);
+  --foreground: light-dark(#1c1f22, #ece9e3);
+  --surface: light-dark(#fdfdfc, #1e2120);
+  --surface-strong: light-dark(#ffffff, #252827);
+  --muted: light-dark(#ebe9e5, #292c2b);
+  --muted-foreground: light-dark(#5e656e, #a3a49f);
+  --primary: light-dark(#3c6252, #7fb39c);
+  --primary-strong: light-dark(#2e4c40, #99c6b1);
+  --primary-foreground: light-dark(#fbfaf8, #14201b);
 
   /* O acento de marca é terracota queimada: quente, mas nunca confundível com
      o âmbar de `--shared`, que só existe na partilha. */
-  --accent: #a8563c;
-  --accent-soft: #f2e2d9;
-  --accent-soft-strong: #e8cfc1;
-  --accent-foreground: #7a3a24;
+  --accent: light-dark(#a8563c, #d98a68);
+  --accent-soft: light-dark(#f2e2d9, #33241d);
+  --accent-soft-strong: light-dark(#e8cfc1, #453025);
+  --accent-foreground: light-dark(#7a3a24, #eeb193);
+
+  /* Texto *sobre* cada superfície de acento. Sem estes tokens cada uso
+     escrevia `text-white`, que é uma cor fixa: no tema escuro `--primary`
+     passa a verde claro e o branco por cima desaparece. `check:contrast`
+     recusa cores fixas justamente por isso. */
+  --on-accent: light-dark(#fdf7f4, #22120c);
+  --on-destructive: light-dark(#fdf6f5, #2a1210);
+  --on-shared: #2b1a08;
 
   /* Pigmentos, não pastéis. Todos derivados da mesma base quente e
      dessaturados o suficiente para nunca competirem com o texto. */
-  --pigment-sage: #dde5dd;
-  --pigment-clay: #eddfd4;
-  --pigment-sand: #efe7d6;
-  --pigment-stone: #e4e3de;
-  --pigment-ochre: #f0e4c8;
-  --pigment-rose: #ecdcd8;
+  --pigment-sage: light-dark(#dde5dd, #22302a);
+  --pigment-clay: light-dark(#eddfd4, #33271f);
+  --pigment-sand: light-dark(#efe7d6, #322c1f);
+  --pigment-stone: light-dark(#e4e3de, #26292a);
+  --pigment-ochre: light-dark(#f0e4c8, #35301c);
+  --pigment-rose: light-dark(#ecdcd8, #33262a);
 
   --highlight-yellow: #e0bb6b;
-  --border: #d7d2cb;
-  --border-strong: #c2bcb2;
-  --ring: #396a56;
-  --success: #2c6152;
-  --success-soft: var(--pigment-sage);
-  --warning: #7a5518;
-  --warning-soft: var(--pigment-ochre);
-  --info: #35566b;
-  --info-soft: var(--pigment-stone);
-  --destructive: #b83028;
-  --destructive-strong: #96241e;
-  --destructive-soft: #f6e2df;
+  --border: light-dark(#d7d2cb, #323533);
+  --border-strong: light-dark(#c2bcb2, #454846);
+  --ring: light-dark(#396a56, #7fb39c);
+  --success: light-dark(#2c6152, #7fc4a8);
+  --success-soft: light-dark(var(--pigment-sage), #22302a);
+  --warning: light-dark(#7a5518, #ddba71);
+  --warning-soft: light-dark(var(--pigment-ochre), #35301c);
+  --info: light-dark(#35566b, #93b3c4);
+  --info-soft: light-dark(var(--pigment-stone), #26292a);
+  --destructive: light-dark(#b83028, #e8867e);
+  --destructive-strong: light-dark(#96241e, #f0a09a);
+  --destructive-soft: light-dark(#f6e2df, #37211f);
 
   /* 0.875rem em vez de 1.35rem. O raio grande era metade da leitura
      "wellness": cantos muito redondos lêem como app de meditação. */
   --radius-lg: 0.875rem;
   --radius-sm: 0.5rem;
 
-  --sidebar: #1f2422;
-  --sidebar-foreground: #f1efe9;
+  /* A barra lateral é escura nos dois temas — é uma superfície invariante, e
+     por isso tem o seu próprio conjunto de tokens em vez de `text-white` e
+     `bg-white/12` espalhados. Sem estes, cada uso era uma cor cega ao tema à
+     espera de partir. */
+  --sidebar: light-dark(#1f2422, #121413);
+  --sidebar-foreground: light-dark(#f1efe9, #ece9e3);
+  --sidebar-muted: #a8ada9;
+  --sidebar-raised: #2b312e;
+  --sidebar-raised-strong: #363d39;
+  --sidebar-border: #343b37;
+  --scrim: rgba(12, 14, 13, 0.55);
 
   /* Dark editorial surface shared by the Estruturas de Carga engine. */
   --ink: #15171b;
@@ -78,16 +95,27 @@
 
   /* Elevação — sombras que descrevem material, não altura (§6.6).
      Baixa opacidade, raio alto e matiz da própria superfície quente: o objeto
-     parece pousado sobre papel, não a flutuar sobre um ecrã. */
-  --shadow-xs: 0 1px 2px rgba(44, 38, 30, 0.05);
+     parece pousado sobre papel, não a flutuar sobre um ecrã.
+
+     A geometria é a mesma nos dois temas; só a cor muda. Por isso o que muda
+     está isolado em tokens de cor — `light-dark()` recebe exatamente dois
+     argumentos e uma lista de sombras tem vírgulas próprias, o que tornaria a
+     declaração inteira inválida se fossem escritas lá dentro. */
+  --shadow-contact: light-dark(rgba(44, 38, 30, 0.05), rgba(0, 0, 0, 0.38));
+  --shadow-ambient-sm: light-dark(rgba(44, 38, 30, 0.04), rgba(0, 0, 0, 0.3));
+  --shadow-ambient-md: light-dark(rgba(44, 38, 30, 0.06), rgba(0, 0, 0, 0.36));
+  --shadow-ambient-lg: light-dark(rgba(44, 38, 30, 0.08), rgba(0, 0, 0, 0.44));
+  --shadow-ambient-xl: light-dark(rgba(44, 38, 30, 0.12), rgba(0, 0, 0, 0.5));
+
+  --shadow-xs: 0 1px 2px var(--shadow-contact);
   --shadow-sm:
-    0 1px 2px rgba(44, 38, 30, 0.05), 0 3px 10px rgba(44, 38, 30, 0.04);
+    0 1px 2px var(--shadow-contact), 0 3px 10px var(--shadow-ambient-sm);
   --shadow-md:
-    0 1px 2px rgba(44, 38, 30, 0.04), 0 10px 26px rgba(44, 38, 30, 0.06);
+    0 1px 2px var(--shadow-contact), 0 10px 26px var(--shadow-ambient-md);
   --shadow-lg:
-    0 2px 4px rgba(44, 38, 30, 0.04), 0 20px 48px rgba(44, 38, 30, 0.08);
+    0 2px 4px var(--shadow-contact), 0 20px 48px var(--shadow-ambient-lg);
   --shadow-xl:
-    0 4px 10px rgba(44, 38, 30, 0.05), 0 38px 88px rgba(44, 38, 30, 0.12);
+    0 4px 10px var(--shadow-contact), 0 38px 88px var(--shadow-ambient-xl);
   --shadow-primary:
     0 1px 2px rgba(30, 48, 40, 0.22), 0 8px 22px rgba(30, 48, 40, 0.18);
   --shadow-primary-strong:
@@ -107,107 +135,60 @@
      e nunca só por cor (WCAG 1.4.1). Cada par traz também forma de borda,
      ícone e texto — ver `components/sensitivity.tsx`.
      ------------------------------------------------------------------------ */
-  --private: #556d63;
-  --private-surface: #f3f1ed;
-  --private-border: #c9d2cc;
-  --shared: #d9943a;
-  --shared-foreground: #6e451c;
-  --shared-surface: #f5efe5;
-  --shared-border: #e3c79c;
-  --retained: #5e656e;
-  --retained-surface: #eceef1;
+  --private: light-dark(#556d63, #9dbdae);
+  --private-surface: light-dark(#f3f1ed, #23282a);
+  --private-border: light-dark(#c9d2cc, #39443f);
+  --shared: light-dark(#d9943a, #e8a758);
+  --shared-foreground: light-dark(#6e451c, #f0c48a);
+  --shared-surface: light-dark(#f5efe5, #33281c);
+  --shared-border: light-dark(#e3c79c, #5c4527);
+  --retained: light-dark(#5e656e, #a5a7a3);
+  --retained-surface: light-dark(#eceef1, #26292a);
 
   /* Estados honestos — cada um distinto, nenhum reaproveitado (§7.5). */
-  --state-empty: #ebe9e5;
-  --state-empty-foreground: #6b6373;
-  --state-withheld: #576b63;
-  --state-withheld-surface: #e9eeeb;
-  --state-forbidden: #5e656e;
-  --state-forbidden-surface: #eceef1;
-  --state-offline: #7d746b;
-  --state-offline-surface: #f0ece7;
-  --state-error: #b83028;
-  --state-error-surface: #fbe6e4;
+  --state-empty: light-dark(#ebe9e5, #26292a);
+  --state-empty-foreground: light-dark(#6b6373, #a3a49f);
+  --state-withheld: light-dark(#576b63, #9dbdae);
+  --state-withheld-surface: light-dark(#e9eeeb, #22292a);
+  --state-forbidden: light-dark(#5e656e, #a5a7a3);
+  --state-forbidden-surface: light-dark(#eceef1, #26292a);
+  --state-offline: light-dark(#7d746b, #b0a79d);
+  --state-offline-surface: light-dark(#f0ece7, #2a2724);
+  --state-error: light-dark(#b83028, #e8867e);
+  --state-error-surface: light-dark(#fbe6e4, #37211f);
+
+  /* Grão de material (§6.6) — ver `.material::after`. */
+  --grain-ink: light-dark(rgba(44, 38, 30, 0.05), rgba(232, 228, 220, 0.07));
 }
 
 /* ==========================================================================
-   Modo escuro — segunda paleta, não uma inversão (§6.3)
+   Engine de tema
 
-   Utilizadores em sofrimento preferem paletas escuras. Os matizes são os
-   mesmos; as superfícies são quentes e muito dessaturadas, nunca cinzento
-   neutro. Segue `prefers-color-scheme` sem qualquer armazenamento, o que
-   mantém as rotas de experiência sem cookies e sem impressão digital
-   (§10.4) e as páginas estáticas.
+   Regra de construção, não de gosto: **um token declara-se uma vez, com os
+   dois valores juntos.** É isso que `light-dark()` garante. Enquanto a paleta
+   escura vivia num `@media` separado, era possível acrescentar um token ao
+   tema claro e esquecer o escuro — e foi exatamente assim que apareceram as
+   caixas claras com texto claro por cima que o utilizador viu.
+
+   Com `light-dark()` esse erro deixa de ser possível de escrever: a função
+   exige os dois argumentos. E porque tudo depende de `color-scheme`, trocar
+   de tema é mudar uma única propriedade na raiz — não há uma segunda paleta
+   para manter em sincronia, logo não há como as duas divergirem.
+
+   `:root` sem atributo segue o sistema (é o estado por omissão, e o único que
+   o HTML servido estaticamente conhece). O atributo `data-theme` só existe
+   quando alguém escolheu explicitamente.
    ========================================================================== */
+:root {
+  color-scheme: light dark;
+}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Superfícies quentes muito dessaturadas, nunca cinzento neutro. */
-    --background: #17191a;
-    --background-deep: #121415;
-    --foreground: #ece9e3;
-    --surface: #1e2120;
-    --surface-strong: #252827;
-    --muted: #292c2b;
-    --muted-foreground: #a3a49f;
-    --primary: #7fb39c;
-    --primary-strong: #99c6b1;
-    --primary-foreground: #14201b;
-    --accent: #d98a68;
-    --accent-soft: #33241d;
-    --accent-soft-strong: #453025;
-    --accent-foreground: #eeb193;
-    --pigment-sage: #22302a;
-    --pigment-clay: #33271f;
-    --pigment-sand: #322c1f;
-    --pigment-stone: #26292a;
-    --pigment-ochre: #35301c;
-    --pigment-rose: #33262a;
-    --highlight-yellow: #e0bb6b;
-    --border: #323533;
-    --border-strong: #454846;
-    --ring: #7fb39c;
-    --success: #7fc4a8;
-    --success-soft: #22302a;
-    --warning: #ddba71;
-    --warning-soft: #35301c;
-    --info: #93b3c4;
-    --info-soft: #26292a;
-    --destructive: #e8867e;
-    --destructive-strong: #f0a09a;
-    --destructive-soft: #37211f;
-    --sidebar: #121413;
-    --sidebar-foreground: #ece9e3;
+:root[data-theme="light"] {
+  color-scheme: light;
+}
 
-    --private: #9dbdae;
-    --private-surface: #23282a;
-    --private-border: #39443f;
-    --shared: #e8a758;
-    --shared-foreground: #f0c48a;
-    --shared-surface: #33281c;
-    --shared-border: #5c4527;
-    --retained: #a5a7a3;
-    --retained-surface: #26292a;
-
-    --state-empty: #26292a;
-    --state-empty-foreground: #a3a49f;
-    --state-withheld: #9dbdae;
-    --state-withheld-surface: #22292a;
-    --state-forbidden: #a5a7a3;
-    --state-forbidden-surface: #26292a;
-    --state-offline: #b0a79d;
-    --state-offline-surface: #2a2724;
-    --state-error: #e8867e;
-    --state-error-surface: #37211f;
-
-    /* Sombras em superfície escura descrevem material por profundidade de
-       preto, não por opacidade de tinta escura sobre claro. */
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 3px 10px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 26px rgba(0, 0, 0, 0.36);
-    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 20px 48px rgba(0, 0, 0, 0.44);
-    --shadow-xl: 0 4px 10px rgba(0, 0, 0, 0.4), 0 38px 88px rgba(0, 0, 0, 0.5);
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 @theme {
@@ -252,8 +233,8 @@
   /* Formação do artefacto e travessia da ponte — os dois únicos momentos do
      produto que podem ser lentos de propósito. */
   --animate-forming: forming var(--duration-forming) var(--ease-forming) both;
-  --animate-crossing:
-    crossing var(--duration-crossing) var(--ease-in-out-quart) both;
+  --animate-crossing: crossing var(--duration-crossing) var(--ease-in-out-quart)
+    both;
 }
 
 /* Declared outside `@theme` so they are always emitted: the plain-CSS
@@ -587,20 +568,22 @@ p {
   isolation: isolate;
 }
 
+/* O grão é pintado com uma cor do tema e recortado pela textura, em vez de ser
+   uma imagem cinzenta com opacidade diferente por tema. A diferença não é
+   estética: uma `opacity` não é uma cor, portanto não cabe em `light-dark()`,
+   e escrevê-la num `@media` reabriria a porta a uma segunda paleta que
+   diverge da primeira. Aqui só existe um token, `--grain-ink`. */
 .material::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
-}
-
-@media (prefers-color-scheme: dark) {
-  .material::after {
-    opacity: 0.05;
-  }
+  background-color: var(--grain-ink);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+  -webkit-mask-size: 160px 160px;
+  mask-size: 160px 160px;
 }
 
 /* Cantos assimétricos: um cartão com raios diferentes por canto lê como

@@ -178,7 +178,7 @@ export function ClientSessionsWorkspace() {
             className={cn(
               "min-h-10 rounded-full px-4 text-xs font-bold",
               tab === value
-                ? "bg-[var(--primary)] text-white"
+                ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
                 : "border border-[var(--border)] bg-[var(--surface)]",
             )}
           >
@@ -199,7 +199,7 @@ export function ClientSessionsWorkspace() {
               <CardContent className="p-6 sm:p-7">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <span className="grid size-14 place-items-center rounded-3xl bg-white/70 text-[var(--primary)]">
+                    <span className="grid size-14 place-items-center rounded-3xl bg-[var(--surface)] text-[var(--primary)]">
                       <CalendarCheck2 className="size-5" />
                     </span>
                     <div>
@@ -214,14 +214,14 @@ export function ClientSessionsWorkspace() {
                   </Badge>
                 </div>
                 <div className="mt-7 grid grid-cols-2 gap-3">
-                  <div className="bg-white/62 rounded-2xl p-4">
+                  <div className="bg-[var(--surface)] rounded-2xl p-4">
                     <Clock3 className="size-4 text-[var(--primary)]" />
                     <p className="mt-2 text-sm font-bold">{session.time}</p>
                     <p className="mt-1 text-xs text-[var(--muted-foreground)]">
                       50 minutos
                     </p>
                   </div>
-                  <div className="bg-white/62 rounded-2xl p-4">
+                  <div className="bg-[var(--surface)] rounded-2xl p-4">
                     {session.modality === "Online" ? (
                       <Video className="size-4 text-[var(--primary)]" />
                     ) : (

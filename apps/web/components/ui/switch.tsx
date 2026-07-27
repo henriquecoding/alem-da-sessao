@@ -34,7 +34,7 @@ export function Switch({
         className={cn(
           // The knob overshoots very slightly on its way across, which is what
           // reads as a physical toggle rather than a repositioned circle.
-          "ease-(--ease-spring) pointer-events-none absolute left-1 top-1 size-6 rounded-full border border-black/5 bg-white shadow-[0_2px_8px_rgba(40,36,49,.2)] transition-transform duration-300",
+          "ease-(--ease-spring) pointer-events-none absolute left-1 top-1 size-6 rounded-full border border-black/5 bg-[var(--surface)] shadow-[0_2px_8px_rgba(40,36,49,.2)] transition-transform duration-300",
           checked ? "translate-x-6" : "translate-x-0",
         )}
       />
