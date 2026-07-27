@@ -29,8 +29,8 @@ export default async function DemoPage({
       description:
         "Agenda, clientes, pendências e atribuição de experiências numa superfície operacional.",
       href: "/pro/hoje",
-      tone: "bg-[var(--primary)] text-white",
-      iconTone: "bg-white/12 text-white",
+      tone: "bg-[var(--primary)] text-[var(--primary-foreground)]",
+      iconTone: "bg-[var(--sidebar-raised)] text-[var(--sidebar-foreground)]",
     },
     {
       icon: HeartHandshake,
@@ -48,7 +48,7 @@ export default async function DemoPage({
         "Operação, assinaturas e verificações sem uma janela normal para conteúdo clínico.",
       href: "/admin/operacao",
       tone: "bg-[var(--pigment-stone)]",
-      iconTone: "bg-[var(--primary)] text-white",
+      iconTone: "bg-[var(--primary)] text-[var(--primary-foreground)]",
     },
   ];
 
@@ -78,7 +78,7 @@ export default async function DemoPage({
               </h2>
               <p
                 className={`mt-3 text-sm leading-7 ${
-                  area.tone.includes("text-white")
+                  area.tone.includes("text-[var(--sidebar-foreground)]")
                     ? "text-white/68"
                     : "text-[var(--muted-foreground)]"
                 }`}
@@ -88,7 +88,7 @@ export default async function DemoPage({
               <Button
                 asChild
                 variant={
-                  area.tone.includes("text-white") ? "secondary" : "default"
+                  area.tone.includes("text-[var(--sidebar-foreground)]") ? "secondary" : "default"
                 }
                 className="mt-auto w-full"
               >

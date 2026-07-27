@@ -16,7 +16,8 @@
     "check:claims": "node --import tsx scripts/check-claims.ts",
     "check:direction": "node --import tsx scripts/check-direction.ts",
     "check:budgets": "node --import tsx scripts/check-budgets.ts",
-    "check:accessibility": "node --import tsx scripts/check-accessibility.ts"
+    "check:accessibility": "node --import tsx scripts/check-accessibility.ts",
+    "check:contrast": "node --import tsx scripts/check-contrast.ts"
   },
   "dependencies": {
     "@alem-da-sessao/authz": "workspace:*",

@@ -26,7 +26,7 @@ const buttonVariants = cva(
         quiet:
           "bg-[var(--accent-soft)] text-[var(--accent-foreground)] hover:bg-[var(--accent-soft-strong)] hover:shadow-[var(--shadow-sm)]",
         destructive:
-          "bg-[var(--destructive)] text-white shadow-[var(--shadow-sm)] hover:bg-[var(--destructive-strong)] hover:shadow-[var(--shadow-md)]",
+          "bg-[var(--destructive)] text-[var(--on-destructive)] shadow-[var(--shadow-sm)] hover:bg-[var(--destructive-strong)] hover:shadow-[var(--shadow-md)]",
       },
       size: {
         default: "h-11",

@@ -607,7 +607,7 @@ export function SessionInventoryExperience({
                       <span
                         aria-hidden="true"
                         className={cn(
-                          "ease-(--ease-spring) absolute right-3 top-3 grid size-6 place-items-center rounded-full bg-[var(--primary)] text-white transition-all duration-300",
+                          "ease-(--ease-spring) absolute right-3 top-3 grid size-6 place-items-center rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] transition-all duration-300",
                           active
                             ? "scale-100 opacity-100"
                             : "scale-50 opacity-0",
@@ -771,7 +771,7 @@ export function SessionInventoryExperience({
                           className={cn(
                             "grid size-6 shrink-0 place-items-center rounded-full border transition-colors duration-300",
                             fragment.share
-                              ? "border-[var(--primary)] bg-[var(--primary)] text-white"
+                              ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)]"
                               : "border-[var(--border)]",
                           )}
                         >

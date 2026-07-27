@@ -21,10 +21,11 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import type { LocaleSegment } from "@alem-da-sessao/i18n";
+import { localeFromSegment, type LocaleSegment } from "@alem-da-sessao/i18n";
 import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -111,11 +112,11 @@ function NavigationItems({
             title={collapsed ? item.label : undefined}
             className={cn(
               "group/nav relative flex min-h-11 items-center gap-3 overflow-hidden rounded-2xl px-3 text-sm font-semibold outline-none",
-              "ease-(--ease-out-quint) transition-[background-color,color,transform] duration-200 focus-visible:ring-2 focus-visible:ring-white/70",
+              "ease-(--ease-out-quint) transition-[background-color,color,transform] duration-200 focus-visible:ring-2 focus-visible:ring-[var(--sidebar-foreground)]",
               collapsed && "justify-center px-0",
               active
                 ? "bg-[var(--highlight-yellow)] text-[var(--sidebar)] shadow-[0_8px_24px_rgba(242,207,99,.16)]"
-                : "hover:bg-white/8 text-white/58 hover:translate-x-0.5 hover:text-white",
+                : "hover:bg-[var(--sidebar-raised)] text-[var(--sidebar-muted)] hover:translate-x-0.5 hover:text-[var(--sidebar-foreground)]",
             )}
           >
             <item.icon
@@ -183,7 +184,7 @@ export function AppShell({
     <div className="min-h-screen bg-[var(--background)] lg:flex">
       <aside
         className={cn(
-          "sticky top-0 hidden h-screen shrink-0 flex-col bg-[var(--sidebar)] p-4 text-white lg:flex",
+          "sticky top-0 hidden h-screen shrink-0 flex-col bg-[var(--sidebar)] p-4 text-[var(--sidebar-foreground)] lg:flex",
           "duration-400 ease-(--ease-out-quint) transition-[width]",
           collapsed ? "w-[84px]" : "w-[248px]",
         )}
@@ -194,13 +195,13 @@ export function AppShell({
             collapsed && "justify-center",
           )}
         >
-          <BrandMark className="bg-white/12" />
+          <BrandMark className="bg-[var(--sidebar-raised)]" />
           {!collapsed && (
             <div className="enter-fade min-w-0">
               <p className="truncate text-sm font-bold tracking-[-0.025em]">
                 Além da Sessão
               </p>
-              <p className="text-white/42 mt-0.5 text-[10px]">
+              <p className="text-[var(--sidebar-muted)] mt-0.5 text-[10px]">
                 demonstração local
               </p>
             </div>
@@ -216,17 +217,17 @@ export function AppShell({
         <div className="mt-auto">
           <div
             className={cn(
-              "bg-white/6 mb-2 flex items-center gap-3 rounded-2xl p-2",
+              "bg-[var(--sidebar-raised)] mb-2 flex items-center gap-3 rounded-2xl p-2",
               collapsed && "justify-center",
             )}
           >
-            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--primary)] text-xs font-bold text-white">
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)]">
               {identity.initials}
             </span>
             {!collapsed && (
               <div className="enter-fade min-w-0">
                 <p className="truncate text-xs font-bold">{identity.name}</p>
-                <p className="text-white/42 truncate text-[10px]">
+                <p className="text-[var(--sidebar-muted)] truncate text-[10px]">
                   {identity.subtitle}
                 </p>
               </div>
@@ -235,7 +236,7 @@ export function AppShell({
           <button
             type="button"
             onClick={() => setCollapsed((value) => !value)}
-            className="hover:bg-white/8 flex min-h-11 w-full items-center justify-center rounded-2xl text-white/50 transition-colors duration-200 hover:text-white"
+            className="hover:bg-[var(--sidebar-raised)] flex min-h-11 w-full items-center justify-center rounded-2xl text-[var(--sidebar-muted)] transition-colors duration-200 hover:text-[var(--sidebar-foreground)]"
             aria-label={collapsed ? "Expandir navegação" : "Recolher navegação"}
             aria-expanded={!collapsed}
           >
@@ -267,7 +268,10 @@ export function AppShell({
               <Badge tone="warning">Dados fictícios</Badge>
             </div>
             <div className="flex items-center gap-2">
-              <LocaleSwitcher segment={segment} compact />
+              <div className="flex items-center gap-1.5">
+                <LocaleSwitcher segment={segment} compact />
+                <ThemeSwitcher locale={localeFromSegment(segment)} />
+              </div>
               <Button
                 asChild
                 variant="secondary"
@@ -296,7 +300,7 @@ export function AppShell({
               a freshly mounted element has no previous state to move from. */}
           <button
             className={cn(
-              "absolute inset-0 bg-black/45 backdrop-blur-[3px]",
+              "absolute inset-0 bg-[var(--scrim)] backdrop-blur-[3px]",
               drawer === "open"
                 ? "animate-backdrop-in"
                 : "animate-backdrop-out",
@@ -306,17 +310,17 @@ export function AppShell({
           />
           <aside
             className={cn(
-              "relative flex h-full w-[min(88vw,340px)] flex-col bg-[var(--sidebar)] p-5 text-white shadow-2xl",
+              "relative flex h-full w-[min(88vw,340px)] flex-col bg-[var(--sidebar)] p-5 text-[var(--sidebar-foreground)] shadow-2xl",
               drawer === "open" ? "animate-drawer-in" : "animate-drawer-out",
             )}
           >
             <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <BrandMark className="bg-white/12" />
+                <BrandMark className="bg-[var(--sidebar-raised)]" />
                 <span className="text-sm font-bold">Além da Sessão</span>
               </div>
               <button
-                className="hover:bg-white/8 grid size-11 place-items-center rounded-2xl text-white/65 transition-colors duration-200 hover:text-white"
+                className="hover:bg-[var(--sidebar-raised)] grid size-11 place-items-center rounded-2xl text-[var(--sidebar-muted)] transition-colors duration-200 hover:text-[var(--sidebar-foreground)]"
                 onClick={closeDrawer}
                 aria-label="Fechar navegação"
               >
@@ -332,7 +336,7 @@ export function AppShell({
             <div className="mt-auto">
               <Link
                 href={`/${segment}`}
-                className="hover:bg-white/8 text-white/58 flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold transition-colors duration-200 hover:text-white"
+                className="hover:bg-[var(--sidebar-raised)] text-[var(--sidebar-muted)] flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold transition-colors duration-200 hover:text-[var(--sidebar-foreground)]"
               >
                 <LogOut className="size-[18px]" />
                 Sair da demonstração
@@ -344,7 +348,7 @@ export function AppShell({
 
       <nav
         aria-label="Navegação principal mobile"
-        className="border-white/8 fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[1.35rem] border bg-[var(--sidebar)] p-1.5 text-white shadow-[0_16px_50px_rgba(35,30,45,.35)] lg:hidden"
+        className="border-white/8 fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[1.35rem] border bg-[var(--sidebar)] p-1.5 text-[var(--sidebar-foreground)] shadow-[0_16px_50px_rgba(35,30,45,.35)] lg:hidden"
       >
         {mobileItems.map((item) => {
           const href = `/${segment}${item.href}`;
@@ -362,7 +366,7 @@ export function AppShell({
                 // yellow only won by source order.
                 active
                   ? "bg-[var(--highlight-yellow)] text-[var(--sidebar)]"
-                  : "text-white/46 active:bg-white/8",
+                  : "text-[var(--sidebar-muted)] active:bg-[var(--sidebar-raised)]",
               )}
             >
               <item.icon className="ease-(--ease-spring) size-[17px] transition-transform duration-500 group-active/tab:scale-90" />
@@ -374,7 +378,7 @@ export function AppShell({
           type="button"
           onClick={() => setDrawer("open")}
           aria-label="Mais opções"
-          className="active:bg-white/8 text-white/46 flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold transition-colors duration-200"
+          className="active:bg-[var(--sidebar-raised)] text-[var(--sidebar-muted)] flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold transition-colors duration-200"
         >
           <Menu className="size-[17px]" />
           <span>Mais</span>

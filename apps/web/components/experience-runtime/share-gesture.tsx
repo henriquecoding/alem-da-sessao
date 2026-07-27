@@ -167,7 +167,7 @@ export function ShareGesture({
             "transition-[background-color,box-shadow] duration-200",
             "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2",
             crossed
-              ? "bg-[var(--shared)] text-white"
+              ? "bg-[var(--shared)] text-[var(--on-shared)]"
               : "cursor-grab bg-[var(--surface)] text-[var(--private)] shadow-[var(--shadow-sm)] active:cursor-grabbing",
           )}
           // A posição é calculada em CSS puro contra a largura da pista, sem

@@ -1,3 +1,5 @@
+import { homeBR, homePT } from "./home";
+
 export const locales = ["pt-PT", "pt-BR"] as const;
 export type Locale = (typeof locales)[number];
 export type LocaleSegment = "pt-pt" | "pt-br";
@@ -22,6 +24,7 @@ export function segmentFromLocale(locale: Locale): LocaleSegment {
 
 const ptPT = {
   localeLabel: "Português (Portugal)",
+  home: homePT,
   common: {
     brand: "Além da Sessão",
     localPreview: "Ambiente local · dados fictícios",
@@ -91,6 +94,7 @@ const ptPT = {
 
 const ptBR: typeof ptPT = {
   localeLabel: "Português (Brasil)",
+  home: homeBR,
   common: {
     brand: "Além da Sessão",
     localPreview: "Ambiente local · dados fictícios",

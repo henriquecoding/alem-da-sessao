@@ -40,9 +40,9 @@ export function DashboardPreview() {
           aria-hidden="true"
           className="grid min-h-[390px] grid-cols-[76px_1fr] sm:grid-cols-[170px_1fr]"
         >
-          <aside className="bg-[var(--sidebar)] p-3 text-white sm:p-4">
+          <aside className="bg-[var(--sidebar)] p-3 text-[var(--sidebar-foreground)] sm:p-4">
             <div className="mb-8 flex items-center gap-2">
-              <span className="grid size-8 place-items-center rounded-xl bg-white/10">
+              <span className="grid size-8 place-items-center rounded-xl bg-[var(--sidebar-raised)]">
                 <Sparkles className="size-4 text-[var(--accent)]" />
               </span>
               <span className="hidden text-xs font-bold sm:block">
@@ -56,8 +56,8 @@ export function DashboardPreview() {
                     key={item}
                     className={`flex h-10 items-center gap-2 rounded-xl px-3 text-xs ${
                       index === 0
-                        ? "bg-white text-[var(--sidebar)]"
-                        : "text-white/58"
+                        ? "bg-[var(--sidebar-foreground)] text-[var(--sidebar)]"
+                        : "text-[var(--sidebar-muted)]"
                     }`}
                   >
                     <span className="size-1.5 shrink-0 rounded-full bg-current" />
@@ -79,20 +79,20 @@ export function DashboardPreview() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-[1.25fr_.75fr]">
-              <div className="rounded-2xl bg-[var(--primary)] p-4 text-white">
+              <div className="rounded-2xl bg-[var(--primary)] p-4 text-[var(--primary-foreground)]">
                 <div className="flex items-center justify-between">
-                  <Badge className="bg-white/14 text-white">
+                  <Badge className="bg-[var(--sidebar-raised)] text-[var(--sidebar-foreground)]">
                     Próxima sessão
                   </Badge>
-                  <Clock3 className="size-4 text-white/65" />
+                  <Clock3 className="size-4 text-[var(--sidebar-muted)]" />
                 </div>
                 <p className="mt-6 text-lg font-bold">Marta Oliveira</p>
-                <p className="mt-1 text-xs text-white/65">
+                <p className="mt-1 text-xs text-[var(--sidebar-muted)]">
                   09:30 · Online · 50 min
                 </p>
                 {/* Desenho de um botão, não um botão: era focável e anunciado
                     como acionável sem fazer nada. */}
-                <span className="mt-5 flex w-full items-center justify-between rounded-xl bg-white px-3 py-2.5 text-left text-xs font-bold text-[var(--foreground)]">
+                <span className="mt-5 flex w-full items-center justify-between rounded-xl bg-[var(--surface)] px-3 py-2.5 text-left text-xs font-bold text-[var(--foreground)]">
                   Abrir contexto
                   <ChevronRight className="size-4" />
                 </span>
@@ -115,7 +115,7 @@ export function DashboardPreview() {
               </div>
             </div>
 
-            <div className="mt-3 flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-white p-4">
+            <div className="mt-3 flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
               <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--pigment-sage)] text-[var(--success)]">
                 <Check className="size-4" />
               </span>

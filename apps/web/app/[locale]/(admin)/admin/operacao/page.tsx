@@ -112,7 +112,7 @@ export default async function AdminOperationPage({
           </CardContent>
         </Card>
 
-        <Card className="bg-[var(--primary)] text-white">
+        <Card className="bg-[var(--primary)] text-[var(--primary-foreground)]">
           <CardHeader>
             <div className="flex items-start justify-between gap-4">
               <CardTitle>Fronteira administrativa</CardTitle>
@@ -125,7 +125,7 @@ export default async function AdminOperationPage({
               saúde do sistema. Conteúdo de notas, respostas ou rascunhos não é
               carregado por conveniência.
             </p>
-            <div className="bg-white/8 mt-7 rounded-2xl p-4">
+            <div className="bg-[var(--sidebar-raised)] mt-7 rounded-2xl p-4">
               <p className="flex items-center gap-2 text-xs font-bold">
                 <Clock3 className="size-4 text-[var(--accent)]" />
                 Acesso de emergência protegido

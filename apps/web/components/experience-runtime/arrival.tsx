@@ -120,7 +120,7 @@ export function Arrival({
             className={cn(
               "enter flex gap-4 rounded-2xl border p-4",
               ink
-                ? "border-[#2f3239] bg-[#1a1c20]"
+                ? "border-[var(--ink-line)] bg-[var(--ink-raised)]"
                 : "border-[var(--border)] bg-[var(--surface)]",
             )}
             style={{ "--d": 3 + index } as CSSProperties}
@@ -129,7 +129,7 @@ export function Arrival({
               className={cn(
                 "grid size-10 shrink-0 place-items-center rounded-xl",
                 ink
-                  ? "bg-[#24272d] text-[var(--ember)]"
+                  ? "bg-[var(--ink-raised)] text-[var(--ember)]"
                   : "bg-[var(--muted)] text-[var(--primary)]",
               )}
             >
@@ -162,7 +162,7 @@ export function Arrival({
           className={cn(
             "enter mt-6 flex items-start gap-3 rounded-2xl border border-dashed p-4 text-sm leading-6",
             ink
-              ? "border-[#4a4237] bg-[#1e1b18] text-[#c9c2b6]"
+              ? "border-[var(--ink-line)] bg-[var(--ink-raised)] text-[var(--ink-muted)]"
               : "border-[var(--border-strong)] bg-[var(--private-surface)] text-[var(--private)]",
           )}
           style={{ "--d": 6 } as CSSProperties}
