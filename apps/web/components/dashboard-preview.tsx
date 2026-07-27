@@ -11,8 +11,17 @@ import { Badge } from "@/components/ui/badge";
 export function DashboardPreview() {
   return (
     <div className="relative mx-auto w-full max-w-[650px]">
-      <div className="bg-[var(--accent)]/10 absolute -inset-5 -z-10 rounded-[2.4rem] blur-2xl" />
-      <div className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-[var(--surface)] shadow-[0_30px_90px_rgba(50,39,76,.16)]">
+      {/* Two offset glows that drift out of phase, so the frame sits in light
+          instead of floating on a flat background. */}
+      <div
+        aria-hidden="true"
+        className="bg-[var(--accent)]/12 animate-breathe absolute -inset-6 -z-10 rounded-[2.6rem] blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="bg-[var(--primary)]/10 animate-breathe absolute -inset-4 -z-10 rounded-[2.4rem] blur-2xl [animation-delay:-3.5s]"
+      />
+      <div className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-[var(--surface)] shadow-[var(--shadow-xl)]">
         <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3 sm:px-5">
           <div className="flex items-center gap-2">
             <span className="size-2.5 rounded-full bg-[var(--accent)]" />

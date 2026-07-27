@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -209,21 +209,33 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
 
   if (mode === "done") {
     return (
-      <Card className="mx-auto max-w-2xl">
+      <Card className="enter-scale mx-auto max-w-2xl">
         <CardContent className="flex min-h-[480px] flex-col items-center justify-center p-8 text-center">
-          <span className="grid size-16 place-items-center rounded-3xl bg-[var(--pastel-lilac)] text-[var(--primary)]">
+          <span className="animate-pop relative grid size-16 place-items-center rounded-3xl bg-[var(--pastel-lilac)] text-[var(--primary)]">
+            <span
+              aria-hidden="true"
+              className="animate-breathe absolute -inset-3 -z-10 rounded-[1.6rem] bg-[var(--pastel-lilac)] blur-xl"
+            />
             <Check className="size-7" />
           </span>
-          <h2 className="mt-7 text-3xl font-bold tracking-[-0.045em]">
+          <h2
+            className="enter mt-7 text-3xl font-bold tracking-[-0.045em]"
+            style={{ "--d": 1 } as CSSProperties}
+          >
             {t.done as string}
           </h2>
-          <p className="mt-4 max-w-md text-sm leading-7 text-[var(--muted-foreground)]">
+          <p
+            className="enter mt-4 max-w-md text-sm leading-7 text-[var(--muted-foreground)]"
+            style={{ "--d": 2 } as CSSProperties}
+          >
             {t.doneBody as string}
           </p>
-          <Button className="mt-8" onClick={reset}>
-            <RotateCcw className="size-4" />
-            {t.restart as string}
-          </Button>
+          <div className="enter mt-8" style={{ "--d": 3 } as CSSProperties}>
+            <Button onClick={reset}>
+              <RotateCcw className="size-4" />
+              {t.restart as string}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
@@ -237,17 +249,18 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
           <ArrowLeft className="size-4" />
           {t.back as string}
         </Button>
-        <Card className="mt-3">
+        <Card className="animate-sheet-in mt-3">
           <CardContent className="p-6 sm:p-9">
             <h2 className="text-2xl font-bold">{t.preview as string}</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
               {t.previewBody as string}
             </p>
             <div className="mt-7 space-y-3">
-              {shared.map((fragment) => (
+              {shared.map((fragment, index) => (
                 <div
                   key={fragment.id}
-                  className="flex gap-4 rounded-3xl bg-[var(--background)] p-4"
+                  className="enter flex gap-4 rounded-3xl bg-[var(--background)] p-4"
+                  style={{ "--d": index + 1 } as CSSProperties}
                 >
                   <span
                     className={cn(
@@ -306,20 +319,32 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
           <LockKeyhole className="mr-1.5 size-3.5" />
           {t.private as string}
         </Badge>
-        <span className="text-xs font-semibold text-[var(--muted-foreground)]">
+        <span className="tabular text-xs font-semibold text-[var(--muted-foreground)]">
           {stage + 1} / 4
         </span>
       </div>
       <div className="mb-7 grid grid-cols-4 gap-2">
         {(t.stages as string[]).map((label, index) => (
           <div key={label}>
-            <div
+            {/* The segment fills from its left edge rather than snapping
+                between two background colours. */}
+            <div className="h-1.5 overflow-hidden rounded-full bg-[var(--muted)]">
+              <div
+                className={cn(
+                  "ease-(--ease-out-quint) h-full origin-left rounded-full bg-[var(--primary)] transition-transform duration-500",
+                  index <= stage ? "scale-x-100" : "scale-x-0",
+                )}
+                style={{ transitionDelay: `${index * 60}ms` }}
+              />
+            </div>
+            <p
               className={cn(
-                "h-1.5 rounded-full",
-                index <= stage ? "bg-[var(--primary)]" : "bg-[var(--muted)]",
+                "mt-2 hidden text-[10px] font-semibold transition-colors duration-500 sm:block",
+                index <= stage
+                  ? "text-[var(--foreground)]"
+                  : "text-[var(--muted-foreground)]",
               )}
-            />
-            <p className="mt-2 hidden text-[10px] font-semibold text-[var(--muted-foreground)] sm:block">
+            >
               {label}
             </p>
           </div>
@@ -327,7 +352,8 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
       </div>
 
       <Card>
-        <CardContent className="p-5 sm:p-8">
+        {/* Keyed on the stage so each step animates in as its own sheet. */}
+        <CardContent key={stage} className="animate-sheet-in p-5 sm:p-8">
           {stage === 0 && (
             <>
               <div className="rounded-3xl bg-[var(--pastel-blue)] p-5">
@@ -353,15 +379,30 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
                       aria-pressed={active}
                       onClick={() => toggleOption(option)}
                       className={cn(
-                        "min-h-32 rounded-3xl border p-4 text-left transition-all",
+                        "group/option relative min-h-32 rounded-3xl border p-4 text-left outline-none",
+                        "ease-(--ease-out-quint) transition-[border-color,background-color,box-shadow,transform] duration-300",
+                        "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2",
                         active
-                          ? "border-[var(--primary)] bg-[var(--surface)] shadow-[0_12px_35px_rgba(104,72,198,.12)]"
-                          : "border-transparent bg-[var(--background)] hover:-translate-y-1 hover:border-[var(--border)]",
+                          ? "-translate-y-0.5 border-[var(--primary)] bg-[var(--surface)] shadow-[0_12px_35px_rgba(104,72,198,.14)]"
+                          : "border-transparent bg-[var(--background)] hover:-translate-y-1 hover:border-[var(--border)] hover:shadow-[var(--shadow-sm)]",
                       )}
                     >
+                      {/* Absolutely positioned so selecting a fragment does
+                          not reflow the card it sits in. */}
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "ease-(--ease-spring) absolute right-3 top-3 grid size-6 place-items-center rounded-full bg-[var(--primary)] text-white transition-all duration-300",
+                          active
+                            ? "scale-100 opacity-100"
+                            : "scale-50 opacity-0",
+                        )}
+                      >
+                        <Check className="size-3.5" />
+                      </span>
                       <span
                         className={cn(
-                          "grid size-10 place-items-center rounded-2xl",
+                          "ease-(--ease-spring) grid size-10 place-items-center rounded-2xl transition-transform duration-500 group-hover/option:scale-110",
                           tone,
                         )}
                       >
@@ -370,9 +411,6 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
                       <span className="mt-4 block text-sm font-bold">
                         {label}
                       </span>
-                      {active && (
-                        <Check className="mt-2 size-4 text-[var(--primary)]" />
-                      )}
                     </button>
                   );
                 })}
@@ -403,10 +441,12 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
                               updateFragment(fragment.id, { state: key })
                             }
                             className={cn(
-                              "rounded-2xl border p-3 text-left",
+                              "rounded-2xl border p-3 text-left outline-none",
+                              "duration-250 ease-(--ease-out-quint) transition-[border-color,background-color,transform,box-shadow]",
+                              "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2",
                               fragment.state === key
-                                ? "border-[var(--primary)] bg-[var(--pastel-lilac)]"
-                                : "border-[var(--border)]",
+                                ? "border-[var(--primary)] bg-[var(--pastel-lilac)] shadow-[var(--shadow-sm)]"
+                                : "hover:bg-[var(--muted)]/50 border-[var(--border)] hover:-translate-y-0.5 hover:border-[var(--border-strong)]",
                             )}
                           >
                             <span className="block text-sm font-bold">
@@ -450,10 +490,12 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
                               updateFragment(fragment.id, { destination: key })
                             }
                             className={cn(
-                              "rounded-2xl border p-3 text-left",
+                              "rounded-2xl border p-3 text-left outline-none",
+                              "duration-250 ease-(--ease-out-quint) transition-[border-color,background-color,transform,box-shadow]",
+                              "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2",
                               fragment.destination === key
-                                ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                                : "border-[var(--border)]",
+                                ? "border-[var(--accent)] bg-[var(--accent-soft)] shadow-[var(--shadow-sm)]"
+                                : "hover:bg-[var(--muted)]/50 border-[var(--border)] hover:-translate-y-0.5 hover:border-[var(--border-strong)]",
                             )}
                           >
                             <span className="block text-sm font-bold">
@@ -490,10 +532,12 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
                       updateFragment(fragment.id, { share: !fragment.share })
                     }
                     className={cn(
-                      "flex gap-4 rounded-3xl border p-4 text-left",
+                      "flex gap-4 rounded-3xl border p-4 text-left outline-none",
+                      "ease-(--ease-out-quint) transition-[border-color,background-color,opacity,box-shadow] duration-300",
+                      "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2",
                       fragment.share
-                        ? "border-[var(--primary)] bg-[var(--surface)]"
-                        : "border-[var(--border)] bg-[var(--background)] opacity-65",
+                        ? "border-[var(--primary)] bg-[var(--surface)] shadow-[var(--shadow-sm)]"
+                        : "border-[var(--border)] bg-[var(--background)] opacity-60 hover:opacity-85",
                     )}
                   >
                     <span
@@ -508,14 +552,20 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-sm font-bold">{fragment.label}</p>
                         <span
+                          aria-hidden="true"
                           className={cn(
-                            "grid size-6 shrink-0 place-items-center rounded-full border",
+                            "grid size-6 shrink-0 place-items-center rounded-full border transition-colors duration-300",
                             fragment.share
                               ? "border-[var(--primary)] bg-[var(--primary)] text-white"
                               : "border-[var(--border)]",
                           )}
                         >
-                          {fragment.share && <Check className="size-3.5" />}
+                          <Check
+                            className={cn(
+                              "ease-(--ease-spring) size-3.5 transition-transform duration-300",
+                              fragment.share ? "scale-100" : "scale-0",
+                            )}
+                          />
                         </span>
                       </div>
                       <p className="mt-2 text-xs leading-5 text-[var(--muted-foreground)]">
@@ -546,7 +596,7 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
                 />
               </label>
               {mode === "saved" && (
-                <p className="mt-5 rounded-2xl bg-[var(--success-soft)] p-4 text-sm text-[var(--success)]">
+                <p className="enter mt-5 rounded-2xl bg-[var(--success-soft)] p-4 text-sm font-medium text-[var(--success)]">
                   {t.saved as string}
                 </p>
               )}
@@ -556,7 +606,7 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
           {error && (
             <p
               role="alert"
-              className="mt-5 rounded-2xl bg-[color-mix(in_srgb,var(--destructive)_12%,white)] p-4 text-sm text-[var(--destructive)]"
+              className="enter mt-5 rounded-2xl bg-[var(--destructive-soft)] p-4 text-sm font-medium text-[var(--destructive)]"
             >
               {t.error as string}
             </p>

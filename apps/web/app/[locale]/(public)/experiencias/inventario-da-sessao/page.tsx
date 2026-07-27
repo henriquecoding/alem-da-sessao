@@ -35,7 +35,7 @@ export default async function PublicSessionInventoryPage({
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--info)]">
           Experiência pública 02
         </p>
-        <h1 className="editorial mt-4 text-5xl font-medium leading-none tracking-[-0.045em] sm:text-7xl">
+        <h1 className="editorial mt-4 text-balance text-[clamp(2.5rem,1.2rem+4.6vw,4.5rem)] font-medium leading-[0.98] tracking-[-0.045em]">
           Inventário da Sessão
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[var(--muted-foreground)]">

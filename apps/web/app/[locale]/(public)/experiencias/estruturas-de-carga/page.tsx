@@ -59,7 +59,7 @@ export default async function PublicLoadStructuresPage({
               <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-[#d1844f]">
                 Experiência pública 01 · engenharia de continuidade
               </p>
-              <h1 className="mt-5 max-w-4xl text-balance font-serif text-[clamp(3.4rem,8vw,7rem)] font-medium leading-[0.86] tracking-[-0.055em]">
+              <h1 className="mt-5 max-w-4xl text-balance font-serif text-[clamp(2.9rem,1.4rem+5.4vw,5.4rem)] font-medium leading-[0.92] tracking-[-0.055em]">
                 Estruturas
                 <br />
                 de Carga

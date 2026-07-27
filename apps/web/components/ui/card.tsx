@@ -1,11 +1,19 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export function Card({ className, ...props }: React.ComponentProps<"section">) {
+export function Card({
+  className,
+  interactive = false,
+  ...props
+}: React.ComponentProps<"section"> & {
+  /** Adds the shared hover elevation used by cards that lead somewhere. */
+  interactive?: boolean;
+}) {
   return (
     <section
       className={cn(
-        "rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] shadow-[0_1px_1px_rgba(40,36,49,.02),0_18px_50px_rgba(40,36,49,.05)]",
+        "rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-md)]",
+        interactive && "lift hover:border-[var(--border-strong)]",
         className,
       )}
       {...props}

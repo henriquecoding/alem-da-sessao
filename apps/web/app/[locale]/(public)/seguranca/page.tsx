@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { EyeOff, KeyRound, LockKeyhole, ServerCog, ShieldCheck } from "lucide-react";
+import {
+  EyeOff,
+  KeyRound,
+  LockKeyhole,
+  ServerCog,
+  ShieldCheck,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -37,7 +43,7 @@ export default function SecurityPage() {
         <ShieldCheck className="mr-1.5 size-3.5" />
         Segurança desde o primeiro commit
       </Badge>
-      <h1 className="mt-5 max-w-4xl text-balance text-4xl font-bold tracking-[-0.055em] sm:text-6xl">
+      <h1 className="mt-5 max-w-4xl text-balance text-[clamp(2.15rem,1.3rem+3.2vw,3.5rem)] font-bold leading-[1.02] tracking-[-0.055em]">
         Confiança precisa de ser demonstrável, não apenas prometida.
       </h1>
       <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--muted-foreground)]">
