@@ -4,8 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageHeading } from "@/components/page-heading";
+import { pigmentSurface } from "@/lib/pigment";
 import { formatTime } from "@/lib/format";
 import { resolveLocale } from "@/lib/locale";
+import { cn } from "@/lib/utils";
 
 const days = [
   { week: "SEG", day: "27", active: true },
@@ -59,7 +61,9 @@ export default async function SchedulePage({
               <div
                 key={day.day}
                 className={`border-l border-[var(--border)] p-4 text-center ${
-                  day.active ? "surface-primary" : ""
+                  day.active
+                    ? "surface-pigment-sage border-b-2 border-b-[var(--border-strong)]"
+                    : ""
                 }`}
               >
                 <p className="text-[10px] font-bold tracking-[0.14em] opacity-60">
@@ -100,13 +104,20 @@ export default async function SchedulePage({
                   data.appointments.map((appointment, index) => (
                     <div
                       key={appointment.id}
-                      className={`absolute left-2 right-2 rounded-2xl border p-3 ${
-                        index === 0
-                          ? "border-[var(--accent-soft-strong)] bg-[var(--accent-soft)]"
-                          : index === 1
-                            ? "border-[var(--border-strong)] bg-[var(--info-soft)]"
-                            : "border-[var(--border)] bg-[var(--info-soft)]"
-                      }`}
+                      // A cor vem do nome, não da posição na lista. O terceiro
+                      // da segunda deixa de ser azul só por ser o terceiro: a
+                      // Marta é sempre a mesma cor, e é assim que uma semana
+                      // cheia se lê num relance. Ver `lib/pigment.ts`.
+                      // Sem borda cinzenta à volta: o bloco de cor **é** o
+                      // cartão. Uma linha neutra a contornar um pastel apaga-o
+                      // — era metade da razão de a agenda parecer morta. Fica
+                      // só a aresta esquerda, no tom forte do próprio
+                      // pigmento, que é o que se lê como «isto é de alguém».
+                      className={cn(
+                        "absolute inset-x-2 overflow-hidden rounded-2xl border-l-[5px] border-l-[var(--border-strong)] p-3",
+                        "ease-(--ease-out-quint) transition-[transform,box-shadow] duration-200 hover:-translate-y-px hover:shadow-[var(--shadow-md)]",
+                        pigmentSurface(appointment.clientName),
+                      )}
                       style={{
                         top: 48 + index * 115,
                         minHeight: 92,
@@ -119,7 +130,10 @@ export default async function SchedulePage({
                         <Clock3 className="size-3" />
                         {formatTime(appointment.startsAt, locale)}
                       </p>
-                      <Badge className="mt-3">
+                      {/* O nome e a modalidade continuam escritos: a cor
+                          acelera o reconhecimento, nunca o carrega sozinha
+                          (WCAG 1.4.1). */}
+                      <Badge className="mt-3 border-0 bg-[var(--surface)] text-[var(--foreground)]">
                         {appointment.modality === "online"
                           ? "Online"
                           : "Presencial"}

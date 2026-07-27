@@ -24,7 +24,10 @@
   --surface: light-dark(#fdfdfc, #1e2120);
   --surface-strong: light-dark(#ffffff, #252827);
   --muted: light-dark(#ebe9e5, #292c2b);
-  --muted-foreground: light-dark(#5e656e, #a3a49f);
+  /* Escurecido de #5e656e para dar folga aos pigmentos: o que estava
+     apertado era o texto, não a cor de fundo. Melhora o contraste em toda a
+     interface de caminho, não só nas superfícies novas. */
+  --muted-foreground: light-dark(#555c65, #a3a49f);
   --primary: light-dark(#3c6252, #7fb39c);
   --primary-strong: light-dark(#2e4c40, #99c6b1);
   --primary-foreground: light-dark(#fbfaf8, #14201b);
@@ -46,12 +49,22 @@
 
   /* Pigmentos, não pastéis. Todos derivados da mesma base quente e
      dessaturados o suficiente para nunca competirem com o texto. */
-  --pigment-sage: light-dark(#dde5dd, #22302a);
-  --pigment-clay: light-dark(#eddfd4, #33271f);
-  --pigment-sand: light-dark(#efe7d6, #322c1f);
-  --pigment-stone: light-dark(#e4e3de, #26292a);
-  --pigment-ochre: light-dark(#f0e4c8, #35301c);
-  --pigment-rose: light-dark(#ecdcd8, #33262a);
+  --pigment-sage: light-dark(#c9e5d4, #1d3a2c);
+  --pigment-sage-edge: light-dark(#3f8a63, #6fc79b);
+  --pigment-clay: light-dark(#f8d6bd, #3d2418);
+  --pigment-clay-edge: light-dark(#b96634, #e8996a);
+  --pigment-sand: light-dark(#f8ecbc, #3a3218);
+  --pigment-sand-edge: light-dark(#9c7a17, #dcbb56);
+  --pigment-stone: light-dark(#dee3e8, #242a2f);
+  --pigment-stone-edge: light-dark(#6b7683, #93a1af);
+  --pigment-ochre: light-dark(#fadfa6, #3c3316);
+  --pigment-ochre-edge: light-dark(#a37a15, #e0b352);
+  --pigment-rose: light-dark(#fad6dc, #3a222a);
+  --pigment-rose-edge: light-dark(#c05470, #ef92a8);
+  --pigment-sky: light-dark(#cfe1f5, #1e2a3a);
+  --pigment-sky-edge: light-dark(#3d76ac, #7cadde);
+  --pigment-plum: light-dark(#e7d9f2, #2c2439);
+  --pigment-plum-edge: light-dark(#7d57a8, #b18fd8);
 
   --highlight-yellow: #e0bb6b;
   --border: light-dark(#d7d2cb, #323533);
@@ -262,6 +275,14 @@
   .surface-warning,
   .surface-info,
   .surface-danger,
+  .surface-pigment-sage,
+  .surface-pigment-clay,
+  .surface-pigment-sand,
+  .surface-pigment-stone,
+  .surface-pigment-ochre,
+  .surface-pigment-rose,
+  .surface-pigment-sky,
+  .surface-pigment-plum,
   .surface-primary,
   .surface-accent,
   .surface-shared,
@@ -311,6 +332,49 @@
   }
   .surface-danger {
     --surface-bg: var(--destructive-soft);
+  }
+
+  /* Os oito pigmentos como superfícies.
+   
+     São tonais — no tema claro são creme-claros, no escuro são profundos — e
+     por isso herdam o texto da página. Não precisam de cores próprias; o que
+     precisam é de ser verificados, e são: `check:contrast` mede o texto e o
+     texto secundário sobre cada um, nos dois temas.
+   
+     A razão de existirem é `pigmentFor()`. Sem uma lista fechada de
+     superfícies válidas, atribuir cor por conteúdo acabaria em `bg-[#eddfd4]`
+     espalhado, que é o hardcoded que ADR-033 proíbe. */
+  .surface-pigment-sage {
+    --surface-bg: var(--pigment-sage);
+    --border-strong: var(--pigment-sage-edge);
+  }
+  .surface-pigment-clay {
+    --surface-bg: var(--pigment-clay);
+    --border-strong: var(--pigment-clay-edge);
+  }
+  .surface-pigment-sand {
+    --surface-bg: var(--pigment-sand);
+    --border-strong: var(--pigment-sand-edge);
+  }
+  .surface-pigment-stone {
+    --surface-bg: var(--pigment-stone);
+    --border-strong: var(--pigment-stone-edge);
+  }
+  .surface-pigment-ochre {
+    --surface-bg: var(--pigment-ochre);
+    --border-strong: var(--pigment-ochre-edge);
+  }
+  .surface-pigment-rose {
+    --surface-bg: var(--pigment-rose);
+    --border-strong: var(--pigment-rose-edge);
+  }
+  .surface-pigment-sky {
+    --surface-bg: var(--pigment-sky);
+    --border-strong: var(--pigment-sky-edge);
+  }
+  .surface-pigment-plum {
+    --surface-bg: var(--pigment-plum);
+    --border-strong: var(--pigment-plum-edge);
   }
 
   /* Fortes — polaridade invertida, conjunto completo obrigatório. */

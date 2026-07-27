@@ -173,3 +173,38 @@ describe("engine de tema", () => {
     }
   });
 });
+
+/**
+ * A engine de superfícies só funciona se as duas metades souberem uma da
+ * outra: as receitas em `globals.css` e a lista de grupos exclusivos em
+ * `cn`.
+ *
+ * Faltar uma na lista não dá erro nenhum. Dá um cartão que **ignora em
+ * silêncio** a superfície que lhe foi passada — o `bg-*` do componente não é
+ * removido, e a utilidade ganha à camada de componentes. Aconteceu com os oito
+ * pigmentos: as receitas existiam, o `check:contrast` validava-as, e no ecrã
+ * os cartões continuavam brancos.
+ */
+describe("engine de superfícies", () => {
+  const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
+  const utils = readFileSync(join(process.cwd(), "lib/utils.ts"), "utf8");
+
+  const declared = [
+    ...new Set(
+      [...css.matchAll(/\.surface-([\w-]+)\s*\{/g)].map((match) => match[1]!),
+    ),
+  ].sort();
+
+  const registered = [
+    ...utils
+      .slice(utils.indexOf("const surfaces = ["), utils.indexOf("] as const;"))
+      .matchAll(/"([\w-]+)"/g),
+  ]
+    .map((match) => match[1]!)
+    .sort();
+
+  it("registers every recipe in the exclusive class group", () => {
+    expect(declared.length).toBeGreaterThan(15);
+    expect(registered).toEqual(declared);
+  });
+});

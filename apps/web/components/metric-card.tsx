@@ -3,13 +3,28 @@ import type { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
+/**
+ * O pigmento tinge o cartão inteiro, não um quadrado de 24 px.
+ *
+ * Era essa a razão de uma fileira de métricas ler como uma fileira de caixas
+ * cinzentas com um pontinho de cor: o tom estava lá, mas em 1% da superfície.
+ * Uma linha de métricas é a primeira coisa que se vê num painel e a última que
+ * se lê com atenção — precisa de se distinguir por forma e cor antes de
+ * alguém chegar aos números.
+ *
+ * Os nomes são de pigmento e não de significado (`sage`, `clay`) de propósito.
+ * Uma métrica não é boa nem má por ser verde; quando um número *tem* estado,
+ * quem o diz é o `--state-*` no detalhe, por escrito.
+ */
 const tones = {
-  neutral: "bg-[var(--pigment-rose)] text-[var(--accent-foreground)]",
-  accent: "bg-[var(--pigment-clay)] text-[var(--accent-foreground)]",
-  aqua: "bg-[var(--pigment-sage)] text-[var(--success)]",
-  blue: "bg-[var(--pigment-stone)] text-[var(--info)]",
-  lilac: "bg-[var(--pigment-sage)] text-[var(--primary)]",
-  lemon: "bg-[var(--pigment-ochre)] text-[var(--warning)]",
+  neutral: "surface-pigment-stone",
+  accent: "surface-pigment-clay",
+  aqua: "surface-pigment-sage",
+  blue: "surface-pigment-sky",
+  lilac: "surface-pigment-plum",
+  lemon: "surface-pigment-ochre",
+  rose: "surface-pigment-rose",
+  sand: "surface-pigment-sand",
 } as const;
 
 export function MetricCard({
@@ -33,6 +48,7 @@ export function MetricCard({
     <Card
       className={cn(
         "group/metric ease-(--ease-out-quint) transition-[border-color,box-shadow] duration-300 hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-lg)]",
+        tones[tone],
         className,
       )}
       style={style}
@@ -45,10 +61,9 @@ export function MetricCard({
       <CardContent className="p-4">
         <div className="flex items-center gap-2">
           <span
-            className={cn(
-              "grid size-6 shrink-0 place-items-center rounded-[var(--radius-sm)]",
-              tones[tone],
-            )}
+            // O chip fica na superfície de cima do cartão, para se destacar
+            // do pigmento sem precisar de uma segunda cor.
+            className="grid size-6 shrink-0 place-items-center rounded-[var(--radius-sm)] bg-[var(--surface)] text-[var(--foreground)]"
           >
             <Icon className="size-3.5" aria-hidden="true" />
           </span>

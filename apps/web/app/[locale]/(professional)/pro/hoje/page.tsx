@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { pigmentSurface } from "@/lib/pigment";
 import { localPath, resolveLocale } from "@/lib/locale";
 
 /**
@@ -218,10 +219,19 @@ export default async function ProfessionalTodayPage({
                       "hover:bg-[var(--muted)]/70 focus-visible:bg-[var(--muted)]/70",
                     )}
                   >
-                    <item.icon
-                      className="size-4 shrink-0 text-[var(--muted-foreground)]"
-                      aria-hidden="true"
-                    />
+                    {/* O ícone ganha a sua própria pastilha de pigmento: uma
+                        lista de quatro linhas cinzentas iguais obriga a ler
+                        todas para encontrar uma. A cor vem do rótulo, portanto
+                        «Partilhas por rever» é sempre a mesma em todos os
+                        ecrãs onde apareça. */}
+                    <span
+                      className={cn(
+                        "grid size-8 shrink-0 place-items-center rounded-[var(--radius-sm)]",
+                        pigmentSurface(item.label),
+                      )}
+                    >
+                      <item.icon className="size-4" aria-hidden="true" />
+                    </span>
                     <span className="tabular w-8 shrink-0 text-lg font-semibold tracking-[-0.03em]">
                       {item.value}
                     </span>

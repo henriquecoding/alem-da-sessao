@@ -37,6 +37,17 @@ const surfaces = [
   "sidebar-raised-strong",
   "ink",
   "ink-raised",
+  // Os pigmentos. Faltarem aqui não dava erro nenhum: dava um cartão que
+  // ignorava em silêncio a superfície que lhe foi passada, porque o `bg-*` do
+  // componente não era removido e a utilidade ganha à camada de componentes.
+  "pigment-sage",
+  "pigment-clay",
+  "pigment-sand",
+  "pigment-stone",
+  "pigment-ochre",
+  "pigment-rose",
+  "pigment-sky",
+  "pigment-plum",
 ] as const;
 
 // O parâmetro de tipo regista o grupo novo; sem ele o TypeScript só aceita
