@@ -180,7 +180,7 @@ export function ReportsWorkspace() {
                         "ease-(--ease-out-quint) w-full rounded-t-xl transition-[height,background-color] duration-700",
                         index === data.bars.length - 1
                           ? "bg-[var(--primary)]"
-                          : "bg-[var(--pastel-lilac)]",
+                          : "bg-[var(--pigment-sage)]",
                       )}
                       style={{
                         height: `${height}%`,
@@ -324,7 +324,7 @@ export function TeamWorkspace() {
       )}
 
       {inviteOpen && (
-        <Card className="border-[var(--primary)]/30 mb-5 bg-[var(--pastel-lilac)]">
+        <Card className="border-[var(--primary)]/30 mb-5 bg-[var(--pigment-sage)]">
           <CardContent className="grid gap-4 p-5 sm:grid-cols-[1fr_220px_auto] sm:items-end">
             <label>
               <span className="mb-2 block text-xs font-bold">
@@ -383,7 +383,7 @@ export function TeamWorkspace() {
                 key={member.id}
                 className="grid gap-4 rounded-3xl border border-[var(--border)] p-4 sm:grid-cols-[auto_1fr_170px_auto] sm:items-center"
               >
-                <span className="grid size-11 place-items-center rounded-2xl bg-[var(--pastel-lilac)] text-xs font-bold text-[var(--primary)]">
+                <span className="grid size-11 place-items-center rounded-2xl bg-[var(--pigment-sage)] text-xs font-bold text-[var(--primary)]">
                   {member.initials}
                 </span>
                 <div>
@@ -561,7 +561,7 @@ export function FinanceWorkspace() {
       )}
 
       {showForm && (
-        <Card className="mb-5 bg-[var(--pastel-lemon)]">
+        <Card className="mb-5 bg-[var(--pigment-ochre)]">
           <CardContent className="grid gap-4 p-5 sm:grid-cols-[1fr_180px_auto] sm:items-end">
             <label>
               <span className="mb-2 block text-xs font-bold">Cliente</span>

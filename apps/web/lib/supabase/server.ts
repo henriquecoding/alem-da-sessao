@@ -7,11 +7,7 @@ function requireClinicalEnvironment() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_CLINICAL_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_CLINICAL_ANON_KEY;
 
-  if (
-    process.env.NEXT_PUBLIC_DATA_MODE !== "supabase" ||
-    !url ||
-    !anonKey
-  ) {
+  if (process.env.NEXT_PUBLIC_DATA_MODE !== "supabase" || !url || !anonKey) {
     throw new Error(
       "Clinical Supabase is unavailable. Keep NEXT_PUBLIC_DATA_MODE=fixture until an isolated project is configured.",
     );

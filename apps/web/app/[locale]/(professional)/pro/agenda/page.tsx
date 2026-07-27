@@ -102,10 +102,10 @@ export default async function SchedulePage({
                       key={appointment.id}
                       className={`absolute left-2 right-2 rounded-2xl border p-3 ${
                         index === 0
-                          ? "border-[#e8b5a5] bg-[var(--accent-soft)]"
+                          ? "border-[var(--accent-soft-strong)] bg-[var(--accent-soft)]"
                           : index === 1
-                            ? "border-[#b7cce0] bg-[var(--info-soft)]"
-                            : "border-[#bdd1e3] bg-[var(--info-soft)]"
+                            ? "border-[var(--border-strong)] bg-[var(--info-soft)]"
+                            : "border-[var(--border)] bg-[var(--info-soft)]"
                       }`}
                       style={{
                         top: 48 + index * 115,

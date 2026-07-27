@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  getMessages,
-  localeFromSegment,
-  locales,
-} from "@alem-da-sessao/i18n";
+import { getMessages, localeFromSegment, locales } from "@alem-da-sessao/i18n";
 
 describe("founder locales", () => {
   it("ships exactly the two complete launch locales", () => {

@@ -47,7 +47,7 @@ export default async function DemoPage({
       description:
         "Operação, assinaturas e verificações sem uma janela normal para conteúdo clínico.",
       href: "/admin/operacao",
-      tone: "bg-[var(--pastel-blue)]",
+      tone: "bg-[var(--pigment-stone)]",
       iconTone: "bg-[var(--primary)] text-white",
     },
   ];

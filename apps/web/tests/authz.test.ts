@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  canAccessClinicalResource,
-  roleCan,
-} from "@alem-da-sessao/authz";
+import { canAccessClinicalResource, roleCan } from "@alem-da-sessao/authz";
 
 const secureContext = {
   sameOrganization: true,

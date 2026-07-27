@@ -17,7 +17,12 @@
     "test:run": "pnpm --filter @alem-da-sessao/web test:run",
     "check:i18n": "pnpm --filter @alem-da-sessao/web check:i18n",
     "check:privacy": "pnpm --filter @alem-da-sessao/web check:privacy",
-    "check": "pnpm lint && pnpm typecheck && pnpm test:run && pnpm check:i18n && pnpm check:privacy",
+    "check:tools": "pnpm --filter @alem-da-sessao/web check:tools",
+    "check:claims": "pnpm --filter @alem-da-sessao/web check:claims",
+    "check:direction": "pnpm --filter @alem-da-sessao/web check:direction",
+    "check:budgets": "pnpm --filter @alem-da-sessao/web check:budgets",
+    "check:accessibility": "pnpm --filter @alem-da-sessao/web check:accessibility",
+    "check": "pnpm lint && pnpm typecheck && pnpm test:run && pnpm check:i18n && pnpm check:privacy && pnpm check:tools && pnpm check:claims && pnpm check:direction && pnpm check:budgets && pnpm check:accessibility",
     "verify:release": "pnpm check && pnpm build",
     "format:check": "prettier --check .",
     "format": "prettier --write ."

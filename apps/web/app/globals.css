@@ -4,43 +4,68 @@
    Luz de Intervalo — tokens
    ========================================================================== */
 
+/* ==========================================================================
+   Base — relatório v2 §6.3
+
+   A paleta anterior era lilás sobre cinzento frio, com pastéis saturados. Isso
+   é a armadilha *wellness* nomeada no §6.1 — infantiliza o cliente e
+   desqualifica o produto aos olhos do profissional que paga — e o gradiente
+   roxo-azul é literalmente o anti-padrão #4.
+
+   Esta é a substituição: base creme quente, primário verde profundo e
+   contido, e um único acento âmbar reservado ao gesto de partilha. Onde havia
+   pastéis há agora pigmentos — cores que parecem material, não rebuçado.
+   ========================================================================== */
+
 :root {
-  --background: #f7f5f8;
-  --background-deep: #eeeaf2;
-  --foreground: #282431;
-  --surface: #fffcfa;
+  --background: #f8f6f2;
+  --background-deep: #f0ede5;
+  --foreground: #1c1f22;
+  --surface: #fdfdfc;
   --surface-strong: #ffffff;
-  --muted: #eee9f1;
-  --muted-foreground: #6b6373;
-  --primary: #6848c6;
-  --primary-strong: #51349f;
-  --primary-foreground: #ffffff;
-  --accent: #d7654e;
-  --accent-soft: #f9dad2;
-  --accent-soft-strong: #f3c5b9;
-  --accent-foreground: #7a3022;
-  --pastel-lilac: #ded6fa;
-  --pastel-blue: #dceaf7;
-  --pastel-aqua: #d7ecee;
-  --pastel-lemon: #f7e6a8;
-  --pastel-pink: #f4d6e2;
-  --pastel-peach: #f6d3c4;
-  --highlight-yellow: #f2cf63;
-  --border: #ddd7e1;
-  --border-strong: #cec6d5;
-  --ring: #6848c6;
-  --success: #27666a;
-  --success-soft: var(--pastel-aqua);
-  --warning: #795015;
-  --warning-soft: var(--pastel-lemon);
-  --info: #315d85;
-  --info-soft: var(--pastel-blue);
-  --destructive: #ad4550;
-  --destructive-strong: #8f3540;
-  --destructive-soft: #f7dcdd;
-  --radius-lg: 1.35rem;
-  --sidebar: #231e2d;
-  --sidebar-foreground: #fbf8fd;
+  --muted: #ebe9e5;
+  --muted-foreground: #5e656e;
+  --primary: #3c6252;
+  --primary-strong: #2e4c40;
+  --primary-foreground: #fbfaf8;
+
+  /* O acento de marca é terracota queimada: quente, mas nunca confundível com
+     o âmbar de `--shared`, que só existe na partilha. */
+  --accent: #a8563c;
+  --accent-soft: #f2e2d9;
+  --accent-soft-strong: #e8cfc1;
+  --accent-foreground: #7a3a24;
+
+  /* Pigmentos, não pastéis. Todos derivados da mesma base quente e
+     dessaturados o suficiente para nunca competirem com o texto. */
+  --pigment-sage: #dde5dd;
+  --pigment-clay: #eddfd4;
+  --pigment-sand: #efe7d6;
+  --pigment-stone: #e4e3de;
+  --pigment-ochre: #f0e4c8;
+  --pigment-rose: #ecdcd8;
+
+  --highlight-yellow: #e0bb6b;
+  --border: #d7d2cb;
+  --border-strong: #c2bcb2;
+  --ring: #396a56;
+  --success: #2c6152;
+  --success-soft: var(--pigment-sage);
+  --warning: #7a5518;
+  --warning-soft: var(--pigment-ochre);
+  --info: #35566b;
+  --info-soft: var(--pigment-stone);
+  --destructive: #b83028;
+  --destructive-strong: #96241e;
+  --destructive-soft: #f6e2df;
+
+  /* 0.875rem em vez de 1.35rem. O raio grande era metade da leitura
+     "wellness": cantos muito redondos lêem como app de meditação. */
+  --radius-lg: 0.875rem;
+  --radius-sm: 0.5rem;
+
+  --sidebar: #1f2422;
+  --sidebar-foreground: #f1efe9;
 
   /* Dark editorial surface shared by the Estruturas de Carga engine. */
   --ink: #15171b;
@@ -51,30 +76,165 @@
   --ember: #d58b57;
   --ember-strong: #e3a372;
 
-  /* Elevation — one scale, used everywhere instead of ad-hoc shadows. */
-  --shadow-xs: 0 1px 2px rgba(40, 36, 49, 0.05);
+  /* Elevação — sombras que descrevem material, não altura (§6.6).
+     Baixa opacidade, raio alto e matiz da própria superfície quente: o objeto
+     parece pousado sobre papel, não a flutuar sobre um ecrã. */
+  --shadow-xs: 0 1px 2px rgba(44, 38, 30, 0.05);
   --shadow-sm:
-    0 1px 2px rgba(40, 36, 49, 0.04), 0 3px 10px rgba(40, 36, 49, 0.04);
+    0 1px 2px rgba(44, 38, 30, 0.05), 0 3px 10px rgba(44, 38, 30, 0.04);
   --shadow-md:
-    0 1px 2px rgba(40, 36, 49, 0.03), 0 10px 26px rgba(40, 36, 49, 0.06);
+    0 1px 2px rgba(44, 38, 30, 0.04), 0 10px 26px rgba(44, 38, 30, 0.06);
   --shadow-lg:
-    0 2px 4px rgba(40, 36, 49, 0.03), 0 20px 48px rgba(40, 36, 49, 0.08);
+    0 2px 4px rgba(44, 38, 30, 0.04), 0 20px 48px rgba(44, 38, 30, 0.08);
   --shadow-xl:
-    0 4px 10px rgba(40, 36, 49, 0.04), 0 38px 88px rgba(50, 39, 76, 0.13);
+    0 4px 10px rgba(44, 38, 30, 0.05), 0 38px 88px rgba(44, 38, 30, 0.12);
   --shadow-primary:
-    0 2px 6px rgba(104, 72, 198, 0.18), 0 10px 28px rgba(104, 72, 198, 0.22);
+    0 1px 2px rgba(30, 48, 40, 0.22), 0 8px 22px rgba(30, 48, 40, 0.18);
   --shadow-primary-strong:
-    0 3px 8px rgba(104, 72, 198, 0.22), 0 16px 38px rgba(104, 72, 198, 0.28);
+    0 2px 4px rgba(30, 48, 40, 0.26), 0 14px 32px rgba(30, 48, 40, 0.24);
   --shadow-ember:
     0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(188, 101, 50, 0.18);
+
+  /* ------------------------------------------------------------------------
+     Semântica de sensibilidade (relatório v2 §6.3)
+
+     `--shared` é o acento reservado: existe para o gesto de partilha e para
+     nada mais. Um acento que aparece uma vez tem mais força que um que
+     aparece em vinte lugares, e `check:tokens` falha o build se ele escapar
+     das superfícies de partilha.
+
+     Regra de ouro: privado e partilhado têm de ser distinguíveis num relance
+     e nunca só por cor (WCAG 1.4.1). Cada par traz também forma de borda,
+     ícone e texto — ver `components/sensitivity.tsx`.
+     ------------------------------------------------------------------------ */
+  --private: #556d63;
+  --private-surface: #f3f1ed;
+  --private-border: #c9d2cc;
+  --shared: #d9943a;
+  --shared-foreground: #6e451c;
+  --shared-surface: #f5efe5;
+  --shared-border: #e3c79c;
+  --retained: #5e656e;
+  --retained-surface: #eceef1;
+
+  /* Estados honestos — cada um distinto, nenhum reaproveitado (§7.5). */
+  --state-empty: #ebe9e5;
+  --state-empty-foreground: #6b6373;
+  --state-withheld: #576b63;
+  --state-withheld-surface: #e9eeeb;
+  --state-forbidden: #5e656e;
+  --state-forbidden-surface: #eceef1;
+  --state-offline: #7d746b;
+  --state-offline-surface: #f0ece7;
+  --state-error: #b83028;
+  --state-error-surface: #fbe6e4;
+}
+
+/* ==========================================================================
+   Modo escuro — segunda paleta, não uma inversão (§6.3)
+
+   Utilizadores em sofrimento preferem paletas escuras. Os matizes são os
+   mesmos; as superfícies são quentes e muito dessaturadas, nunca cinzento
+   neutro. Segue `prefers-color-scheme` sem qualquer armazenamento, o que
+   mantém as rotas de experiência sem cookies e sem impressão digital
+   (§10.4) e as páginas estáticas.
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Superfícies quentes muito dessaturadas, nunca cinzento neutro. */
+    --background: #17191a;
+    --background-deep: #121415;
+    --foreground: #ece9e3;
+    --surface: #1e2120;
+    --surface-strong: #252827;
+    --muted: #292c2b;
+    --muted-foreground: #a3a49f;
+    --primary: #7fb39c;
+    --primary-strong: #99c6b1;
+    --primary-foreground: #14201b;
+    --accent: #d98a68;
+    --accent-soft: #33241d;
+    --accent-soft-strong: #453025;
+    --accent-foreground: #eeb193;
+    --pigment-sage: #22302a;
+    --pigment-clay: #33271f;
+    --pigment-sand: #322c1f;
+    --pigment-stone: #26292a;
+    --pigment-ochre: #35301c;
+    --pigment-rose: #33262a;
+    --highlight-yellow: #e0bb6b;
+    --border: #323533;
+    --border-strong: #454846;
+    --ring: #7fb39c;
+    --success: #7fc4a8;
+    --success-soft: #22302a;
+    --warning: #ddba71;
+    --warning-soft: #35301c;
+    --info: #93b3c4;
+    --info-soft: #26292a;
+    --destructive: #e8867e;
+    --destructive-strong: #f0a09a;
+    --destructive-soft: #37211f;
+    --sidebar: #121413;
+    --sidebar-foreground: #ece9e3;
+
+    --private: #9dbdae;
+    --private-surface: #23282a;
+    --private-border: #39443f;
+    --shared: #e8a758;
+    --shared-foreground: #f0c48a;
+    --shared-surface: #33281c;
+    --shared-border: #5c4527;
+    --retained: #a5a7a3;
+    --retained-surface: #26292a;
+
+    --state-empty: #26292a;
+    --state-empty-foreground: #a3a49f;
+    --state-withheld: #9dbdae;
+    --state-withheld-surface: #22292a;
+    --state-forbidden: #a5a7a3;
+    --state-forbidden-surface: #26292a;
+    --state-offline: #b0a79d;
+    --state-offline-surface: #2a2724;
+    --state-error: #e8867e;
+    --state-error-surface: #37211f;
+
+    /* Sombras em superfície escura descrevem material por profundidade de
+       preto, não por opacidade de tinta escura sobre claro. */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 3px 10px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 26px rgba(0, 0, 0, 0.36);
+    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 20px 48px rgba(0, 0, 0, 0.44);
+    --shadow-xl: 0 4px 10px rgba(0, 0, 0, 0.4), 0 38px 88px rgba(0, 0, 0, 0.5);
+  }
 }
 
 @theme {
-  /* Motion — every transition in the product picks a curve from this list. */
+  /* ------------------------------------------------------------------------
+     Movimento (relatório v2 §6.5)
+
+     Regra única: o movimento existe para explicar uma mudança de estado ou um
+     gesto. Se remover a animação e nada ficar menos compreensível, remova.
+
+     | Contexto                         | Duração     | Curva                    |
+     | Care OS — estado                 | 180–220 ms  | --ease-care              |
+     | Care OS — navegação              | 0 ms        | —                        |
+     | Experiência — revelação de etapa | 400–600 ms  | --ease-out-expo          |
+     | Experiência — formação           | 800–1400 ms | --ease-forming           |
+     | Partilha — travessia da ponte    | 600–900 ms  | --ease-in-out-quart      |
+     ------------------------------------------------------------------------ */
+  --ease-care: cubic-bezier(0.2, 0, 0, 1);
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-forming: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  --duration-care: 200ms;
+  --duration-step: 500ms;
+  --duration-forming: 1100ms;
+  --duration-crossing: 780ms;
 
   --animate-rise: rise 0.72s var(--ease-out-quint) both;
   --animate-fade: fade 0.5s var(--ease-out-quint) both;
@@ -88,6 +248,12 @@
   --animate-shimmer: shimmer 2.4s linear infinite;
   --animate-breathe: breathe 7s ease-in-out infinite;
   --animate-float: float 9s ease-in-out infinite;
+
+  /* Formação do artefacto e travessia da ponte — os dois únicos momentos do
+     produto que podem ser lentos de propósito. */
+  --animate-forming: forming var(--duration-forming) var(--ease-forming) both;
+  --animate-crossing:
+    crossing var(--duration-crossing) var(--ease-in-out-quart) both;
 }
 
 /* Declared outside `@theme` so they are always emitted: the plain-CSS
@@ -204,13 +370,52 @@
   }
 }
 
+/* O artefacto assenta: sobe pouco, escala pouco, e demora. */
+@keyframes forming {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Sob movimento reduzido a formação continua a acontecer — por opacidade,
+   nunca por deslocamento (§6.5: projete os dois, não degrade um). */
+@keyframes forming-reduced {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* A travessia da ponte: o snapshot atravessa da margem privada para a
+   partilhada. Não é um toast verde — é o movimento a explicar o gesto. */
+@keyframes crossing {
+  0% {
+    opacity: 0;
+    transform: translate3d(-1.75rem, 0, 0);
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--surface);
   --color-border: var(--border);
-  --font-sans: var(--font-manrope);
-  --font-serif: var(--font-newsreader);
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader Variable", ui-serif, Georgia, serif;
 }
 
 /* ==========================================================================
@@ -229,26 +434,31 @@ html {
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(
-      circle at 10% -8%,
-      rgba(215, 101, 78, 0.1),
-      transparent 34rem
-    ),
-    radial-gradient(
-      circle at 92% 4%,
-      rgba(104, 72, 198, 0.1),
-      transparent 31rem
-    ),
-    var(--background);
-  background-attachment: fixed;
+  /* Fundo chapado. Os dois halos radiais que aqui estavam eram o anti-padrão
+     #4 — gradiente colorido difuso — e a razão pela qual o produto lia como
+     app de bem-estar. O que dá vida à base agora é grão, não luz de palco. */
+  background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  color-scheme: light dark;
+  font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   font-optical-sizing: auto;
   font-synthesis-weight: none;
+  font-feature-settings: "cv05", "cv08", "ss03";
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Grão de papel sobre a base inteira: 3 kB de SVG, fixo, atrás de tudo.
+   É o que separa "superfície" de "fundo de ecrã" (§6.6). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23p)' opacity='.06'/%3E%3C/svg%3E");
 }
 
 ::selection {
@@ -283,7 +493,7 @@ p {
 }
 
 .editorial {
-  font-family: var(--font-newsreader), ui-serif, Georgia, serif;
+  font-family: "Newsreader Variable", ui-serif, Georgia, serif;
   font-optical-sizing: auto;
 }
 
@@ -360,6 +570,55 @@ p {
     opacity: 1;
     transform: none;
   }
+}
+
+/* --------------------------------------------------------------------------
+   Materialidade (§6.6)
+
+   O que separa "lugar" de "formulário decorado" não é ilustração — é
+   materialidade. Tudo aqui é CSS/SVG, sem imagens e sem custo por utilizador,
+   o que também é unit economics (§1.6).
+   -------------------------------------------------------------------------- */
+
+/* Grão muito subtil sobre a base quente: elimina a sensação de plástico sem
+   nunca competir com o texto. Um único data-URI, cacheado com a folha. */
+.material {
+  position: relative;
+  isolation: isolate;
+}
+
+.material::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  .material::after {
+    opacity: 0.05;
+  }
+}
+
+/* Cantos assimétricos: um cartão com raios diferentes por canto lê como
+   objeto feito, não como `div`. */
+.corner-made {
+  border-radius: 1.6rem 0.85rem 1.6rem 0.85rem;
+}
+
+.corner-made-alt {
+  border-radius: 0.85rem 1.6rem 0.85rem 1.6rem;
+}
+
+/* Sombra que descreve material em vez de elevação: baixa opacidade, raio
+   alto, matiz da própria superfície — o objeto parece pousado, não a flutuar. */
+.shadow-rested {
+  box-shadow:
+    0 1px 1px color-mix(in srgb, var(--foreground) 4%, transparent),
+    0 12px 40px -12px color-mix(in srgb, var(--foreground) 14%, transparent);
 }
 
 /* --------------------------------------------------------------------------
@@ -496,7 +755,12 @@ p {
 }
 
 /* ==========================================================================
-   Reduced motion — every animation collapses to its end state.
+   Movimento reduzido — um modo de design, não um interruptor (§6.5)
+
+   O padrão continua a ser: deslocamento, escala e movimento ambiente
+   desaparecem. Mas os dois momentos que *significam* alguma coisa — a
+   formação do artefacto e a travessia da ponte — continuam a acontecer, por
+   opacidade e revelação de etapas. Projete os dois, não degrade um.
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -515,8 +779,37 @@ p {
     transition-delay: 0ms !important;
   }
 
+  /* As duas exceções deliberadas. Mantêm a duração inteira, trocando o
+     deslocamento por opacidade. */
+  .animate-forming,
+  .animate-crossing {
+    animation-name: forming-reduced !important;
+    animation-duration: var(--duration-forming) !important;
+    animation-timing-function: linear !important;
+  }
+
+  .animate-crossing {
+    animation-duration: var(--duration-crossing) !important;
+  }
+
+  /* A formação em etapas continua escalonada, porque é o escalonamento que
+     comunica "isto está a ser construído a partir do que escreveu". */
+  .forming-step {
+    animation: forming-reduced 320ms linear both !important;
+    animation-delay: calc(var(--d, 0) * 160ms) !important;
+  }
+
   .lift:hover,
   .lift:active {
     transform: none;
+  }
+}
+
+/* Fora do modo reduzido, cada etapa da formação entra com o seu próprio
+   atraso — o artefacto monta-se peça a peça em vez de aparecer inteiro. */
+@media (prefers-reduced-motion: no-preference) {
+  .forming-step {
+    animation: forming 0.9s var(--ease-forming) both;
+    animation-delay: calc(var(--d, 0) * 180ms);
   }
 }
