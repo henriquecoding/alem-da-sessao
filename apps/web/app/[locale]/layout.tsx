@@ -3,6 +3,7 @@ import "@fontsource-variable/manrope";
 import "@fontsource-variable/newsreader";
 import "../globals.css";
 import { locales } from "@alem-da-sessao/i18n";
+import { RevealObserver } from "@/components/reveal-observer";
 import { resolveLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
@@ -39,7 +40,17 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body>{children}</body>
+      <head>
+        {/* Without scripting nothing reveals the deferred content, so it has
+            to render in its final state. */}
+        <noscript>
+          <style>{`.reveal{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
+      <body>
+        {children}
+        <RevealObserver />
+      </body>
     </html>
   );
 }

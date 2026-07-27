@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -38,17 +39,17 @@ export default async function ClientTodayPage({
       />
 
       <div className="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
-        <Card className="overflow-hidden bg-[var(--surface)]">
-          <CardContent className="grid min-h-[300px] gap-6 p-6 sm:grid-cols-[1fr_auto] sm:p-8">
+        <Card className="enter overflow-hidden bg-[var(--surface)]">
+          <CardContent className="grid min-h-[300px] gap-6 p-6 sm:grid-cols-[minmax(0,1fr)_13.5rem] sm:p-8">
             <div className="flex flex-col">
               <Badge tone="success" className="w-fit">
                 {messages.client.nextSession}
               </Badge>
-              <h2 className="mt-8 text-3xl font-bold tracking-[-0.045em]">
+              <h2 className="mt-8 text-[1.75rem] font-bold leading-[1.1] tracking-[-0.045em] sm:text-3xl">
                 Segunda-feira, 27 de julho
               </h2>
               <div className="mt-4 flex flex-wrap gap-4 text-sm text-[var(--muted-foreground)]">
-                <span className="inline-flex items-center gap-2">
+                <span className="tabular inline-flex items-center gap-2">
                   <Clock3 className="size-4 text-[var(--primary)]" />
                   09:30 · 50 minutos
                 </span>
@@ -64,21 +65,44 @@ export default async function ClientTodayPage({
                 </Link>
               </Button>
             </div>
-            <div className="flex min-w-44 flex-col justify-between rounded-3xl bg-[var(--muted)] p-5">
-              <ShieldCheck className="size-5 text-[var(--primary)]" />
-              <div>
-                <p className="text-xs font-bold">Dra. Inês Almeida</p>
-                <p className="mt-1 text-[10px] leading-4 text-[var(--muted-foreground)]">
-                  Psicóloga · credencial verificada para demonstração
-                </p>
+            {/* Grouped as one identity block rather than an icon and a caption
+                pinned to opposite ends of an empty panel. */}
+            <div className="flex flex-col gap-4 rounded-3xl bg-[var(--muted)] p-5">
+              <div className="flex items-center gap-3">
+                <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[var(--surface)] text-[var(--primary)] shadow-[var(--shadow-xs)]">
+                  <ShieldCheck className="size-5" aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold">
+                    Dra. Inês Almeida
+                  </p>
+                  <p className="text-[11px] text-[var(--muted-foreground)]">
+                    Psicóloga
+                  </p>
+                </div>
               </div>
+              <p className="text-xs leading-5 text-[var(--muted-foreground)]">
+                Credencial verificada para demonstração. Acompanha o seu
+                processo desde março.
+              </p>
+              <p className="mt-auto inline-flex items-center gap-2 text-[11px] font-semibold text-[var(--success)]">
+                <span className="size-1.5 rounded-full bg-[var(--success)]" />
+                Sessão confirmada
+              </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden bg-[var(--pastel-lilac)]">
-          <CardContent className="flex min-h-[300px] flex-col p-6 sm:p-8">
-            <div className="flex items-start justify-between">
+        <Card
+          className="enter relative overflow-hidden bg-[var(--pastel-lilac)]"
+          style={{ "--d": 1 } as CSSProperties}
+        >
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-16 -top-20 size-64 rounded-full bg-white/40 blur-3xl"
+          />
+          <CardContent className="relative flex min-h-[300px] flex-col p-6 sm:p-8">
+            <div className="flex items-start justify-between gap-3">
               <span className="bg-white/72 grid size-11 place-items-center rounded-2xl text-[var(--primary)]">
                 <Sparkles className="size-5" />
               </span>
@@ -91,6 +115,17 @@ export default async function ClientTodayPage({
               Observe o que sustenta, como a estrutura responde e onde o apoio
               pode ser redistribuído.
             </p>
+            <div className="mt-6">
+              <div
+                className="h-1.5 overflow-hidden rounded-full bg-white/55"
+                role="presentation"
+              >
+                <div className="h-full w-[40%] rounded-full bg-[var(--primary)]" />
+              </div>
+              <p className="mt-2 text-[11px] font-semibold text-[var(--muted-foreground)]">
+                Etapa 2 de 5 · retomar onde parou
+              </p>
+            </div>
             <Button asChild className="mt-auto w-fit">
               <Link
                 href={localPath(
@@ -106,7 +141,7 @@ export default async function ClientTodayPage({
         </Card>
       </div>
 
-      <Card className="mt-5">
+      <Card className="reveal mt-5">
         <CardHeader className="sm:flex-row sm:items-start sm:justify-between">
           <div>
             <CardTitle>{messages.client.privacyTitle}</CardTitle>

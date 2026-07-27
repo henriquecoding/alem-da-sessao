@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -56,8 +57,12 @@ export default async function ProfessionalTodayPage({
       />
 
       <div className="grid gap-5 xl:grid-cols-[1.25fr_.75fr]">
-        <Card className="overflow-hidden bg-[var(--primary)] text-white">
-          <CardContent className="grid min-h-[290px] gap-8 p-6 sm:grid-cols-[1fr_auto] sm:p-8">
+        <Card className="enter relative overflow-hidden bg-[var(--primary)] text-white shadow-[var(--shadow-primary)]">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-20 -top-28 size-80 rounded-full bg-white/10 blur-3xl"
+          />
+          <CardContent className="relative grid min-h-[290px] gap-6 p-6 sm:grid-cols-[minmax(0,1fr)_15rem] sm:p-8">
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge className="bg-white/12 text-white">
@@ -102,19 +107,33 @@ export default async function ProfessionalTodayPage({
               </div>
             </div>
 
-            <div className="bg-white/8 flex min-w-40 flex-col justify-between rounded-3xl p-5">
-              <LockKeyhole className="size-5 text-[var(--accent)]" />
-              <div>
+            {/* Previously a `justify-between` column, which stranded the icon
+                and the copy at opposite ends of 290px of empty panel. */}
+            <div className="flex flex-col gap-4 rounded-3xl bg-white/10 p-5 ring-1 ring-inset ring-white/10">
+              <div className="flex items-center gap-2.5">
+                <span className="bg-white/12 grid size-9 shrink-0 place-items-center rounded-xl text-[var(--accent-soft)]">
+                  <LockKeyhole className="size-4" aria-hidden="true" />
+                </span>
                 <p className="text-xs font-bold">Antes da sessão</p>
-                <p className="mt-2 text-xs leading-5 text-white/55">
-                  1 partilha por rever e nenhum rascunho privado visível.
-                </p>
               </div>
+              <p className="text-xs leading-5 text-white/60">
+                1 partilha por rever e nenhum rascunho privado visível.
+              </p>
+              <dl className="border-white/12 mt-auto space-y-2 border-t pt-4 text-xs">
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-white/55">Partilhas por rever</dt>
+                  <dd className="tabular font-bold">1</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-white/55">Rascunhos visíveis</dt>
+                  <dd className="tabular font-bold">0</dd>
+                </div>
+              </dl>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="enter" style={{ "--d": 1 } as CSSProperties}>
           <CardHeader className="flex-row items-start justify-between">
             <div>
               <CardTitle>{messages.professional.todaySchedule}</CardTitle>
@@ -126,10 +145,10 @@ export default async function ProfessionalTodayPage({
             {data.appointments.map((appointment, index) => (
               <div
                 key={appointment.id}
-                className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-white/40 p-3"
+                className="ease-(--ease-out-quint) group flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-white/40 p-3 transition-[border-color,background-color,transform] duration-300 hover:translate-x-0.5 hover:border-[var(--border-strong)] hover:bg-white"
               >
                 <span
-                  className={`h-10 w-1 rounded-full ${
+                  className={`ease-(--ease-out-quint) h-10 w-1 rounded-full transition-[height] duration-300 group-hover:h-11 ${
                     index === 0
                       ? "bg-[var(--accent)]"
                       : index === 1
@@ -141,14 +160,14 @@ export default async function ProfessionalTodayPage({
                   <p className="truncate text-sm font-bold">
                     {appointment.clientName}
                   </p>
-                  <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+                  <p className="tabular mt-0.5 text-xs text-[var(--muted-foreground)]">
                     {formatTime(appointment.startsAt, locale)} ·{" "}
                     {appointment.modality === "online"
                       ? "Online"
                       : "Presencial"}
                   </p>
                 </div>
-                <UserRound className="text-[var(--muted-foreground)]/55 size-4" />
+                <UserRound className="text-[var(--muted-foreground)]/55 size-4 transition-colors duration-300 group-hover:text-[var(--muted-foreground)]" />
               </div>
             ))}
           </CardContent>
@@ -167,34 +186,44 @@ export default async function ProfessionalTodayPage({
           </div>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <MetricCard
-            label={messages.professional.newRequests}
-            value={data.actionCounts.newRequests}
-            detail="Recebidos desde sexta-feira"
-            icon={Inbox}
-            tone="blue"
-          />
-          <MetricCard
-            label={messages.professional.unsignedNotes}
-            value={data.actionCounts.unsignedNotes}
-            detail="Rascunho guardado com sucesso"
-            icon={ClipboardSignature}
-            tone="lilac"
-          />
-          <MetricCard
-            label={messages.professional.sharedExperiences}
-            value={data.actionCounts.sharedExperiences}
-            detail="Partilhadas pelos clientes"
-            icon={Sparkles}
-            tone="accent"
-          />
-          <MetricCard
-            label={messages.professional.pendingPayments}
-            value={data.actionCounts.pendingPayments}
-            detail="Registados como externos"
-            icon={CreditCard}
-            tone="lemon"
-          />
+          {[
+            {
+              label: messages.professional.newRequests,
+              value: data.actionCounts.newRequests,
+              detail: "Recebidos desde sexta-feira",
+              icon: Inbox,
+              tone: "blue",
+            },
+            {
+              label: messages.professional.unsignedNotes,
+              value: data.actionCounts.unsignedNotes,
+              detail: "Rascunho guardado com sucesso",
+              icon: ClipboardSignature,
+              tone: "lilac",
+            },
+            {
+              label: messages.professional.sharedExperiences,
+              value: data.actionCounts.sharedExperiences,
+              detail: "Partilhadas pelos clientes",
+              icon: Sparkles,
+              tone: "accent",
+            },
+            {
+              label: messages.professional.pendingPayments,
+              value: data.actionCounts.pendingPayments,
+              detail: "Registados como externos",
+              icon: CreditCard,
+              tone: "lemon",
+            },
+          ].map((metric, index) => (
+            <MetricCard
+              key={metric.label}
+              {...metric}
+              tone={metric.tone as "blue" | "lilac" | "accent" | "lemon"}
+              className="reveal"
+              style={{ "--d": index } as CSSProperties}
+            />
+          ))}
         </div>
       </section>
 

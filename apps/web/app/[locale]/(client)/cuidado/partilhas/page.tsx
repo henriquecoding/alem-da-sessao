@@ -31,10 +31,13 @@ export default function SharesPage() {
         </Card>
         <Card className="border-dashed">
           <CardContent className="flex min-h-[230px] flex-col items-center justify-center p-6 text-center">
-            <LockKeyhole className="size-6 text-[var(--muted-foreground)]/50" />
-            <p className="mt-4 text-sm font-bold">O restante continua privado.</p>
+            <LockKeyhole className="text-[var(--muted-foreground)]/50 size-6" />
+            <p className="mt-4 text-sm font-bold">
+              O restante continua privado.
+            </p>
             <p className="mt-2 max-w-xs text-xs leading-5 text-[var(--muted-foreground)]">
-              Experiências guardadas sem partilha nunca aparecem ao profissional.
+              Experiências guardadas sem partilha nunca aparecem ao
+              profissional.
             </p>
           </CardContent>
         </Card>

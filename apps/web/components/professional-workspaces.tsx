@@ -104,10 +104,12 @@ export function ReportsWorkspace() {
             aria-pressed={period === value}
             onClick={() => setPeriod(value)}
             className={cn(
-              "min-h-10 rounded-full px-4 text-xs font-bold",
+              "min-h-10 rounded-full px-4 text-xs font-bold outline-none",
+              "ease-(--ease-out-quint) transition-[background-color,color,border-color,box-shadow,transform] duration-200",
+              "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 active:translate-y-px",
               period === value
-                ? "bg-[var(--primary)] text-white"
-                : "border border-[var(--border)] bg-[var(--surface)]",
+                ? "bg-[var(--primary)] text-white shadow-[var(--shadow-primary)]"
+                : "border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)] hover:bg-[var(--muted)]",
             )}
           >
             {value} dias
@@ -161,23 +163,32 @@ export function ReportsWorkspace() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex h-64 items-end gap-3 rounded-3xl bg-[var(--background)] p-5">
+            {/* Each column is stretched to the full plot height, so the bars'
+                percentage heights have a definite box to resolve against —
+                previously they collapsed to zero and the chart rendered
+                empty. */}
+            <div
+              role="img"
+              aria-label={`Volume relativo por intervalo, do mais antigo ao mais recente: ${data.bars.join("%, ")}%.`}
+              className="flex h-64 items-stretch gap-3 rounded-3xl bg-[var(--background)] p-5"
+            >
               {data.bars.map((height, index) => (
-                <div
-                  key={index}
-                  className="flex flex-1 flex-col items-center gap-2"
-                >
-                  <div
-                    className={cn(
-                      "w-full rounded-t-xl",
-                      index === data.bars.length - 1
-                        ? "bg-[var(--primary)]"
-                        : "bg-[var(--pastel-lilac)]",
-                    )}
-                    style={{ height: `${height}%` }}
-                    aria-label={`${height}% da capacidade visual`}
-                  />
-                  <span className="text-[10px] text-[var(--muted-foreground)]">
+                <div key={index} className="flex flex-1 flex-col gap-2">
+                  <div className="flex flex-1 items-end" aria-hidden="true">
+                    <div
+                      className={cn(
+                        "ease-(--ease-out-quint) w-full rounded-t-xl transition-[height,background-color] duration-700",
+                        index === data.bars.length - 1
+                          ? "bg-[var(--primary)]"
+                          : "bg-[var(--pastel-lilac)]",
+                      )}
+                      style={{
+                        height: `${height}%`,
+                        transitionDelay: `${index * 55}ms`,
+                      }}
+                    />
+                  </div>
+                  <span className="text-center text-[10px] text-[var(--muted-foreground)]">
                     S{index + 1}
                   </span>
                 </div>

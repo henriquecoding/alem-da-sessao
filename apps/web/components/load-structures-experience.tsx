@@ -564,6 +564,30 @@ function Monolith({
   );
 }
 
+/* The engine renders on its own dark surface, so it cannot use the shared
+   Button. These three constants replace what were five hand-rolled copies with
+   drifting hover, focus and transition rules. */
+const emberButton = cn(
+  "inline-flex min-h-12 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[var(--ember)] px-6 text-sm font-semibold text-[#17181b]",
+  "shadow-[var(--shadow-ember)] transition-[background-color,transform,box-shadow] duration-200 ease-(--ease-out-quint)",
+  "hover:-translate-y-0.5 hover:bg-[var(--ember-strong)] hover:shadow-[0_2px_4px_rgba(0,0,0,.32),0_10px_26px_rgba(188,101,50,.26)] active:translate-y-px",
+  "outline-none focus-visible:ring-2 focus-visible:ring-[#dc8a52] focus-visible:ring-offset-2 focus-visible:ring-offset-[#15171b]",
+  "disabled:cursor-wait disabled:opacity-70 disabled:hover:translate-y-0",
+);
+
+const outlineButton = cn(
+  "inline-flex min-h-12 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#4a4f59] px-6 text-sm font-semibold text-[#d9dbe0]",
+  "transition-[border-color,background-color,color] duration-200 ease-(--ease-out-quint)",
+  "hover:border-[#737984] hover:bg-white/5 hover:text-white",
+  "outline-none focus-visible:ring-2 focus-visible:ring-[#dc8a52] focus-visible:ring-offset-2 focus-visible:ring-offset-[#15171b]",
+);
+
+const quietButton = cn(
+  "inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-full px-3 text-sm font-semibold text-[#9fa4ae]",
+  "transition-colors duration-200 hover:text-white",
+  "outline-none focus-visible:ring-2 focus-visible:ring-[#dc8a52] focus-visible:ring-offset-2 focus-visible:ring-offset-[#15171b]",
+);
+
 function Choice({
   active,
   title,
@@ -692,18 +716,27 @@ function HoldToAnchor({
       )}
       aria-describedby="anchor-instruction"
     >
+      {/* Driven straight from the rAF value, so the fill tracks the finger
+          with no transition lag. */}
       <span
-        className="absolute inset-y-0 left-0 bg-[linear-gradient(90deg,rgba(188,101,50,.25),rgba(218,143,88,.38))] transition-[width] duration-75"
-        style={{ width: `${visibleProgress * 100}%` }}
+        aria-hidden="true"
+        className="absolute inset-y-0 left-0 w-full origin-left bg-[linear-gradient(90deg,rgba(188,101,50,.25),rgba(218,143,88,.38))]"
+        style={{ transform: `scaleX(${visibleProgress})` }}
       />
       <span className="relative flex items-center gap-4">
         <span
           className={cn(
-            "grid size-12 shrink-0 place-items-center rounded-full border",
+            "grid size-12 shrink-0 place-items-center rounded-full border transition-colors duration-300",
             complete
               ? "border-[#d99560] bg-[#d99560] text-[#17181b]"
               : "border-[#5a5f69] text-[#c0c4cc]",
           )}
+          style={
+            complete
+              ? undefined
+              : // A gentle pulse while held, keyed to the same progress value.
+                { transform: `scale(${1 + visibleProgress * 0.08})` }
+          }
         >
           {complete ? (
             <Check className="size-5" />
@@ -1016,10 +1049,7 @@ export function LoadStructuresExperience({
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               {community && publication?.status === "approved" && (
-                <a
-                  href="#parede-comunitaria"
-                  className="inline-flex min-h-12 items-center rounded-full bg-[#d58b57] px-6 text-sm font-semibold text-[#17181b] transition-colors hover:bg-[#e3a372]"
-                >
+                <a href="#parede-comunitaria" className={emberButton}>
                   {t.visitWall}
                 </a>
               )}
@@ -1137,7 +1167,7 @@ export function LoadStructuresExperience({
             <button
               type="button"
               onClick={() => setMode("editing")}
-              className="min-h-12 rounded-full border border-[#434750] px-6 text-sm font-semibold text-[#d8d9dd] hover:border-[#686e79]"
+              className={outlineButton}
             >
               {t.back}
             </button>
@@ -1145,7 +1175,7 @@ export function LoadStructuresExperience({
               type="button"
               disabled={publishing}
               onClick={confirmShare}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#d58b57] px-6 text-sm font-semibold text-[#17181b] hover:bg-[#e3a372] disabled:cursor-wait disabled:opacity-70"
+              className={emberButton}
             >
               {publishing && <LoaderCircle className="size-4 animate-spin" />}
               {publishing ? t.depositing : community ? t.deposit : t.confirm}
@@ -1170,10 +1200,19 @@ export function LoadStructuresExperience({
                 <span className="hidden sm:inline">{t.private}</span>
               </div>
             </div>
-            <div className="mt-4 h-1 overflow-hidden rounded-full bg-[#2a2d33]">
+            <div
+              className="mt-4 h-1 overflow-hidden rounded-full bg-[#2a2d33]"
+              role="progressbar"
+              aria-valuemin={1}
+              aria-valuemax={5}
+              aria-valuenow={stage + 1}
+              aria-label={`${t.step} ${stage + 1} ${t.of} 5`}
+            >
+              {/* Scaled rather than resized: width animation reflows on every
+                  frame, transform does not. */}
               <div
-                className="h-full rounded-full bg-[linear-gradient(90deg,#a6572f,#dd955f)] transition-[width] duration-500"
-                style={{ width: `${((stage + 1) / 5) * 100}%` }}
+                className="ease-(--ease-out-quint) h-full origin-left rounded-full bg-[linear-gradient(90deg,#a6572f,#dd955f)] transition-transform duration-700"
+                style={{ transform: `scaleX(${(stage + 1) / 5})` }}
               />
             </div>
           </div>
@@ -1185,7 +1224,11 @@ export function LoadStructuresExperience({
           </div>
         </div>
 
-        <div className="min-h-[650px] p-5 sm:p-8 lg:p-10">
+        {/* Keyed on the stage so advancing reads as a new panel arriving. */}
+        <div
+          key={stage}
+          className="animate-sheet-in min-h-[650px] p-5 sm:p-8 lg:p-10"
+        >
           {stage === 0 && (
             <fieldset>
               <legend className="sr-only">{t.collectTitle}</legend>
@@ -1221,15 +1264,17 @@ export function LoadStructuresExperience({
                       aria-pressed={active}
                       onClick={() => toggleLoad(option)}
                       className={cn(
-                        "group relative min-h-44 overflow-hidden rounded-[1.25rem] border p-4 text-left outline-none transition-[border-color,background-color,transform] focus-visible:ring-2 focus-visible:ring-[#dc8a52] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17191d]",
+                        "group relative min-h-44 overflow-hidden rounded-[1.25rem] border p-4 text-left outline-none",
+                        "ease-(--ease-out-quint) transition-[border-color,background-color,transform,box-shadow] duration-300",
+                        "focus-visible:ring-2 focus-visible:ring-[#dc8a52] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17191d]",
                         active
-                          ? "border-[#d28751] bg-[#2a231f]"
-                          : "border-[#34373f] bg-[#1d1f24] hover:-translate-y-1 hover:border-[#5b606a]",
+                          ? "-translate-y-0.5 border-[#d28751] bg-[#2a231f] shadow-[0_10px_30px_rgba(0,0,0,.35)]"
+                          : "border-[#34373f] bg-[#1d1f24] hover:-translate-y-1 hover:border-[#5b606a] hover:shadow-[0_14px_34px_rgba(0,0,0,.4)]",
                       )}
                     >
                       <span
                         className={cn(
-                          "grid size-10 place-items-center rounded-full border",
+                          "grid size-10 place-items-center rounded-full border transition-colors duration-300",
                           active
                             ? "border-[#d28751]/50 bg-[#d28751] text-[#17181b]"
                             : "border-[#41454f] bg-[#24272d] text-[#aeb2ba]",
@@ -1247,7 +1292,10 @@ export function LoadStructuresExperience({
                       <span className="mt-2 block font-mono text-[9px] uppercase tracking-[0.14em] text-[#777d88]">
                         {option.descriptors[locale]}
                       </span>
-                      <span className="absolute inset-x-4 bottom-0 h-px bg-gradient-to-r from-transparent via-[#d28751]/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-4 bottom-0 h-px bg-gradient-to-r from-transparent via-[#d28751]/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                      />
                     </button>
                   );
                 })}
@@ -1713,14 +1761,14 @@ export function LoadStructuresExperience({
                 <button
                   type="button"
                   onClick={() => setSaved(true)}
-                  className="min-h-12 rounded-full border border-[#4a4f59] px-6 text-sm font-semibold text-[#d9dbe0] hover:border-[#737984]"
+                  className={outlineButton}
                 >
                   {t.save}
                 </button>
                 <button
                   type="button"
                   onClick={prepareShare}
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#d58b57] px-6 text-sm font-semibold text-[#17181b] hover:bg-[#e3a372]"
+                  className={emberButton}
                 >
                   {t.preview}
                   <Eye className="size-4" />
@@ -1732,7 +1780,7 @@ export function LoadStructuresExperience({
           {error && (
             <p
               role="alert"
-              className="mt-6 rounded-xl border border-[#8f5139] bg-[#2e201c] px-4 py-3 text-sm text-[#f0b18a]"
+              className="enter mt-6 rounded-xl border border-[#8f5139] bg-[#2e201c] px-4 py-3 text-sm text-[#f0b18a]"
             >
               {error}
             </p>
@@ -1748,7 +1796,7 @@ export function LoadStructuresExperience({
                   setStage((current) => Math.max(0, current - 1));
                   setError(null);
                 }}
-                className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold text-[#9fa4ae] hover:text-white"
+                className={quietButton}
               >
                 <ArrowLeft className="size-4" />
                 {t.back}
@@ -1756,11 +1804,7 @@ export function LoadStructuresExperience({
             )}
           </div>
           {stage < 4 && (
-            <button
-              type="button"
-              onClick={advance}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#d58b57] px-6 text-sm font-semibold text-[#17181b] transition-colors hover:bg-[#e3a372]"
-            >
+            <button type="button" onClick={advance} className={emberButton}>
               {t.continue}
               <ArrowRight className="size-4" />
             </button>

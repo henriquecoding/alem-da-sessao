@@ -13,11 +13,7 @@ const tones: Record<NonNullable<BadgeProps["tone"]>, string> = {
   info: "bg-[var(--info-soft)] text-[var(--info)]",
 };
 
-export function Badge({
-  className,
-  tone = "neutral",
-  ...props
-}: BadgeProps) {
+export function Badge({ className, tone = "neutral", ...props }: BadgeProps) {
   return (
     <span
       className={cn(

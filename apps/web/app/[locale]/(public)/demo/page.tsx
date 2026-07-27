@@ -55,7 +55,7 @@ export default async function DemoPage({
   return (
     <main className="mx-auto w-full max-w-[1120px] px-4 pb-20 pt-10 sm:px-6 lg:px-8 lg:pt-20">
       <Badge tone="warning">Ambiente exclusivamente local</Badge>
-      <h1 className="mt-5 max-w-3xl text-balance text-4xl font-bold tracking-[-0.055em] sm:text-6xl">
+      <h1 className="mt-5 max-w-3xl text-balance text-[clamp(2.15rem,1.3rem+3.2vw,3.5rem)] font-bold leading-[1.02] tracking-[-0.055em]">
         Escolha a perspectiva que quer validar.
       </h1>
       <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--muted-foreground)]">

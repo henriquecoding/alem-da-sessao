@@ -32,7 +32,7 @@ export default async function ClientsPage({
       />
 
       <div className="relative mb-5 max-w-lg">
-        <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-[var(--muted-foreground)]" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[var(--muted-foreground)]" />
         <Input className="pl-11" placeholder="Pesquisar por nome…" />
       </div>
 
@@ -49,14 +49,16 @@ export default async function ClientsPage({
               <Link
                 key={client.id}
                 href={localPath(segment, `/pro/clientes/${client.id}`)}
-                className="grid min-h-20 items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition-colors hover:border-[var(--border)] hover:bg-[var(--muted)]/55 focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:px-4 md:grid-cols-[1.25fr_.7fr_1fr_auto]"
+                className="hover:bg-[var(--muted)]/55 grid min-h-20 items-center gap-3 rounded-2xl border border-transparent px-3 py-3 transition-colors hover:border-[var(--border)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:px-4 md:grid-cols-[1.25fr_.7fr_1fr_auto]"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--muted)] text-xs font-bold">
                     {client.initials}
                   </span>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-bold">{client.displayName}</p>
+                    <p className="truncate text-sm font-bold">
+                      {client.displayName}
+                    </p>
                     <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
                       Desde {client.relationshipSince}
                     </p>

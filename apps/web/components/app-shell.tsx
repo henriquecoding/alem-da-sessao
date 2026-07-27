@@ -7,7 +7,6 @@ import {
   Activity,
   CalendarDays,
   ChevronLeft,
-  ChevronRight,
   CircleDollarSign,
   ClipboardCheck,
   ChartNoAxesCombined,
@@ -23,7 +22,7 @@ import {
   X,
 } from "lucide-react";
 import type { LocaleSegment } from "@alem-da-sessao/i18n";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Button } from "@/components/ui/button";
@@ -111,15 +110,22 @@ function NavigationItems({
             aria-current={active ? "page" : undefined}
             title={collapsed ? item.label : undefined}
             className={cn(
-              "flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-white/70",
+              "group/nav relative flex min-h-11 items-center gap-3 overflow-hidden rounded-2xl px-3 text-sm font-semibold outline-none",
+              "ease-(--ease-out-quint) transition-[background-color,color,transform] duration-200 focus-visible:ring-2 focus-visible:ring-white/70",
               collapsed && "justify-center px-0",
               active
                 ? "bg-[var(--highlight-yellow)] text-[var(--sidebar)] shadow-[0_8px_24px_rgba(242,207,99,.16)]"
-                : "text-white/58 hover:bg-white/8 hover:text-white",
+                : "hover:bg-white/8 text-white/58 hover:translate-x-0.5 hover:text-white",
             )}
           >
-            <item.icon className="size-[18px] shrink-0" aria-hidden="true" />
-            {!collapsed && <span>{item.label}</span>}
+            <item.icon
+              className={cn(
+                "ease-(--ease-spring) size-[18px] shrink-0 transition-transform duration-500",
+                !active && "group-hover/nav:scale-110",
+              )}
+              aria-hidden="true"
+            />
+            {!collapsed && <span className="truncate">{item.label}</span>}
           </Link>
         );
       })}
@@ -137,16 +143,48 @@ export function AppShell({
   segment: LocaleSegment;
 }) {
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  // "closing" keeps the drawer mounted for the length of its exit animation,
+  // so dismissing it reads as a movement rather than a disappearance.
+  const [drawer, setDrawer] = useState<"closed" | "open" | "closing">("closed");
   const identity = surfaceIdentity[surface];
   const mobileItems = navigation[surface].slice(0, 4);
   const pathname = usePathname();
+  const drawerOpen = drawer !== "closed";
+
+  function closeDrawer() {
+    setDrawer((current) => (current === "open" ? "closing" : current));
+  }
+
+  useEffect(() => {
+    if (drawer !== "closing") return;
+    const timer = window.setTimeout(() => setDrawer("closed"), 260);
+    return () => window.clearTimeout(timer);
+  }, [drawer]);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") closeDrawer();
+    }
+
+    // The page behind a modal drawer must not scroll with it.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [drawerOpen]);
 
   return (
     <div className="min-h-screen bg-[var(--background)] lg:flex">
       <aside
         className={cn(
-          "sticky top-0 hidden h-screen shrink-0 flex-col bg-[var(--sidebar)] p-4 text-white transition-[width] duration-300 lg:flex",
+          "sticky top-0 hidden h-screen shrink-0 flex-col bg-[var(--sidebar)] p-4 text-white lg:flex",
+          "duration-400 ease-(--ease-out-quint) transition-[width]",
           collapsed ? "w-[84px]" : "w-[248px]",
         )}
       >
@@ -158,7 +196,7 @@ export function AppShell({
         >
           <BrandMark className="bg-white/12" />
           {!collapsed && (
-            <div className="min-w-0">
+            <div className="enter-fade min-w-0">
               <p className="truncate text-sm font-bold tracking-[-0.025em]">
                 Além da Sessão
               </p>
@@ -186,7 +224,7 @@ export function AppShell({
               {identity.initials}
             </span>
             {!collapsed && (
-              <div className="min-w-0">
+              <div className="enter-fade min-w-0">
                 <p className="truncate text-xs font-bold">{identity.name}</p>
                 <p className="text-white/42 truncate text-[10px]">
                   {identity.subtitle}
@@ -197,14 +235,18 @@ export function AppShell({
           <button
             type="button"
             onClick={() => setCollapsed((value) => !value)}
-            className="hover:bg-white/8 flex min-h-11 w-full items-center justify-center rounded-2xl text-white/50 transition-colors hover:text-white"
+            className="hover:bg-white/8 flex min-h-11 w-full items-center justify-center rounded-2xl text-white/50 transition-colors duration-200 hover:text-white"
             aria-label={collapsed ? "Expandir navegação" : "Recolher navegação"}
+            aria-expanded={!collapsed}
           >
-            {collapsed ? (
-              <ChevronRight className="size-4" />
-            ) : (
-              <ChevronLeft className="size-4" />
-            )}
+            {/* One chevron that rotates, rather than two that swap. */}
+            <ChevronLeft
+              className={cn(
+                "duration-400 ease-(--ease-out-quint) size-4 transition-transform",
+                collapsed && "rotate-180",
+              )}
+              aria-hidden="true"
+            />
           </button>
         </div>
       </aside>
@@ -217,7 +259,7 @@ export function AppShell({
                 variant="secondary"
                 size="icon"
                 className="lg:hidden"
-                onClick={() => setMobileOpen(true)}
+                onClick={() => setDrawer("open")}
                 aria-label="Abrir navegação"
               >
                 <Menu className="size-5" />
@@ -243,22 +285,39 @@ export function AppShell({
         </main>
       </div>
 
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+      {drawerOpen && (
+        <div
+          className="fixed inset-0 z-50 lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navegação principal"
+        >
+          {/* Enter and exit are separate keyframes rather than a transition:
+              a freshly mounted element has no previous state to move from. */}
           <button
-            className="bg-black/42 absolute inset-0 backdrop-blur-[2px]"
-            onClick={() => setMobileOpen(false)}
+            className={cn(
+              "absolute inset-0 bg-black/45 backdrop-blur-[3px]",
+              drawer === "open"
+                ? "animate-backdrop-in"
+                : "animate-backdrop-out",
+            )}
+            onClick={closeDrawer}
             aria-label="Fechar navegação"
           />
-          <aside className="relative flex h-full w-[min(88vw,340px)] flex-col bg-[var(--sidebar)] p-5 text-white shadow-2xl">
+          <aside
+            className={cn(
+              "relative flex h-full w-[min(88vw,340px)] flex-col bg-[var(--sidebar)] p-5 text-white shadow-2xl",
+              drawer === "open" ? "animate-drawer-in" : "animate-drawer-out",
+            )}
+          >
             <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <BrandMark className="bg-white/12" />
                 <span className="text-sm font-bold">Além da Sessão</span>
               </div>
               <button
-                className="hover:bg-white/8 grid size-11 place-items-center rounded-2xl text-white/65"
-                onClick={() => setMobileOpen(false)}
+                className="hover:bg-white/8 grid size-11 place-items-center rounded-2xl text-white/65 transition-colors duration-200 hover:text-white"
+                onClick={closeDrawer}
                 aria-label="Fechar navegação"
               >
                 <X className="size-5" />
@@ -268,12 +327,12 @@ export function AppShell({
               surface={surface}
               segment={segment}
               collapsed={false}
-              onNavigate={() => setMobileOpen(false)}
+              onNavigate={closeDrawer}
             />
             <div className="mt-auto">
               <Link
                 href={`/${segment}`}
-                className="text-white/58 hover:bg-white/8 flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold hover:text-white"
+                className="hover:bg-white/8 text-white/58 flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold transition-colors duration-200 hover:text-white"
               >
                 <LogOut className="size-[18px]" />
                 Sair da demonstração
@@ -297,21 +356,25 @@ export function AppShell({
               aria-label={item.label}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "text-white/46 flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold",
-                active && "bg-white text-[var(--sidebar)]",
-                active && "bg-[var(--highlight-yellow)]",
+                "group/tab flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold",
+                "ease-(--ease-out-quint) transition-[background-color,color] duration-200",
+                // Two conflicting background classes used to fight here; the
+                // yellow only won by source order.
+                active
+                  ? "bg-[var(--highlight-yellow)] text-[var(--sidebar)]"
+                  : "text-white/46 active:bg-white/8",
               )}
             >
-              <item.icon className="size-[17px]" />
+              <item.icon className="ease-(--ease-spring) size-[17px] transition-transform duration-500 group-active/tab:scale-90" />
               <span className="max-w-full truncate">{item.label}</span>
             </Link>
           );
         })}
         <button
           type="button"
-          onClick={() => setMobileOpen(true)}
+          onClick={() => setDrawer("open")}
           aria-label="Mais opções"
-          className="text-white/46 flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold"
+          className="active:bg-white/8 text-white/46 flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold transition-colors duration-200"
         >
           <Menu className="size-[17px]" />
           <span>Mais</span>
