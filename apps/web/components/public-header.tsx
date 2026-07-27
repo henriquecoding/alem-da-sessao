@@ -18,10 +18,11 @@ export function PublicHeader({ segment }: { segment: LocaleSegment }) {
     <header className="relative z-20 mx-auto flex w-full max-w-[1240px] items-center justify-between gap-4 px-4 py-5 sm:px-6 lg:px-8">
       <Link
         href={localPath(segment)}
-        className="inline-flex min-h-11 items-center gap-3 rounded-full pr-3 text-sm font-bold tracking-[-0.02em]"
+        className="inline-flex min-h-11 shrink-0 items-center gap-3 rounded-full pr-3 text-sm font-bold tracking-[-0.02em]"
       >
         <BrandMark />
-        <span>Além da Sessão</span>
+        {/* Sem isto o nome parte-se em «Além da / Sessão» a 390 px. */}
+        <span className="whitespace-nowrap">Além da Sessão</span>
       </Link>
 
       <nav className="hidden items-center gap-7 text-sm font-semibold text-[var(--muted-foreground)] md:flex">
@@ -41,7 +42,7 @@ export function PublicHeader({ segment }: { segment: LocaleSegment }) {
             only route out of the homepage on a phone. */}
         <Link
           href={localPath(segment, "/experiencias")}
-          className="inline-flex min-h-11 items-center rounded-full px-2 text-sm font-semibold text-[var(--muted-foreground)] transition-colors duration-200 hover:text-[var(--foreground)] md:hidden"
+          className="hidden min-h-11 items-center rounded-full px-2 text-sm font-semibold text-[var(--muted-foreground)] transition-colors duration-200 hover:text-[var(--foreground)] min-[440px]:inline-flex md:hidden"
         >
           Experiências
         </Link>
