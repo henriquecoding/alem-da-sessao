@@ -11,33 +11,27 @@ import { Badge } from "@/components/ui/badge";
 export function DashboardPreview() {
   return (
     <div className="relative mx-auto w-full max-w-[650px]">
-      {/* Two offset glows that drift out of phase, so the frame sits in light
-          instead of floating on a flat background. */}
-      <div
-        aria-hidden="true"
-        className="bg-[var(--accent)]/12 animate-breathe absolute -inset-6 -z-10 rounded-[2.6rem] blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="bg-[var(--primary)]/10 animate-breathe absolute -inset-4 -z-10 rounded-[2.4rem] blur-2xl [animation-delay:-3.5s]"
-      />
       {/* Isto é um retrato do produto, não o produto: um leitor de ecrã recebe
-          a descrição e não os controlos falsos que há lá dentro (WCAG 1.1.1). */}
+          a descrição e não os controlos falsos que há lá dentro (WCAG 1.1.1).
+
+          Os dois halos que aqui estavam e o cromo de navegador com as três
+          bolinhas saíram: "captura de ecrã dentro de uma janela falsa" é o
+          cliché visual de toda a Camada A, e um halo colorido a pulsar é o
+          anti-padrão #4. Uma moldura fina e uma sombra que descreve material
+          dizem a mesma coisa sem pedir emprestada a estética de mais ninguém. */}
       <div
         role="img"
         aria-label="Retrato da área profissional: agenda do dia, próxima sessão com uma cliente e um aviso de partilha por rever. Todos os dados são fictícios."
-        className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-[var(--surface)] shadow-[var(--shadow-xl)]"
+        className="shadow-rested overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)]"
       >
         <div
           aria-hidden="true"
-          className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3 sm:px-5"
+          className="flex items-center justify-between border-b border-[var(--border)] px-4 py-2.5 sm:px-5"
         >
-          <div className="flex items-center gap-2">
-            <span className="size-2.5 rounded-full bg-[var(--accent)]" />
-            <span className="size-2.5 rounded-full bg-[#edc868]" />
-            <span className="size-2.5 rounded-full bg-[#8bbba4]" />
-          </div>
-          <span className="rounded-full bg-[var(--muted)] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--muted-foreground)]">
+          <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+            Área profissional
+          </span>
+          <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
             Dados fictícios
           </span>
         </div>
@@ -105,7 +99,7 @@ export function DashboardPreview() {
               </div>
 
               <div className="space-y-3">
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--pastel-lemon)] p-4">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--pigment-ochre)] p-4">
                   <CalendarDays className="size-4 text-[var(--primary)]" />
                   <p className="mt-3 text-2xl font-bold tracking-[-0.04em]">
                     4
@@ -114,7 +108,7 @@ export function DashboardPreview() {
                     sessões hoje
                   </p>
                 </div>
-                <div className="rounded-2xl bg-[var(--pastel-lilac)] p-4">
+                <div className="rounded-2xl bg-[var(--pigment-sage)] p-4">
                   <LockKeyhole className="size-4 text-[var(--accent-foreground)]" />
                   <p className="mt-3 text-xs font-bold">Privado por desenho</p>
                 </div>
@@ -122,7 +116,7 @@ export function DashboardPreview() {
             </div>
 
             <div className="mt-3 flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-white p-4">
-              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--pastel-aqua)] text-[var(--success)]">
+              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--pigment-sage)] text-[var(--success)]">
                 <Check className="size-4" />
               </span>
               <div className="min-w-0">

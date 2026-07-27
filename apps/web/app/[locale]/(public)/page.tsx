@@ -12,8 +12,8 @@ import {
 import { getMessages } from "@alem-da-sessao/i18n";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { DashboardPreview } from "@/components/dashboard-preview";
+import { IntervalFigure } from "@/components/interval-figure";
 import { localPath, resolveLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
@@ -81,8 +81,11 @@ export default async function HomePage({
           </div>
         </div>
 
+        {/* A figura do intervalo em vez da captura de ecrã. Uma captura de
+            dashboard podia pertencer a qualquer produto da Camada A; isto não
+            (§6.8, terceiro teste de qualidade). */}
         <div className="enter-scale" style={{ "--d": 4 } as CSSProperties}>
-          <DashboardPreview />
+          <IntervalFigure locale={locale} />
         </div>
       </section>
 
@@ -137,62 +140,102 @@ export default async function HomePage({
           </h2>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          <div className="reveal">
-            <Card className="lift sheen relative h-full overflow-hidden bg-[var(--primary)] text-white shadow-[var(--shadow-primary)]">
-              {/* A single soft light source keeps the flat purple from reading
-                like an unstyled block. */}
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute -right-16 -top-24 size-72 rounded-full bg-white/10 blur-3xl"
-              />
-              <CardContent className="relative flex min-h-[360px] flex-col p-7 sm:p-9">
-                <Badge className="bg-white/14 w-fit text-white">
-                  Profissionais
-                </Badge>
-                <h3 className="mt-10 max-w-md text-[1.7rem] font-bold leading-[1.1] tracking-[-0.04em] sm:text-3xl">
-                  {messages.public.professionalTitle}
-                </h3>
-                <p className="mt-4 max-w-md text-sm leading-7 text-white/70">
-                  Uma superfície operacional leve, com densidade apenas onde
-                  ajuda a decidir — nunca gráficos decorativos sobre pessoas.
-                </p>
-                <Button
-                  asChild
-                  variant="secondary"
-                  className="mt-auto w-fit border-0 bg-white text-[var(--foreground)] hover:bg-white/90"
-                >
-                  <Link href={localPath(segment, "/pro/hoje")}>
-                    Entrar na área profissional
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+        {/* Dois modos, lado a lado, cada um descrito pelas suas próprias
+            regras (§6.2). Eram dois cartões coloridos genéricos; passam a ser
+            duas colunas editoriais com a tabela de diferenças que o relatório
+            usa para os separar — o que é substancialmente mais informativo do
+            que um bloco de cor com um botão. */}
+        <div className="grid gap-x-12 gap-y-10 md:grid-cols-2">
+          {[
+            {
+              audience: "Para quem acompanha",
+              title: messages.public.professionalTitle,
+              body: "Densidade alta e compacta, porque a decisão é rápida e a latência é hostilidade. Tudo o que importa numa vista, entre duas sessões.",
+              traits: [
+                ["Sensação", "competência tranquila"],
+                ["Ritmo", "rápido"],
+                ["Vazio", "«Nada pendente hoje.»"],
+              ],
+              href: "/pro/hoje",
+              cta: "Entrar na área profissional",
+              tone: "primary" as const,
+            },
+            {
+              audience: "Para quem está a viver o processo",
+              title: messages.public.clientTitle,
+              body: "Densidade baixa, uma decisão por ecrã, ritmo lento — porque aqui a pressa é que é hostilidade. Não é um prontuário reduzido.",
+              traits: [
+                ["Sensação", "um lugar"],
+                ["Ritmo", "lento"],
+                ["Vazio", "nunca aparece"],
+              ],
+              href: "/cuidado/hoje",
+              cta: "Entrar na área do cliente",
+              tone: "accent" as const,
+            },
+          ].map((mode, index) => (
+            <div
+              key={mode.href}
+              className="reveal flex flex-col border-t-2 border-[var(--foreground)] pt-6"
+              style={{ "--d": index } as CSSProperties}
+            >
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
+                {mode.audience}
+              </p>
+              <h3 className="mt-4 max-w-md text-balance text-[1.6rem] font-semibold leading-[1.15] tracking-[-0.03em]">
+                {mode.title}
+              </h3>
+              <p className="mt-4 max-w-md text-[0.95rem] leading-7 text-[var(--muted-foreground)]">
+                {mode.body}
+              </p>
 
+              <dl className="mt-7 divide-y divide-[var(--border)] border-y border-[var(--border)]">
+                {mode.traits.map(([term, value]) => (
+                  <div
+                    key={term}
+                    className="flex items-baseline justify-between gap-4 py-2.5 text-sm"
+                  >
+                    <dt className="text-[var(--muted-foreground)]">{term}</dt>
+                    <dd className="text-right font-medium">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              <Button
+                asChild
+                variant={mode.tone === "primary" ? "default" : "quiet"}
+                className="mt-7 w-fit"
+              >
+                <Link href={localPath(segment, mode.href)}>
+                  {mode.cta}
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+              </Button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* O produto existe, e prova-se aqui em vez de no herói — onde a
+          captura de ecrã competia com a ideia em vez de a apoiar. */}
+      <section className="border-t border-[var(--border)] bg-[var(--surface)]">
+        <div className="mx-auto grid w-full max-w-[1240px] items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)] lg:gap-16 lg:px-8 lg:py-24">
+          <div className="reveal">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
+              A superfície profissional
+            </p>
+            <h2 className="mt-4 text-balance text-[clamp(1.6rem,1.1rem+1.8vw,2.2rem)] font-semibold leading-[1.15] tracking-[-0.03em]">
+              A gestão é o bilhete de entrada. O intervalo é o argumento.
+            </h2>
+            <p className="mt-4 max-w-md text-[0.95rem] leading-7 text-[var(--muted-foreground)]">
+              Agenda, clientes, notas e consentimentos existem porque sem eles
+              não há razão para abrir isto todos os dias. Mas nenhum concorrente
+              pode dizer a frase seguinte: o seu cliente chega à próxima sessão
+              com alguma coisa nas mãos.
+            </p>
+          </div>
           <div className="reveal" style={{ "--d": 1 } as CSSProperties}>
-            <Card className="lift h-full overflow-hidden">
-              <CardContent className="flex min-h-[360px] flex-col p-7 sm:p-9">
-                <Badge tone="accent" className="w-fit">
-                  Clientes
-                </Badge>
-                <h3 className="mt-10 max-w-md text-[1.7rem] font-bold leading-[1.1] tracking-[-0.04em] sm:text-3xl">
-                  {messages.public.clientTitle}
-                </h3>
-                <p className="mt-4 max-w-md text-sm leading-7 text-[var(--muted-foreground)]">
-                  O espaço privado não é uma versão reduzida de um prontuário.
-                  Tem uma tarefa principal, linguagem simples e controlo
-                  visível.
-                </p>
-                <Button asChild variant="quiet" className="mt-auto w-fit">
-                  <Link href={localPath(segment, "/cuidado/hoje")}>
-                    Entrar na área do cliente
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+            <DashboardPreview />
           </div>
         </div>
       </section>

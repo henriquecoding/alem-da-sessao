@@ -217,7 +217,7 @@ export function AdminProfessionalsWorkspace() {
               className="grid gap-4 rounded-3xl border border-[var(--border)] p-4 lg:grid-cols-[1fr_190px_150px_auto] lg:items-center"
             >
               <div className="flex items-center gap-3">
-                <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--pastel-lilac)] text-xs font-bold text-[var(--primary)]">
+                <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--pigment-sage)] text-xs font-bold text-[var(--primary)]">
                   {professional.name
                     .split(" ")
                     .map((part) => part[0])
@@ -362,7 +362,7 @@ export function AdminOrganizationsWorkspace() {
           <Card
             key={organization.id}
             className={
-              index === 0 ? "overflow-hidden bg-[var(--pastel-lilac)]" : ""
+              index === 0 ? "overflow-hidden bg-[var(--pigment-sage)]" : ""
             }
           >
             <CardContent className="p-6">
@@ -594,7 +594,7 @@ export function AdminExperiencesWorkspace() {
                 className={cn(
                   "flex w-full items-center gap-3 rounded-2xl border p-4 text-left",
                   selectedId === tool.id
-                    ? "border-[var(--primary)] bg-[var(--pastel-lilac)]"
+                    ? "border-[var(--primary)] bg-[var(--pigment-sage)]"
                     : "border-[var(--border)]",
                 )}
               >
@@ -676,7 +676,7 @@ export function AdminExperiencesWorkspace() {
                 />
               </div>
             ))}
-            <div className="mt-5 rounded-3xl bg-[var(--pastel-blue)] p-5">
+            <div className="mt-5 rounded-3xl bg-[var(--pigment-stone)] p-5">
               <div className="flex gap-3">
                 <ShieldAlert className="size-5 shrink-0 text-[var(--info)]" />
                 <p className="text-xs leading-6 text-[var(--muted-foreground)]">
@@ -777,7 +777,7 @@ export function AdminSettingsWorkspace() {
                 key={key}
                 className="flex items-center gap-4 rounded-2xl border border-[var(--border)] p-4"
               >
-                <span className="grid size-10 place-items-center rounded-2xl bg-[var(--pastel-lilac)] text-[var(--primary)]">
+                <span className="grid size-10 place-items-center rounded-2xl bg-[var(--pigment-sage)] text-[var(--primary)]">
                   <Flag className="size-4" />
                 </span>
                 <div className="flex-1">
@@ -847,7 +847,7 @@ export function AdminSettingsWorkspace() {
                 onChange={(event) => setRetention(event.target.value)}
               />
             </label>
-            <div className="rounded-2xl bg-[var(--pastel-lemon)] p-4 text-xs leading-6 text-[var(--warning)]">
+            <div className="rounded-2xl bg-[var(--pigment-ochre)] p-4 text-xs leading-6 text-[var(--warning)]">
               Notas clínicas, snapshots e pedidos de direitos seguem políticas
               próprias e nunca herdam este prazo automaticamente.
             </div>

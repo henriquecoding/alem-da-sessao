@@ -7,6 +7,7 @@ import { localPath } from "@/lib/locale";
 
 const links = [
   { href: "/experiencias", label: "Experiências" },
+  { href: "/diretorio", label: "Diretório" },
   { href: "/seguranca", label: "Segurança" },
   { href: "/precos", label: "Preços" },
 ];

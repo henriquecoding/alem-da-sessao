@@ -4,12 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const tones = {
-  neutral: "bg-[var(--pastel-pink)] text-[#7c4550]",
-  accent: "bg-[var(--pastel-peach)] text-[var(--accent-foreground)]",
-  aqua: "bg-[var(--pastel-aqua)] text-[var(--success)]",
-  blue: "bg-[var(--pastel-blue)] text-[var(--info)]",
-  lilac: "bg-[var(--pastel-lilac)] text-[#5f4c83]",
-  lemon: "bg-[var(--pastel-lemon)] text-[var(--warning)]",
+  neutral: "bg-[var(--pigment-rose)] text-[#7c4550]",
+  accent: "bg-[var(--pigment-clay)] text-[var(--accent-foreground)]",
+  aqua: "bg-[var(--pigment-sage)] text-[var(--success)]",
+  blue: "bg-[var(--pigment-stone)] text-[var(--info)]",
+  lilac: "bg-[var(--pigment-sage)] text-[#5f4c83]",
+  lemon: "bg-[var(--pigment-ochre)] text-[var(--warning)]",
 } as const;
 
 export function MetricCard({

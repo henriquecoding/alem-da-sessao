@@ -88,16 +88,20 @@ export function Arrival({
         {locale === "pt-PT" ? "Antes de começar" : "Antes de começar"}
       </p>
 
-      <h1
+      {/* A página já nomeia a experiência; repetir o nome aqui daria dois
+          títulos idênticos ao mesmo ecrã. A Chegada abre com a verdade humana
+          do contrato de originalidade (§4.6) — que é, de qualquer forma, o
+          melhor primeiro parágrafo que a experiência tem. */}
+      <h2
         id="arrival-title"
         className={cn(
-          "enter mt-3 text-balance text-[clamp(1.9rem,1.2rem+2.6vw,2.9rem)] font-bold leading-[1.05] tracking-[-0.045em]",
+          "enter mt-3 max-w-3xl text-balance text-[clamp(1.5rem,1.1rem+1.8vw,2.15rem)] font-bold leading-[1.15] tracking-[-0.04em]",
           ink && "font-serif font-medium",
         )}
         style={{ "--d": 1 } as CSSProperties}
       >
-        {manifest.title[locale]}
-      </h1>
+        {manifest.originality.humanTruth}
+      </h2>
 
       <p
         className={cn(
@@ -107,16 +111,6 @@ export function Arrival({
         style={{ "--d": 2 } as CSSProperties}
       >
         {manifest.summary[locale]}
-      </p>
-
-      <p
-        className={cn(
-          "enter mt-3 max-w-2xl text-sm leading-6",
-          ink ? "text-[var(--ink-muted)]" : "text-[var(--muted-foreground)]",
-        )}
-        style={{ "--d": 2 } as CSSProperties}
-      >
-        {manifest.originality.humanTruth}
       </p>
 
       <ul className="mt-9 space-y-3">

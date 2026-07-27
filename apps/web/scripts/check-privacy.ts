@@ -139,16 +139,34 @@ async function filesUnder(path: string): Promise<string[]> {
   return files;
 }
 
+/**
+ * Resolve um alvo que pode ser um diretório, um ficheiro, ou um caminho sem
+ * extensão como `lib/directory`.
+ *
+ * O terceiro caso é o que importa: sem ele, um alvo escrito sem `.ts` falhava
+ * as duas tentativas e devolvia lista vazia — o check dizia que tinha passado
+ * sem ter lido ficheiro nenhum. Um check que não encontra o que devia
+ * verificar tem de gritar, não sorrir.
+ */
 async function collect(target: string): Promise<string[]> {
   try {
     return await filesUnder(target);
   } catch {
-    try {
-      await readFile(target, "utf8");
-      return [target];
-    } catch {
-      return [];
+    for (const candidate of [
+      target,
+      `${target}.ts`,
+      `${target}.tsx`,
+      join(target, "index.ts"),
+      join(target, "index.tsx"),
+    ]) {
+      try {
+        await readFile(candidate, "utf8");
+        return [candidate];
+      } catch {
+        continue;
+      }
     }
+    return [];
   }
 }
 
@@ -199,8 +217,12 @@ async function main() {
   }
 
   // F3 — o diretório não recebe nada derivado de conteúdo.
+  let directoryFilesScanned = 0;
   for (const surface of directorySurfaces) {
-    for (const file of await collect(surface)) {
+    const files = await collect(surface);
+    directoryFilesScanned += files.length;
+
+    for (const file of files) {
       const source = await readFile(file, "utf8");
       for (const input of contentDerivedInputs) {
         if (input.test(source)) {
@@ -213,6 +235,15 @@ async function main() {
     }
   }
 
+  // Um check que não encontra a superfície que devia verificar passa por
+  // omissão, e isso é pior do que não existir.
+  if (directoryFilesScanned === 0) {
+    failures.push(
+      "F3: nenhuma superfície de diretório foi encontrada para verificar. " +
+        `Atualize \`directorySurfaces\` (${directorySurfaces.join(", ")}).`,
+    );
+  }
+
   if (failures.length) {
     for (const failure of [...new Set(failures)]) {
       console.error(`check:privacy — ${failure}`);
@@ -220,7 +251,7 @@ async function main() {
     process.exitCode = 1;
   } else {
     console.log(
-      "check:privacy passou (ADR-004, F1 tags de terceiros, F2 targeting e LLM, F3 diretório neutro).",
+      `check:privacy passou (ADR-004, F1 tags de terceiros, F2 targeting e LLM, F3 diretório neutro em ${directoryFilesScanned} ficheiros).`,
     );
   }
 }

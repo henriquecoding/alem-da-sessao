@@ -113,7 +113,7 @@ export function ClientSessionsWorkspace() {
       )}
 
       {requestOpen && (
-        <Card className="border-[var(--primary)]/30 mb-5 bg-[var(--pastel-lilac)]">
+        <Card className="border-[var(--primary)]/30 mb-5 bg-[var(--pigment-sage)]">
           <CardHeader className="flex-row items-start justify-between">
             <div>
               <CardTitle>Propor disponibilidade</CardTitle>
@@ -193,7 +193,7 @@ export function ClientSessionsWorkspace() {
             <Card
               key={session.id}
               className={
-                index === 0 ? "overflow-hidden bg-[var(--pastel-lilac)]" : ""
+                index === 0 ? "overflow-hidden bg-[var(--pigment-sage)]" : ""
               }
             >
               <CardContent className="p-6 sm:p-7">
@@ -436,7 +436,7 @@ export function ClientAccountWorkspace() {
                 key={session.id}
                 className="flex items-center gap-4 rounded-2xl bg-[var(--background)] p-4"
               >
-                <span className="grid size-10 place-items-center rounded-2xl bg-[var(--pastel-blue)] text-[var(--info)]">
+                <span className="grid size-10 place-items-center rounded-2xl bg-[var(--pigment-stone)] text-[var(--info)]">
                   {session.current ? (
                     <Laptop2 className="size-4" />
                   ) : (
@@ -477,7 +477,7 @@ export function ClientAccountWorkspace() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex gap-3 rounded-2xl bg-[var(--pastel-aqua)] p-4">
+            <div className="flex gap-3 rounded-2xl bg-[var(--pigment-sage)] p-4">
               <ShieldCheck className="size-5 shrink-0 text-[var(--success)]" />
               <div>
                 <p className="text-sm font-bold">Continuidade terapêutica</p>

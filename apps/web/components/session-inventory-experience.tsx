@@ -53,17 +53,17 @@ const copy = {
     intro:
       "Não precisa de reconstruir toda a conversa. Escolha apenas os fragmentos que continuaram presentes.",
     options: [
-      ["clear", "Algo ficou mais claro", Lightbulb, "bg-[var(--pastel-lemon)]"],
-      ["question", "Ficou uma pergunta", CircleHelp, "bg-[var(--pastel-blue)]"],
-      ["feeling", "Uma emoção continuou", Waves, "bg-[var(--pastel-pink)]"],
+      ["clear", "Algo ficou mais claro", Lightbulb, "bg-[var(--pigment-ochre)]"],
+      ["question", "Ficou uma pergunta", CircleHelp, "bg-[var(--pigment-stone)]"],
+      ["feeling", "Uma emoção continuou", Waves, "bg-[var(--pigment-rose)]"],
       [
         "phrase",
         "Uma frase regressou",
         MessageSquareText,
-        "bg-[var(--pastel-lilac)]",
+        "bg-[var(--pigment-sage)]",
       ],
-      ["silence", "Um silêncio teve peso", Pause, "bg-[var(--pastel-peach)]"],
-      ["intention", "Nasceu uma intenção", Target, "bg-[var(--pastel-aqua)]"],
+      ["silence", "Um silêncio teve peso", Pause, "bg-[var(--pigment-clay)]"],
+      ["intention", "Nasceu uma intenção", Target, "bg-[var(--pigment-sage)]"],
     ] as const,
     choose: "Escolha entre um e cinco fragmentos",
     statesTitle: "Como cada fragmento está agora?",
@@ -108,17 +108,17 @@ const copy = {
     intro:
       "Você não precisa reconstruir toda a conversa. Escolha apenas os fragmentos que continuaram presentes.",
     options: [
-      ["clear", "Algo ficou mais claro", Lightbulb, "bg-[var(--pastel-lemon)]"],
-      ["question", "Ficou uma pergunta", CircleHelp, "bg-[var(--pastel-blue)]"],
-      ["feeling", "Uma emoção continuou", Waves, "bg-[var(--pastel-pink)]"],
+      ["clear", "Algo ficou mais claro", Lightbulb, "bg-[var(--pigment-ochre)]"],
+      ["question", "Ficou uma pergunta", CircleHelp, "bg-[var(--pigment-stone)]"],
+      ["feeling", "Uma emoção continuou", Waves, "bg-[var(--pigment-rose)]"],
       [
         "phrase",
         "Uma frase voltou",
         MessageSquareText,
-        "bg-[var(--pastel-lilac)]",
+        "bg-[var(--pigment-sage)]",
       ],
-      ["silence", "Um silêncio teve peso", Pause, "bg-[var(--pastel-peach)]"],
-      ["intention", "Nasceu uma intenção", Target, "bg-[var(--pastel-aqua)]"],
+      ["silence", "Um silêncio teve peso", Pause, "bg-[var(--pigment-clay)]"],
+      ["intention", "Nasceu uma intenção", Target, "bg-[var(--pigment-sage)]"],
     ] as const,
     choose: "Escolha entre um e cinco fragmentos",
     statesTitle: "Como cada fragmento está agora?",
@@ -376,10 +376,10 @@ export function SessionInventoryExperience({
     return (
       <Card className="enter-scale mx-auto max-w-2xl">
         <CardContent className="flex min-h-[480px] flex-col items-center justify-center p-8 text-center">
-          <span className="animate-pop relative grid size-16 place-items-center rounded-3xl bg-[var(--pastel-lilac)] text-[var(--primary)]">
+          <span className="animate-pop relative grid size-16 place-items-center rounded-3xl bg-[var(--pigment-sage)] text-[var(--primary)]">
             <span
               aria-hidden="true"
-              className="animate-breathe absolute -inset-3 -z-10 rounded-[1.6rem] bg-[var(--pastel-lilac)] blur-xl"
+              className="animate-breathe absolute -inset-3 -z-10 rounded-[1.6rem] bg-[var(--pigment-sage)] blur-xl"
             />
             <Check className="size-7" />
           </span>
@@ -475,7 +475,7 @@ export function SessionInventoryExperience({
               ))}
             </div>
             {note && (
-              <div className="mt-5 rounded-3xl bg-[var(--pastel-blue)] p-5">
+              <div className="mt-5 rounded-3xl bg-[var(--pigment-stone)] p-5">
                 <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--info)]">
                   Para abrir a próxima conversa
                 </p>
@@ -551,7 +551,7 @@ export function SessionInventoryExperience({
         <CardContent key={stage} className="animate-sheet-in p-5 sm:p-8">
           {stage === 0 && (
             <>
-              <div className="rounded-3xl bg-[var(--pastel-blue)] p-5">
+              <div className="rounded-3xl bg-[var(--pigment-stone)] p-5">
                 <Sparkles className="size-5 text-[var(--info)]" />
                 <h2 className="mt-4 text-2xl font-bold tracking-[-0.04em]">
                   {t.title as string}
@@ -640,7 +640,7 @@ export function SessionInventoryExperience({
                               "duration-250 ease-(--ease-out-quint) transition-[border-color,background-color,transform,box-shadow]",
                               "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2",
                               fragment.state === key
-                                ? "border-[var(--primary)] bg-[var(--pastel-lilac)] shadow-[var(--shadow-sm)]"
+                                ? "border-[var(--primary)] bg-[var(--pigment-sage)] shadow-[var(--shadow-sm)]"
                                 : "hover:bg-[var(--muted)]/50 border-[var(--border)] hover:-translate-y-0.5 hover:border-[var(--border-strong)]",
                             )}
                           >

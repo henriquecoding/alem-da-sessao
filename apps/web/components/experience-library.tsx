@@ -193,7 +193,7 @@ export function ExperienceLibrary({
             </div>
             <div className="flex flex-col p-6 sm:p-9 lg:p-11">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-[var(--pastel-blue)] px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--info)]">
+                <span className="rounded-full bg-[var(--pigment-stone)] px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--info)]">
                   ENG-02 · inventário guiado
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--success-soft)] px-3 py-1.5 text-[10px] font-semibold text-[var(--success)]">
