@@ -252,8 +252,8 @@
   /* Formação do artefacto e travessia da ponte — os dois únicos momentos do
      produto que podem ser lentos de propósito. */
   --animate-forming: forming var(--duration-forming) var(--ease-forming) both;
-  --animate-crossing:
-    crossing var(--duration-crossing) var(--ease-in-out-quart) both;
+  --animate-crossing: crossing var(--duration-crossing) var(--ease-in-out-quart)
+    both;
 }
 
 /* Declared outside `@theme` so they are always emitted: the plain-CSS
@@ -533,8 +533,16 @@ p {
 
    `--d` is a unitless stagger index shared by both: `--d: 2` is the third item
    in a group. Neither system can strand content invisible — reduced motion
-   short-circuits both below, and the layout's `<noscript>` block un-hides
-   `.reveal` when scripting is unavailable.
+   short-circuits both below.
+
+   Para `.reveal` isso é uma garantia com uma condição: só esconde quando há
+   quem o volte a mostrar. O estado escondido vive atrás de `.js-reveal`, uma
+   classe que `reveal-observer.tsx` põe no `<html>` antes de começar a
+   observar. Se o script não correr — desligado, a falhar a hidratação, ou o
+   bundle recusado por uma CSP sem nonce — a classe nunca aparece, a regra
+   nunca se aplica e a página fica simplesmente visível. O `<noscript>` do
+   layout só cobria o primeiro desses casos; a página inteira abaixo do herói
+   ficava em branco nos outros dois.
    -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: no-preference) {
@@ -557,7 +565,7 @@ p {
     animation-delay: calc(var(--d, 0) * 75ms);
   }
 
-  .reveal {
+  .js-reveal .reveal {
     opacity: 0;
     transform: translate3d(0, 1.25rem, 0);
     transition:
@@ -566,9 +574,69 @@ p {
     transition-delay: calc(var(--d, 0) * 80ms);
   }
 
-  .reveal.is-revealed {
+  .js-reveal .reveal.is-revealed {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Traçado — uma figura que se constrói a partir das suas próprias peças.
+
+   Isto é `.enter` aplicado a geometria em vez de a blocos de texto: a régua
+   estende-se, os traços da sessão assentam, o intervalo preenche-se. A duração
+   vem da linha «Experiência — formação» da tabela de movimento (800–1400 ms),
+   porque é exatamente isso que está a acontecer — algo ganha forma.
+
+   São animações CSS com `both`, não transições à espera de um observador: a
+   figura do herói está acima da dobra e não pode depender de JavaScript para
+   ficar visível. Sem scripting, sem hidratação ou com a CSP a bloquear o
+   bundle, o traçado corre na mesma e termina desenhado.
+   -------------------------------------------------------------------------- */
+
+.draw-x,
+.draw-y {
+  /* Fora do `@media` para que a origem esteja certa mesmo quando a animação
+     não corre — de outro modo um `scale` herdado desenharia a partir do meio. */
+  transform-origin: left center;
+}
+
+.draw-y {
+  transform-origin: center bottom;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .draw-x {
+    animation: draw-x 1s var(--ease-forming) both;
+  }
+
+  .draw-y {
+    animation: draw-y 0.52s var(--ease-out-expo) both;
+  }
+
+  .draw-x,
+  .draw-y {
+    animation-delay: calc(var(--d, 0) * 90ms);
+  }
+}
+
+@keyframes draw-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes draw-y {
+  from {
+    opacity: 0;
+    transform: scaleY(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
   }
 }
 
