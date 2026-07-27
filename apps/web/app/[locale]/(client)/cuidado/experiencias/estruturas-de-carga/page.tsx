@@ -22,7 +22,7 @@ export default async function LoadStructuresPage({
         <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_15%_0%,rgba(194,104,55,.13),transparent_36rem),linear-gradient(rgba(255,255,255,.018)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.018)_1px,transparent_1px)] [background-size:auto,36px_36px,36px_36px]" />
 
         <div className="relative mx-auto max-w-[1320px] px-4 pb-20 pt-6 sm:px-6 lg:px-10 lg:pb-28 lg:pt-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border)] pb-5">
             <Link
               href={`/${segment}/cuidado/experiencias`}
               className="inline-flex min-h-11 items-center gap-2 rounded-full text-sm font-semibold text-[#a3a7b0] transition-colors hover:text-white"

@@ -108,7 +108,11 @@ describe("engine de tema", () => {
    * é o que o teste apanha.
    */
   const invariant = new Set([
+    // `--shared` é âmbar nos dois temas — é o acento reservado da partilha e
+    // não segue a polaridade da página. O texto que assenta nele também não.
     "on-shared",
+    "on-shared-muted",
+    "on-shared-line",
     "highlight-yellow",
     "scrim",
     "sidebar-muted",

@@ -108,7 +108,7 @@ export function ReportsWorkspace() {
               "ease-(--ease-out-quint) transition-[background-color,color,border-color,box-shadow,transform] duration-200",
               "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 active:translate-y-px",
               period === value
-                ? "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[var(--shadow-primary)]"
+                ? "surface-primary shadow-[var(--shadow-primary)]"
                 : "border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)] hover:bg-[var(--muted)]",
             )}
           >
@@ -179,7 +179,7 @@ export function ReportsWorkspace() {
                       className={cn(
                         "ease-(--ease-out-quint) w-full rounded-t-xl transition-[height,background-color] duration-700",
                         index === data.bars.length - 1
-                          ? "bg-[var(--primary)]"
+                          ? "surface-primary"
                           : "bg-[var(--pigment-sage)]",
                       )}
                       style={{

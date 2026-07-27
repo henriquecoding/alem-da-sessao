@@ -40,9 +40,9 @@ export function DashboardPreview() {
           aria-hidden="true"
           className="grid min-h-[390px] grid-cols-[76px_1fr] sm:grid-cols-[170px_1fr]"
         >
-          <aside className="bg-[var(--sidebar)] p-3 text-[var(--sidebar-foreground)] sm:p-4">
+          <aside className="surface-sidebar p-3 text-[var(--sidebar-foreground)] sm:p-4">
             <div className="mb-8 flex items-center gap-2">
-              <span className="grid size-8 place-items-center rounded-xl bg-[var(--sidebar-raised)]">
+              <span className="surface-sidebar-raised grid size-8 place-items-center rounded-xl">
                 <Sparkles className="size-4 text-[var(--accent)]" />
               </span>
               <span className="hidden text-xs font-bold sm:block">
@@ -79,9 +79,9 @@ export function DashboardPreview() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-[1.25fr_.75fr]">
-              <div className="rounded-2xl bg-[var(--primary)] p-4 text-[var(--primary-foreground)]">
+              <div className="surface-primary rounded-2xl p-4 text-[var(--primary-foreground)]">
                 <div className="flex items-center justify-between">
-                  <Badge className="bg-[var(--sidebar-raised)] text-[var(--sidebar-foreground)]">
+                  <Badge className="surface-sidebar-raised">
                     Próxima sessão
                   </Badge>
                   <Clock3 className="size-4 text-[var(--sidebar-muted)]" />

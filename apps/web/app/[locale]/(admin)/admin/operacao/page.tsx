@@ -112,25 +112,25 @@ export default async function AdminOperationPage({
           </CardContent>
         </Card>
 
-        <Card className="bg-[var(--primary)] text-[var(--primary-foreground)]">
+        <Card className="surface-primary">
           <CardHeader>
             <div className="flex items-start justify-between gap-4">
               <CardTitle>Fronteira administrativa</CardTitle>
-              <CheckCircle2 className="size-5 text-[var(--accent)]" />
+              <CheckCircle2 className="size-5 text-[var(--foreground)]" />
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-white/62 text-sm leading-7">
+            <p className="text-sm leading-7 text-[var(--muted-foreground)]">
               Esta dashboard administra planos, organizações, verificações e
               saúde do sistema. Conteúdo de notas, respostas ou rascunhos não é
               carregado por conveniência.
             </p>
-            <div className="bg-[var(--sidebar-raised)] mt-7 rounded-2xl p-4">
+            <div className="surface-sidebar-raised mt-7 rounded-2xl p-4">
               <p className="flex items-center gap-2 text-xs font-bold">
-                <Clock3 className="size-4 text-[var(--accent)]" />
+                <Clock3 className="size-4 text-[var(--muted-foreground)]" />
                 Acesso de emergência protegido
               </p>
-              <p className="text-white/48 mt-2 text-xs leading-5">
+              <p className="mt-2 text-xs leading-5 text-[var(--muted-foreground)]">
                 O fluxo administrativo exige motivo, escopo e duração; no modo
                 local produz apenas um evento de auditoria sintético.
               </p>

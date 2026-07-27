@@ -41,30 +41,31 @@ const ownPaletteSurfaces = [
 ];
 
 /**
- * Superfícies invariantes: têm o mesmo valor nos dois temas, portanto uma cor
- * fixa sobre elas não é cega ao tema — é correta. A barra lateral é escura
- * sempre, por decisão de desenho.
+ * Superfícies fortes: invertem a polaridade da página.
  *
- * Mesmo assim não se escreve `text-white` lá: existe `--sidebar-foreground`
- * para isso, e é ele que aparece nesta lista. Uma cor literal continua a ser
- * erro em qualquer sítio, porque o dia em que a barra lateral mudar de tom
- * ninguém se vai lembrar de a procurar.
+ * Um texto que herde `--foreground` sobre uma destas desaparece, e foi
+ * exatamente assim que cartões inteiros ficaram ilegíveis — o fundo verde
+ * estava no cartão, o parágrafo estava num filho, e as duas cores nunca se
+ * encontravam no mesmo sítio do código para alguém as comparar.
+ *
+ * Por isso não se aplicam com `bg-[var(--x)]`. Aplicam-se com a classe
+ * `.surface-x`, que redefine `--foreground`, `--muted-foreground` e `--border`
+ * no seu próprio escopo — e aí qualquer descendente fica certo sem saber onde
+ * está.
  */
-const invariantSurfaces = new Set([
-  "sidebar",
-  "sidebar-raised",
-  "sidebar-raised-strong",
-  "ink",
-  "ink-raised",
-]);
-
-/** Tokens de texto que já declaram sobre que superfície invariante assentam. */
-const invariantForegrounds = new Set([
-  "sidebar-foreground",
-  "sidebar-muted",
-  "ink-foreground",
-  "ink-muted",
-]);
+const strongSurfaces: Record<string, string> = {
+  primary: "surface-primary",
+  "primary-strong": "surface-primary",
+  accent: "surface-accent",
+  shared: "surface-shared",
+  destructive: "surface-destructive",
+  "destructive-strong": "surface-destructive",
+  sidebar: "surface-sidebar",
+  "sidebar-raised": "surface-sidebar-raised",
+  "sidebar-raised-strong": "surface-sidebar-raised-strong",
+  ink: "surface-ink",
+  "ink-raised": "surface-ink-raised",
+};
 
 /**
  * Classes que indicam que o elemento carrega texto. Sem uma destas, um fundo
@@ -248,10 +249,101 @@ async function filesUnder(path: string): Promise<string[]> {
   return files;
 }
 
+/**
+ * Lê as receitas de superfície de `globals.css`.
+ *
+ * Uma receita é `.surface-x { --surface-bg: var(--y); --foreground: var(--z);
+ * ... }`. Validar a receita — e não cada sítio onde ela é usada — é o que
+ * torna esta verificação exaustiva: se `.surface-primary` estiver certa,
+ * **todos** os seus descendentes estão certos, incluindo os que ainda não
+ * foram escritos.
+ */
+type Recipe = {
+  name: string;
+  background: string;
+  foreground: string;
+  mutedForeground: string;
+};
+
+async function readRecipes(): Promise<Recipe[]> {
+  const css = await readFile(cssFile, "utf8");
+  const recipes: Recipe[] = [];
+
+  const block = /\.(surface-[\w-]+)\s*\{([^}]*)\}/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = block.exec(css)) !== null) {
+    const body = match[2]!;
+    const bg = body.match(/--surface-bg:\s*var\(--([\w-]+)\)/);
+    if (!bg) continue;
+
+    recipes.push({
+      name: match[1]!,
+      background: bg[1]!,
+      // Uma superfície tonal não redeclara o texto porque herdar está certo:
+      // a polaridade dela é a da página.
+      foreground:
+        body.match(/--foreground:\s*var\(--([\w-]+)\)/)?.[1] ?? "foreground",
+      mutedForeground:
+        body.match(/--muted-foreground:\s*var\(--([\w-]+)\)/)?.[1] ??
+        "muted-foreground",
+    });
+  }
+
+  return recipes;
+}
+
 async function main() {
   const { light, dark } = await readPalettes();
   const failures: string[] = [];
   let pairsChecked = 0;
+
+  // --- 1. As receitas de superfície, nos dois temas. -----------------------
+  const recipes = await readRecipes();
+  if (recipes.length < 10) {
+    throw new Error(
+      `check:contrast leu apenas ${recipes.length} receitas de superfície em ${cssFile}. ` +
+        `A engine seria inútil assim — corrija o parser antes de continuar.`,
+    );
+  }
+
+  for (const recipe of recipes) {
+    for (const [themeName, palette] of [
+      ["claro", light],
+      ["escuro", dark],
+    ] as const) {
+      const bg = palette[recipe.background];
+      if (!bg) {
+        failures.push(
+          `${cssFile} — .${recipe.name} usa --${recipe.background}, que não existe na paleta.`,
+        );
+        continue;
+      }
+
+      for (const [role, token] of [
+        ["texto", recipe.foreground],
+        ["texto secundário", recipe.mutedForeground],
+      ] as const) {
+        const fg = palette[token];
+        if (!fg) {
+          failures.push(
+            `${cssFile} — .${recipe.name} aponta --${token}, que não existe na paleta.`,
+          );
+          continue;
+        }
+
+        pairsChecked += 1;
+        const ratio = contrast(fg, bg);
+        if (ratio < 4.5) {
+          failures.push(
+            `${cssFile} — tema ${themeName}: o ${role} de .${recipe.name} ` +
+              `(--${token} sobre --${recipe.background}) dá ${ratio.toFixed(2)}:1, ` +
+              `abaixo de 4.5:1 (WCAG AA). Ajuste o token, não o sítio onde é usado.`,
+          );
+        }
+      }
+    }
+  }
 
   const surfaceOf = (palette: Palette) =>
     palette.surface ?? { r: 255, g: 255, b: 255 };
@@ -272,6 +364,41 @@ async function main() {
       const source = await readFile(file, "utf8");
       const line = (index: number) => source.slice(0, index).split("\n").length;
 
+      // --- 2. Cores fixas, em qualquer sítio. ---------------------------
+      // Não dependem de existir um fundo na mesma string, e é essa a
+      // diferença que interessa: `text-white/62` estava sozinho num parágrafo
+      // dentro de um cartão pintado noutro elemento, e a regra antiga — que
+      // só olhava para pares dentro da mesma string — nunca lhe tocou.
+      for (const blind of source.matchAll(
+        /(?:bg|text|border|ring|fill|stroke)-(?:white|black)(?:\/\d{1,3})?\b/g,
+      )) {
+        failures.push(
+          `${show}:${line(blind.index!)} — "${blind[0]}" é uma cor fixa, e não existe ` +
+            `valor fixo que sirva os dois temas. Aplique uma superfície (.surface-*) e deixe ` +
+            `o texto herdar --foreground / --muted-foreground.`,
+        );
+      }
+
+      // --- 3. Superfícies fortes pintadas à mão. ------------------------
+      // Uma variante — `hover:`, `group-hover:`, `data-[x]:` — escurece ou
+      // aclara a mesma superfície e não lhe muda a polaridade. A regra é sobre
+      // *em que superfície o elemento assenta*, e isso quem o diz é a classe
+      // base; um tom de hover da mesma família continua a servir o mesmo texto.
+      for (const raw of source.matchAll(
+        /(^|[\s"'`:])bg-\[var\(--([\w-]+)\)\]/gm,
+      )) {
+        if (raw[1] === ":") continue;
+        const replacement = strongSurfaces[raw[2]!];
+        if (!replacement) continue;
+        failures.push(
+          `${show}:${line(raw.index!)} — "bg-[var(--${raw[2]})]" pinta uma superfície forte ` +
+            `sem trazer as cores de texto dela. Use .${replacement}: a classe redefine ` +
+            `--foreground, --muted-foreground e --border no seu escopo, e é isso que impede ` +
+            `um parágrafo noutro elemento de ficar ilegível.`,
+        );
+      }
+
+      // --- 4. Pares dentro do mesmo elemento. ---------------------------
       // Cada string entre aspas é tratada como um conjunto de classes de um
       // elemento. É aproximado, mas é exatamente como o Tailwind as compõe.
       for (const match of source.matchAll(
@@ -308,11 +435,6 @@ async function main() {
           continue;
         }
 
-        // Um fundo invariante com um texto invariante é um par declarado, e o
-        // contraste dele é verificado uma vez só (é igual nos dois temas).
-        const onInvariant =
-          bgRef.kind === "token" && invariantSurfaces.has(bgRef.name);
-
         // Regra 2: sem cor de texto explícita o elemento herda --foreground,
         // mas isso só interessa se ele carregar texto de facto.
         if (!textRef && !carriesText.test(match[1]!)) continue;
@@ -328,26 +450,6 @@ async function main() {
             ? resolve(textRef, palette, bg)
             : (palette.foreground ?? null);
           if (!fg) continue;
-
-          // Um fundo invariante herdar `--foreground` é sempre erro: no tema
-          // errado o texto desaparece. Tem de declarar o seu par.
-          if (onInvariant && !textRef) {
-            failures.push(
-              `${show}:${line(match.index!)} — "${bgToken}" é uma superfície invariante ` +
-                `e o texto herda --foreground, que muda com o tema. Declare --sidebar-foreground ou --ink-foreground.`,
-            );
-            break;
-          }
-
-          if (
-            onInvariant &&
-            textRef?.kind === "token" &&
-            invariantForegrounds.has(textRef.name) &&
-            themeName === "escuro"
-          ) {
-            // Par invariante: já verificado no tema claro, o valor é o mesmo.
-            continue;
-          }
 
           pairsChecked += 1;
           const ratio = contrast(fg, bg);
@@ -371,7 +473,8 @@ async function main() {
     process.exitCode = 1;
   } else {
     console.log(
-      `check:contrast passou (${pairsChecked} pares texto/fundo verificados nos dois temas).`,
+      `check:contrast passou (${recipes.length} receitas de superfície e ` +
+        `${pairsChecked} pares texto/fundo verificados nos dois temas).`,
     );
   }
 }

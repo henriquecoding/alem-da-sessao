@@ -98,7 +98,7 @@ export function LocaleSwitcher({
               className={cn(
                 "grid size-8 shrink-0 place-items-center rounded-[var(--radius-sm)] font-mono text-[11px] font-semibold tracking-[0.06em]",
                 active
-                  ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
+                  ? "surface-primary"
                   : "bg-[var(--muted)] text-[var(--muted-foreground)]",
               )}
             >

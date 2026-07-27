@@ -178,7 +178,7 @@ export function ClientSessionsWorkspace() {
             className={cn(
               "min-h-10 rounded-full px-4 text-xs font-bold",
               tab === value
-                ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
+                ? "surface-primary"
                 : "border border-[var(--border)] bg-[var(--surface)]",
             )}
           >
@@ -214,14 +214,14 @@ export function ClientSessionsWorkspace() {
                   </Badge>
                 </div>
                 <div className="mt-7 grid grid-cols-2 gap-3">
-                  <div className="bg-[var(--surface)] rounded-2xl p-4">
+                  <div className="rounded-2xl bg-[var(--surface)] p-4">
                     <Clock3 className="size-4 text-[var(--primary)]" />
                     <p className="mt-2 text-sm font-bold">{session.time}</p>
                     <p className="mt-1 text-xs text-[var(--muted-foreground)]">
                       50 minutos
                     </p>
                   </div>
-                  <div className="bg-[var(--surface)] rounded-2xl p-4">
+                  <div className="rounded-2xl bg-[var(--surface)] p-4">
                     {session.modality === "Online" ? (
                       <Video className="size-4 text-[var(--primary)]" />
                     ) : (

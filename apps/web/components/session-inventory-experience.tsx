@@ -546,7 +546,7 @@ export function SessionInventoryExperience({
             <div className="h-1.5 overflow-hidden rounded-full bg-[var(--muted)]">
               <div
                 className={cn(
-                  "ease-(--ease-out-quint) h-full origin-left rounded-full bg-[var(--primary)] transition-transform duration-500",
+                  "ease-(--ease-out-quint) surface-primary h-full origin-left rounded-full transition-transform duration-500",
                   index <= stage ? "scale-x-100" : "scale-x-0",
                 )}
                 style={{ transitionDelay: `${index * 60}ms` }}
@@ -607,7 +607,7 @@ export function SessionInventoryExperience({
                       <span
                         aria-hidden="true"
                         className={cn(
-                          "ease-(--ease-spring) absolute right-3 top-3 grid size-6 place-items-center rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] transition-all duration-300",
+                          "ease-(--ease-spring) surface-primary absolute right-3 top-3 grid size-6 place-items-center rounded-full transition-all duration-300",
                           active
                             ? "scale-100 opacity-100"
                             : "scale-50 opacity-0",
@@ -771,7 +771,7 @@ export function SessionInventoryExperience({
                           className={cn(
                             "grid size-6 shrink-0 place-items-center rounded-full border transition-colors duration-300",
                             fragment.share
-                              ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)]"
+                              ? "surface-primary border-[var(--primary)]"
                               : "border-[var(--border)]",
                           )}
                         >

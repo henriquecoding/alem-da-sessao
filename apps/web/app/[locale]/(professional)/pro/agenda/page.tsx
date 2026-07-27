@@ -59,7 +59,7 @@ export default async function SchedulePage({
               <div
                 key={day.day}
                 className={`border-l border-[var(--border)] p-4 text-center ${
-                  day.active ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : ""
+                  day.active ? "surface-primary" : ""
                 }`}
               >
                 <p className="text-[10px] font-bold tracking-[0.14em] opacity-60">

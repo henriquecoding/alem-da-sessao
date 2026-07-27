@@ -18,7 +18,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[var(--shadow-primary)] hover:bg-[var(--primary-strong)] hover:shadow-[var(--shadow-primary-strong)] active:shadow-[var(--shadow-xs)]",
+          "surface-primary shadow-[var(--shadow-primary)] hover:bg-[var(--primary-strong)] hover:shadow-[var(--shadow-primary-strong)] active:shadow-[var(--shadow-xs)]",
         secondary:
           "border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] shadow-[var(--shadow-xs)] hover:border-[var(--border-strong)] hover:bg-[var(--muted)] hover:shadow-[var(--shadow-sm)]",
         ghost:
@@ -26,7 +26,16 @@ const buttonVariants = cva(
         quiet:
           "bg-[var(--accent-soft)] text-[var(--accent-foreground)] hover:bg-[var(--accent-soft-strong)] hover:shadow-[var(--shadow-sm)]",
         destructive:
-          "bg-[var(--destructive)] text-[var(--on-destructive)] shadow-[var(--shadow-sm)] hover:bg-[var(--destructive-strong)] hover:shadow-[var(--shadow-md)]",
+          "surface-destructive shadow-[var(--shadow-sm)] hover:bg-[var(--destructive-strong)] hover:shadow-[var(--shadow-md)]",
+        /**
+         * Para botões que assentam numa superfície forte — dentro de um cartão
+         * `.surface-primary`, por exemplo. Pega nas cores da superfície onde
+         * está em vez de trazer as suas, que é como um botão verde acabava
+         * invisível dentro de um cartão verde. Substituiu um condicional que
+         * escolhia a variante consoante a cor do pai.
+         */
+        onSurface:
+          "border border-[var(--border)] bg-[var(--surface-bg,var(--surface))] text-[var(--foreground)] hover:opacity-90",
       },
       size: {
         default: "h-11",

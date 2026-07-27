@@ -274,9 +274,9 @@ export default async function ProfessionalTodayPage({
                     className={cn(
                       "h-8 w-0.5 shrink-0 rounded-full",
                       index === 0
-                        ? "bg-[var(--accent)]"
+                        ? "surface-accent"
                         : index === 1
-                          ? "bg-[var(--primary)]"
+                          ? "surface-primary"
                           : "bg-[var(--border-strong)]",
                     )}
                   />

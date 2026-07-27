@@ -24,7 +24,7 @@ export function Switch({
         "ease-(--ease-out-quint) transition-[background-color,border-color,box-shadow] duration-300",
         "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
         checked
-          ? "border-[var(--primary)] bg-[var(--primary)] shadow-[inset_0_0_0_1px_rgba(255,255,255,.12)]"
+          ? "surface-primary border-[var(--primary)] shadow-[inset_0_0_0_1px_rgba(255,255,255,.12)]"
           : "border-[var(--border)] bg-[var(--background-deep)] hover:border-[var(--border-strong)]",
         className,
       )}
@@ -34,7 +34,7 @@ export function Switch({
         className={cn(
           // The knob overshoots very slightly on its way across, which is what
           // reads as a physical toggle rather than a repositioned circle.
-          "ease-(--ease-spring) pointer-events-none absolute left-1 top-1 size-6 rounded-full border border-black/5 bg-[var(--surface)] shadow-[0_2px_8px_rgba(40,36,49,.2)] transition-transform duration-300",
+          "ease-(--ease-spring) pointer-events-none absolute left-1 top-1 size-6 rounded-full border border-[var(--border)] bg-[var(--surface)] shadow-[0_2px_8px_rgba(40,36,49,.2)] transition-transform duration-300",
           checked ? "translate-x-6" : "translate-x-0",
         )}
       />

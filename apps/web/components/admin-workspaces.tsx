@@ -387,7 +387,7 @@ export function AdminOrganizationsWorkspace() {
                 {organization.country} · Plano {organization.plan}
               </p>
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <div className="bg-[var(--surface)] rounded-2xl p-4">
+                <div className="rounded-2xl bg-[var(--surface)] p-4">
                   <UsersRound className="size-4 text-[var(--primary)]" />
                   <p className="mt-3 text-xl font-bold">
                     {organization.members}
@@ -396,7 +396,7 @@ export function AdminOrganizationsWorkspace() {
                     Membros
                   </p>
                 </div>
-                <div className="bg-[var(--surface)] rounded-2xl p-4">
+                <div className="rounded-2xl bg-[var(--surface)] p-4">
                   <Activity className="size-4 text-[var(--info)]" />
                   <p className="mt-3 text-xl font-bold">
                     {organization.clients}

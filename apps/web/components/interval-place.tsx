@@ -92,7 +92,7 @@ export function IntervalPlace({
             : `Intervalo entre ${format(interval.opensAt)} e ${interval.closesAt ? format(interval.closesAt) : "a próxima sessão"}.`
         }
       >
-        <span className="size-2.5 shrink-0 rounded-full bg-[var(--primary)]" />
+        <span className="surface-primary size-2.5 shrink-0 rounded-full" />
         <span
           className="h-px flex-1 bg-[repeating-linear-gradient(90deg,var(--border)_0_6px,transparent_6px_12px)]"
           aria-hidden="true"

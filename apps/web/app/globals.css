@@ -157,6 +157,31 @@
   --state-error: light-dark(#b83028, #e8867e);
   --state-error-surface: light-dark(#fbe6e4, #37211f);
 
+  /* ------------------------------------------------------------------------
+     Cores *sobre* superfícies fortes
+
+     Uma superfície forte inverte a polaridade da página: verde escuro no tema
+     claro, verde claro no escuro. Um texto que herde `--foreground` sobre ela
+     desaparece — e desapareceu, em produção, em cartões inteiros.
+
+     Cada superfície forte traz por isso o seu conjunto completo: o texto
+     principal, o secundário e a linha. Sem o secundário não há como escrever
+     um parágrafo de apoio sobre a superfície sem inventar uma cor à mão, e
+     inventar cores à mão foi exatamente como isto se partiu.
+     ------------------------------------------------------------------------ */
+  --on-primary: light-dark(#fbfaf8, #10201a);
+  --on-primary-muted: light-dark(#d3e0da, #1c3a2f);
+  --on-primary-line: light-dark(#5b7f6f, #5d9784);
+
+  --on-accent-muted: light-dark(#fdf1ec, #3b1a10);
+  --on-accent-line: light-dark(#c07a60, #b06c4c);
+
+  --on-shared-muted: #4a3110;
+  --on-shared-line: #b0762c;
+
+  --on-destructive-muted: light-dark(#fbe7e5, #451a16);
+  --on-destructive-line: light-dark(#cf6259, #a8514a);
+
   /* Grão de material (§6.6) — ver `.material::after`. */
   --grain-ink: light-dark(rgba(44, 38, 30, 0.05), rgba(232, 228, 220, 0.07));
 }
@@ -189,6 +214,180 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
+}
+
+/* As receitas vivem em `@layer components` e não em CSS solto. A ordem das
+   camadas do Tailwind é `theme, base, components, utilities`, portanto uma
+   utilidade escrita no sítio — `bg-[var(--muted)]` — ainda ganha à superfície.
+   Fora de qualquer camada as receitas ganhariam a tudo, e uma superfície que
+   não pode ser afinada onde é usada é uma prisão, não uma engine. */
+@layer components {
+  /* ==========================================================================
+     Engine de superfícies
+
+     **A regra que torna o texto ilegível impossível de escrever.**
+
+     O defeito que isto resolve não era uma cor mal escolhida — era um modelo
+     errado. Um cartão punha `bg-[var(--primary)]`; o parágrafo lá dentro,
+     noutro elemento, herdava `--foreground` ou escrevia `text-white/62`. As
+     duas cores nunca se encontravam no mesmo sítio do código, portanto nenhuma
+     verificação de pares as via, e no ecrã o parágrafo desaparecia.
+
+     A correção é estrutural: **nunca se aplica uma cor de fundo, aplica-se uma
+     superfície.** Uma superfície declara o seu fundo *e redefine os tokens de
+     texto no seu próprio escopo*. Um descendente que escreva
+     `text-[var(--muted-foreground)]` recebe automaticamente o valor certo para
+     a superfície onde está, sem saber em que superfície está — que é a única
+     forma de isto continuar correto quando alguém mover o componente.
+
+     Duas famílias, e a distinção é o que interessa:
+
+     - **Tonais** — a mesma polaridade da página (creme sobre creme, escuro
+       sobre escuro). Herdam o texto da página porque herdar está certo.
+     - **Fortes** — polaridade invertida. Trazem o conjunto completo de
+       `--foreground`, `--muted-foreground` e `--border`.
+
+     `check:contrast` recusa `bg-[var(--primary)]` e companhia no código, exige
+     a classe, e valida cada receita abaixo nos dois temas. Ver ADR-033.
+     ========================================================================== */
+
+  .surface-page,
+  .surface-raised,
+  .surface-sunken,
+  .surface-muted,
+  .surface-private,
+  .surface-shared-soft,
+  .surface-retained,
+  .surface-success,
+  .surface-warning,
+  .surface-info,
+  .surface-danger,
+  .surface-primary,
+  .surface-accent,
+  .surface-shared,
+  .surface-destructive,
+  .surface-sidebar,
+  .surface-sidebar-raised,
+  .surface-sidebar-raised-strong,
+  .surface-ink,
+  .surface-ink-raised {
+    background-color: var(--surface-bg);
+    color: var(--foreground);
+    border-color: var(--border);
+  }
+
+  /* Tonais — o fundo muda, o texto da página continua a servir. */
+  .surface-page {
+    --surface-bg: var(--background);
+  }
+  .surface-raised {
+    --surface-bg: var(--surface);
+  }
+  .surface-sunken {
+    --surface-bg: var(--background-deep);
+  }
+  .surface-muted {
+    --surface-bg: var(--muted);
+  }
+  .surface-private {
+    --surface-bg: var(--private-surface);
+    --border: var(--private-border);
+  }
+  .surface-shared-soft {
+    --surface-bg: var(--shared-surface);
+    --border: var(--shared-border);
+  }
+  .surface-retained {
+    --surface-bg: var(--retained-surface);
+  }
+  .surface-success {
+    --surface-bg: var(--success-soft);
+  }
+  .surface-warning {
+    --surface-bg: var(--warning-soft);
+  }
+  .surface-info {
+    --surface-bg: var(--info-soft);
+  }
+  .surface-danger {
+    --surface-bg: var(--destructive-soft);
+  }
+
+  /* Fortes — polaridade invertida, conjunto completo obrigatório. */
+  .surface-primary {
+    --surface-bg: var(--primary);
+    --foreground: var(--on-primary);
+    --muted-foreground: var(--on-primary-muted);
+    --border: var(--on-primary-line);
+    --border-strong: var(--on-primary-line);
+  }
+
+  .surface-accent {
+    --surface-bg: var(--accent);
+    --foreground: var(--on-accent);
+    --muted-foreground: var(--on-accent-muted);
+    --border: var(--on-accent-line);
+    --border-strong: var(--on-accent-line);
+  }
+
+  .surface-shared {
+    --surface-bg: var(--shared);
+    --foreground: var(--on-shared);
+    --muted-foreground: var(--on-shared-muted);
+    --border: var(--on-shared-line);
+    --border-strong: var(--on-shared-line);
+  }
+
+  .surface-destructive {
+    --surface-bg: var(--destructive);
+    --foreground: var(--on-destructive);
+    --muted-foreground: var(--on-destructive-muted);
+    --border: var(--on-destructive-line);
+    --border-strong: var(--on-destructive-line);
+  }
+
+  /* A barra lateral e a superfície editorial são escuras nos dois temas. São
+     fortes no tema claro e tonais no escuro, e por isso trazem sempre o seu
+     conjunto — é mais barato do que ter de decidir caso a caso. */
+  .surface-sidebar {
+    --surface-bg: var(--sidebar);
+    --foreground: var(--sidebar-foreground);
+    --muted-foreground: var(--sidebar-muted);
+    --border: var(--sidebar-border);
+    --border-strong: var(--sidebar-border);
+  }
+
+  .surface-sidebar-raised {
+    --surface-bg: var(--sidebar-raised);
+    --foreground: var(--sidebar-foreground);
+    --muted-foreground: var(--sidebar-muted);
+    --border: var(--sidebar-border);
+    --border-strong: var(--sidebar-border);
+  }
+
+  .surface-sidebar-raised-strong {
+    --surface-bg: var(--sidebar-raised-strong);
+    --foreground: var(--sidebar-foreground);
+    --muted-foreground: var(--sidebar-muted);
+    --border: var(--sidebar-border);
+    --border-strong: var(--sidebar-border);
+  }
+
+  .surface-ink {
+    --surface-bg: var(--ink);
+    --foreground: var(--ink-foreground);
+    --muted-foreground: var(--ink-muted);
+    --border: var(--ink-line);
+    --border-strong: var(--ink-line);
+  }
+
+  .surface-ink-raised {
+    --surface-bg: var(--ink-raised);
+    --foreground: var(--ink-foreground);
+    --muted-foreground: var(--ink-muted);
+    --border: var(--ink-line);
+    --border-strong: var(--ink-line);
+  }
 }
 
 @theme {

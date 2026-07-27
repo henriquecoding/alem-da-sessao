@@ -95,11 +95,11 @@ export function IntervalArrival({
             />
 
             <span
-              className="draw-y absolute left-0 top-1/2 h-9 w-[3px] -translate-y-1/2 rounded-full bg-[var(--primary)]"
+              className="draw-y surface-primary absolute left-0 top-1/2 h-9 w-[3px] -translate-y-1/2 rounded-full"
               style={{ "--d": 8 } as CSSProperties}
             />
             <span
-              className="draw-y absolute right-0 top-1/2 h-9 w-[3px] -translate-y-1/2 rounded-full bg-[var(--primary)] opacity-45"
+              className="draw-y surface-primary absolute right-0 top-1/2 h-9 w-[3px] -translate-y-1/2 rounded-full opacity-45"
               style={{ "--d": 10 } as CSSProperties}
             />
 
@@ -110,7 +110,7 @@ export function IntervalArrival({
                   circunferência de um disco translúcido lê-se como uma
                   segunda forma, e o que se quer aqui é luz, não outro objeto. */}
               <span className="motion-safe:animate-breathe absolute left-1/2 top-1/2 size-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,var(--accent)_0%,transparent_68%)] opacity-25" />
-              <span className="relative block size-2.5 rounded-full bg-[var(--accent)] ring-4 ring-[var(--background-deep)]" />
+              <span className="surface-accent relative block size-2.5 rounded-full ring-4 ring-[var(--background-deep)]" />
             </span>
 
             {/* A etiqueta pendurada no ponto, não centrada entre as âncoras:

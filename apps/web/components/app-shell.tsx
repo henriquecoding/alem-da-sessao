@@ -116,7 +116,7 @@ function NavigationItems({
               collapsed && "justify-center px-0",
               active
                 ? "bg-[var(--highlight-yellow)] text-[var(--sidebar)] shadow-[0_8px_24px_rgba(242,207,99,.16)]"
-                : "hover:bg-[var(--sidebar-raised)] text-[var(--sidebar-muted)] hover:translate-x-0.5 hover:text-[var(--sidebar-foreground)]",
+                : "text-[var(--sidebar-muted)] hover:translate-x-0.5 hover:bg-[var(--sidebar-raised)] hover:text-[var(--sidebar-foreground)]",
             )}
           >
             <item.icon
@@ -184,7 +184,7 @@ export function AppShell({
     <div className="min-h-screen bg-[var(--background)] lg:flex">
       <aside
         className={cn(
-          "sticky top-0 hidden h-screen shrink-0 flex-col bg-[var(--sidebar)] p-4 text-[var(--sidebar-foreground)] lg:flex",
+          "surface-sidebar sticky top-0 hidden h-screen shrink-0 flex-col p-4 text-[var(--sidebar-foreground)] lg:flex",
           "duration-400 ease-(--ease-out-quint) transition-[width]",
           collapsed ? "w-[84px]" : "w-[248px]",
         )}
@@ -195,13 +195,13 @@ export function AppShell({
             collapsed && "justify-center",
           )}
         >
-          <BrandMark className="bg-[var(--sidebar-raised)]" />
+          <BrandMark className="surface-sidebar-raised" />
           {!collapsed && (
             <div className="enter-fade min-w-0">
               <p className="truncate text-sm font-bold tracking-[-0.025em]">
                 Além da Sessão
               </p>
-              <p className="text-[var(--sidebar-muted)] mt-0.5 text-[10px]">
+              <p className="mt-0.5 text-[10px] text-[var(--sidebar-muted)]">
                 demonstração local
               </p>
             </div>
@@ -217,17 +217,17 @@ export function AppShell({
         <div className="mt-auto">
           <div
             className={cn(
-              "bg-[var(--sidebar-raised)] mb-2 flex items-center gap-3 rounded-2xl p-2",
+              "surface-sidebar-raised mb-2 flex items-center gap-3 rounded-2xl p-2",
               collapsed && "justify-center",
             )}
           >
-            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--primary)] text-xs font-bold text-[var(--primary-foreground)]">
+            <span className="surface-primary grid size-9 shrink-0 place-items-center rounded-xl text-xs font-bold text-[var(--primary-foreground)]">
               {identity.initials}
             </span>
             {!collapsed && (
               <div className="enter-fade min-w-0">
                 <p className="truncate text-xs font-bold">{identity.name}</p>
-                <p className="text-[var(--sidebar-muted)] truncate text-[10px]">
+                <p className="truncate text-[10px] text-[var(--sidebar-muted)]">
                   {identity.subtitle}
                 </p>
               </div>
@@ -236,7 +236,7 @@ export function AppShell({
           <button
             type="button"
             onClick={() => setCollapsed((value) => !value)}
-            className="hover:bg-[var(--sidebar-raised)] flex min-h-11 w-full items-center justify-center rounded-2xl text-[var(--sidebar-muted)] transition-colors duration-200 hover:text-[var(--sidebar-foreground)]"
+            className="flex min-h-11 w-full items-center justify-center rounded-2xl text-[var(--sidebar-muted)] transition-colors duration-200 hover:bg-[var(--sidebar-raised)] hover:text-[var(--sidebar-foreground)]"
             aria-label={collapsed ? "Expandir navegação" : "Recolher navegação"}
             aria-expanded={!collapsed}
           >
@@ -310,17 +310,17 @@ export function AppShell({
           />
           <aside
             className={cn(
-              "relative flex h-full w-[min(88vw,340px)] flex-col bg-[var(--sidebar)] p-5 text-[var(--sidebar-foreground)] shadow-2xl",
+              "surface-sidebar relative flex h-full w-[min(88vw,340px)] flex-col p-5 text-[var(--sidebar-foreground)] shadow-2xl",
               drawer === "open" ? "animate-drawer-in" : "animate-drawer-out",
             )}
           >
             <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <BrandMark className="bg-[var(--sidebar-raised)]" />
+                <BrandMark className="surface-sidebar-raised" />
                 <span className="text-sm font-bold">Além da Sessão</span>
               </div>
               <button
-                className="hover:bg-[var(--sidebar-raised)] grid size-11 place-items-center rounded-2xl text-[var(--sidebar-muted)] transition-colors duration-200 hover:text-[var(--sidebar-foreground)]"
+                className="grid size-11 place-items-center rounded-2xl text-[var(--sidebar-muted)] transition-colors duration-200 hover:bg-[var(--sidebar-raised)] hover:text-[var(--sidebar-foreground)]"
                 onClick={closeDrawer}
                 aria-label="Fechar navegação"
               >
@@ -336,7 +336,7 @@ export function AppShell({
             <div className="mt-auto">
               <Link
                 href={`/${segment}`}
-                className="hover:bg-[var(--sidebar-raised)] text-[var(--sidebar-muted)] flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold transition-colors duration-200 hover:text-[var(--sidebar-foreground)]"
+                className="flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold text-[var(--sidebar-muted)] transition-colors duration-200 hover:bg-[var(--sidebar-raised)] hover:text-[var(--sidebar-foreground)]"
               >
                 <LogOut className="size-[18px]" />
                 Sair da demonstração
@@ -348,7 +348,7 @@ export function AppShell({
 
       <nav
         aria-label="Navegação principal mobile"
-        className="border-white/8 fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[1.35rem] border bg-[var(--sidebar)] p-1.5 text-[var(--sidebar-foreground)] shadow-[0_16px_50px_rgba(35,30,45,.35)] lg:hidden"
+        className="surface-sidebar fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[1.35rem] border border-[var(--border)] p-1.5 text-[var(--sidebar-foreground)] shadow-[0_16px_50px_rgba(35,30,45,.35)] lg:hidden"
       >
         {mobileItems.map((item) => {
           const href = `/${segment}${item.href}`;
@@ -378,7 +378,7 @@ export function AppShell({
           type="button"
           onClick={() => setDrawer("open")}
           aria-label="Mais opções"
-          className="active:bg-[var(--sidebar-raised)] text-[var(--sidebar-muted)] flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold transition-colors duration-200"
+          className="flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold text-[var(--sidebar-muted)] transition-colors duration-200 active:bg-[var(--sidebar-raised)]"
         >
           <Menu className="size-[17px]" />
           <span>Mais</span>

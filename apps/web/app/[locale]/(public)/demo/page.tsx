@@ -29,8 +29,8 @@ export default async function DemoPage({
       description:
         "Agenda, clientes, pendências e atribuição de experiências numa superfície operacional.",
       href: "/pro/hoje",
-      tone: "bg-[var(--primary)] text-[var(--primary-foreground)]",
-      iconTone: "bg-[var(--sidebar-raised)] text-[var(--sidebar-foreground)]",
+      tone: "surface-primary",
+      iconTone: "surface-sidebar-raised",
     },
     {
       icon: HeartHandshake,
@@ -38,7 +38,7 @@ export default async function DemoPage({
       description:
         "Sessões, experiências privadas e controlo explícito sobre qualquer partilha.",
       href: "/cuidado/hoje",
-      tone: "bg-[var(--surface)]",
+      tone: "surface-raised",
       iconTone: "bg-[var(--accent-soft)] text-[var(--accent-foreground)]",
     },
     {
@@ -47,8 +47,8 @@ export default async function DemoPage({
       description:
         "Operação, assinaturas e verificações sem uma janela normal para conteúdo clínico.",
       href: "/admin/operacao",
-      tone: "bg-[var(--pigment-stone)]",
-      iconTone: "bg-[var(--primary)] text-[var(--primary-foreground)]",
+      tone: "surface-muted",
+      iconTone: "surface-primary",
     },
   ];
 
@@ -76,22 +76,14 @@ export default async function DemoPage({
               <h2 className="mt-8 text-2xl font-bold tracking-[-0.04em]">
                 {area.title}
               </h2>
-              <p
-                className={`mt-3 text-sm leading-7 ${
-                  area.tone.includes("text-[var(--sidebar-foreground)]")
-                    ? "text-white/68"
-                    : "text-[var(--muted-foreground)]"
-                }`}
-              >
+              {/* Sem condicional. O parágrafo pede o texto secundário da
+                  superfície onde está, e é a superfície que sabe qual é —
+                  aqui vivia um `text-[var(--muted-foreground)]` que desaparecia no cartão
+                  verde. */}
+              <p className="mt-3 text-sm leading-7 text-[var(--muted-foreground)]">
                 {area.description}
               </p>
-              <Button
-                asChild
-                variant={
-                  area.tone.includes("text-[var(--sidebar-foreground)]") ? "secondary" : "default"
-                }
-                className="mt-auto w-full"
-              >
+              <Button asChild variant="onSurface" className="mt-auto w-full">
                 <Link href={localPath(segment, area.href)}>
                   Entrar nesta área
                   <ArrowRight className="size-4" />

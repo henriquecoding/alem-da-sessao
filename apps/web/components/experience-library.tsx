@@ -75,7 +75,7 @@ function InventoryMark() {
       <span className="ease-(--ease-out-quint) absolute inset-x-2 top-5 h-48 rotate-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--pigment-stone)] shadow-[var(--shadow-md)] transition-transform duration-700 group-hover:rotate-6" />
       <span className="ease-(--ease-out-quint) absolute inset-x-3 top-1 h-48 -rotate-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--pigment-clay)] shadow-[var(--shadow-md)] transition-transform duration-700 group-hover:-rotate-6" />
       <span className="absolute inset-x-0 top-7 h-48 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-lg)]">
-        <span className="block h-1.5 w-16 rounded-full bg-[var(--primary)]" />
+        <span className="surface-primary block h-1.5 w-16 rounded-full" />
         <span className="mt-5 block h-px bg-[var(--border)]" />
         <span className="mt-5 block h-1.5 w-28 rounded-full bg-[var(--border-strong)]" />
         <span className="mt-3 block h-1.5 w-24 rounded-full bg-[var(--border)]" />
