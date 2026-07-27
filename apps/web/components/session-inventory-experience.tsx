@@ -53,8 +53,18 @@ const copy = {
     intro:
       "Não precisa de reconstruir toda a conversa. Escolha apenas os fragmentos que continuaram presentes.",
     options: [
-      ["clear", "Algo ficou mais claro", Lightbulb, "bg-[var(--pigment-ochre)]"],
-      ["question", "Ficou uma pergunta", CircleHelp, "bg-[var(--pigment-stone)]"],
+      [
+        "clear",
+        "Algo ficou mais claro",
+        Lightbulb,
+        "bg-[var(--pigment-ochre)]",
+      ],
+      [
+        "question",
+        "Ficou uma pergunta",
+        CircleHelp,
+        "bg-[var(--pigment-stone)]",
+      ],
       ["feeling", "Uma emoção continuou", Waves, "bg-[var(--pigment-rose)]"],
       [
         "phrase",
@@ -108,8 +118,18 @@ const copy = {
     intro:
       "Você não precisa reconstruir toda a conversa. Escolha apenas os fragmentos que continuaram presentes.",
     options: [
-      ["clear", "Algo ficou mais claro", Lightbulb, "bg-[var(--pigment-ochre)]"],
-      ["question", "Ficou uma pergunta", CircleHelp, "bg-[var(--pigment-stone)]"],
+      [
+        "clear",
+        "Algo ficou mais claro",
+        Lightbulb,
+        "bg-[var(--pigment-ochre)]",
+      ],
+      [
+        "question",
+        "Ficou uma pergunta",
+        CircleHelp,
+        "bg-[var(--pigment-stone)]",
+      ],
       ["feeling", "Uma emoção continuou", Waves, "bg-[var(--pigment-rose)]"],
       [
         "phrase",

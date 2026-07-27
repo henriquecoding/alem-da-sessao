@@ -69,20 +69,21 @@ function InventoryMark() {
       aria-hidden="true"
       className="ease-(--ease-out-quint) relative h-60 w-56 transition-transform duration-700 group-hover:-translate-y-1 group-hover:-rotate-1"
     >
-      {/* The two backing cards fan a little wider on hover, as if the stack is
-          being spread to look through. */}
-      <span className="ease-(--ease-out-quint) absolute inset-x-2 top-5 h-48 rotate-3 rounded-[1.4rem] border border-[#bdcad5] bg-[#dceaf7] shadow-[var(--shadow-md)] transition-transform duration-700 group-hover:rotate-6" />
-      <span className="ease-(--ease-out-quint) absolute inset-x-3 top-1 h-48 -rotate-3 rounded-[1.4rem] border border-[#e0c5d0] bg-[#f4d6e2] shadow-[var(--shadow-md)] transition-transform duration-700 group-hover:-rotate-6" />
-      <span className="absolute inset-x-0 top-7 h-48 rounded-[1.4rem] border border-[#d9d1c6] bg-[#fffcfa] p-6 shadow-[var(--shadow-lg)]">
-        <span className="block h-1.5 w-16 rounded-full bg-[#6b4ac8]" />
-        <span className="mt-5 block h-px bg-[#ded8df]" />
-        <span className="mt-5 block h-1.5 w-28 rounded-full bg-[#c5bec9]" />
-        <span className="mt-3 block h-1.5 w-24 rounded-full bg-[#d5ced8]" />
-        <span className="mt-3 block h-1.5 w-16 rounded-full bg-[#e2dce6]" />
+      {/* Os hexadecimais fixos que aqui estavam eram a paleta antiga — azul,
+          rosa e roxo — e ficavam a gritar contra a base quente. Passa tudo por
+          tokens, portanto a ilustração acompanha a paleta e o modo escuro. */}
+      <span className="ease-(--ease-out-quint) absolute inset-x-2 top-5 h-48 rotate-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--pigment-stone)] shadow-[var(--shadow-md)] transition-transform duration-700 group-hover:rotate-6" />
+      <span className="ease-(--ease-out-quint) absolute inset-x-3 top-1 h-48 -rotate-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--pigment-clay)] shadow-[var(--shadow-md)] transition-transform duration-700 group-hover:-rotate-6" />
+      <span className="absolute inset-x-0 top-7 h-48 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-lg)]">
+        <span className="block h-1.5 w-16 rounded-full bg-[var(--primary)]" />
+        <span className="mt-5 block h-px bg-[var(--border)]" />
+        <span className="mt-5 block h-1.5 w-28 rounded-full bg-[var(--border-strong)]" />
+        <span className="mt-3 block h-1.5 w-24 rounded-full bg-[var(--border)]" />
+        <span className="mt-3 block h-1.5 w-16 rounded-full bg-[var(--muted)]" />
         <span className="mt-6 flex gap-2.5">
-          <span className="size-8 rounded-full bg-[#d7ecee]" />
-          <span className="size-8 rounded-full bg-[#f7e6a8]" />
-          <span className="size-8 rounded-full bg-[#ded6fa]" />
+          <span className="size-8 rounded-full bg-[var(--pigment-sage)]" />
+          <span className="size-8 rounded-full bg-[var(--pigment-ochre)]" />
+          <span className="size-8 rounded-full bg-[var(--pigment-rose)]" />
         </span>
       </span>
     </div>
@@ -187,7 +188,9 @@ export function ExperienceLibrary({
       <div className="reveal" style={{ "--d": 1 } as CSSProperties}>
         <article className="lift group overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-lg)]">
           <div className="grid min-h-[360px] lg:grid-cols-[310px_1fr]">
-            <div className="relative flex items-center justify-center overflow-hidden border-b border-[var(--border)] bg-[linear-gradient(145deg,#eef4fa,#f8edf1)] p-8 lg:border-b-0 lg:border-r">
+            {/* Era um gradiente azul-rosa fixo, o anti-padrão #4. Agora é uma
+                superfície quente chapada com o mesmo grão do resto. */}
+            <div className="material relative flex items-center justify-center overflow-hidden border-b border-[var(--border)] bg-[var(--background-deep)] p-8 lg:border-b-0 lg:border-r">
               <div className="absolute inset-0 opacity-45 [background-image:linear-gradient(rgba(104,72,198,.05)_1px,transparent_1px)] [background-size:100%_28px]" />
               <InventoryMark />
             </div>

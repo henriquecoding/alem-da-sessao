@@ -4,11 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const tones = {
-  neutral: "bg-[var(--pigment-rose)] text-[#7c4550]",
+  neutral: "bg-[var(--pigment-rose)] text-[var(--accent-foreground)]",
   accent: "bg-[var(--pigment-clay)] text-[var(--accent-foreground)]",
   aqua: "bg-[var(--pigment-sage)] text-[var(--success)]",
   blue: "bg-[var(--pigment-stone)] text-[var(--info)]",
-  lilac: "bg-[var(--pigment-sage)] text-[#5f4c83]",
+  lilac: "bg-[var(--pigment-sage)] text-[var(--primary)]",
   lemon: "bg-[var(--pigment-ochre)] text-[var(--warning)]",
 } as const;
 
@@ -37,20 +37,29 @@ export function MetricCard({
       )}
       style={style}
     >
-      <CardContent className="p-5">
-        <span
-          className={cn(
-            "ease-(--ease-spring) grid size-10 place-items-center rounded-2xl transition-transform duration-500 group-hover/metric:scale-110",
-            tones[tone],
-          )}
-        >
-          <Icon className="size-[18px]" aria-hidden="true" />
-        </span>
-        <p className="tabular mt-5 text-[2rem] font-bold leading-none tracking-[-0.05em]">
+      {/* Compacto por decisão, não por economia de espaço. O Care OS é o modo
+          de densidade alta (§6.2); a versão anterior tinha o ícone empilhado
+          sobre o número sobre duas linhas de texto e ocupava o dobro da altura
+          para dizer o mesmo. Aqui o ícone identifica a linha em vez de a
+          encabeçar, e a leitura é uma varredura horizontal. */}
+      <CardContent className="p-4">
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              "grid size-6 shrink-0 place-items-center rounded-[var(--radius-sm)]",
+              tones[tone],
+            )}
+          >
+            <Icon className="size-3.5" aria-hidden="true" />
+          </span>
+          <p className="truncate text-xs font-medium text-[var(--muted-foreground)]">
+            {label}
+          </p>
+        </div>
+        <p className="tabular mt-3 text-[1.75rem] font-semibold leading-none tracking-[-0.04em]">
           {value}
         </p>
-        <p className="mt-2.5 text-sm font-semibold leading-5">{label}</p>
-        <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">
+        <p className="mt-1.5 text-xs leading-5 text-[var(--muted-foreground)]">
           {detail}
         </p>
       </CardContent>
