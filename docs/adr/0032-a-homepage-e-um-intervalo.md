@@ -72,3 +72,25 @@ uma intenção.
 - **O gesto tem três vias equivalentes** — arrastar, Enter, setas — porque é o
   componente real e o WCAG 2.2 SC 2.5.7 aplica-se aqui como em qualquer lado.
 - **Nenhuma alegação clínica.** `check:claims` cobre a copy nova.
+
+## Nota de convergência
+
+Enquanto esta página era escrita, outra sessão desenhou um motor de coreografia
+sem dependências (`useChoreography`, `CountUp`) e animou a `IntervalFigure` do
+herói antigo. As duas linhas encontraram-se num merge.
+
+O que ficou: **o motor**, aplicado à régua da chegada. A ordem que essa sessão
+desenhou — primeiro a semana, depois as duas sessões, por último o tamanho do
+que fica no meio — é exatamente o argumento desta página, e agora é a régua
+inteira que a executa em vez de um cartão no canto.
+
+O que saiu: `interval-figure.tsx`. A figura existia para o herói que esta
+página substituiu, e depois do merge não era renderizada em lado nenhum. Deixar
+um componente órfão no repositório seria pior do que apagá-lo — a ideia dele
+não se perdeu, mudou de escala.
+
+As duas sessões encontraram também a mesma falha de hidratação por caminhos
+diferentes, e as duas correções ficam. A da folha de estilos (`.reveal` só
+esconde dentro de `.js-reveal`) continua a valer no dia em que o bundle falhar
+por uma razão que não seja a CSP; a da CSP (ADR-030) remove a razão que de
+facto o estava a partir.

@@ -31,9 +31,10 @@ export const homePT = {
     toState: "ainda não",
     hereLabel: "está aqui",
     title: "Está aqui.",
-    lede: "Entre duas sessões. É onde vive 99,5% de um tratamento, e é o único sítio que nenhum produto de saúde mental modela — porque o intervalo não fatura.",
+    lede: "Entre duas sessões. É onde vive quase todo um tratamento, e é o único sítio que nenhum produto de saúde mental modela — porque o intervalo não fatura.",
     cue: "Atravessar",
     span: "sete dias",
+    measureLabel: "do tratamento acontece aqui",
   },
 
   /* A pergunta de chegada. Reordena a página e não sai desta visita. */
@@ -171,9 +172,10 @@ export const homeBR: HomeCopy = {
     toState: "ainda não",
     hereLabel: "você está aqui",
     title: "Você está aqui.",
-    lede: "Entre duas sessões. É onde vive 99,5% de um tratamento, e é o único lugar que nenhum produto de saúde mental modela — porque o intervalo não fatura.",
+    lede: "Entre duas sessões. É onde vive quase todo um tratamento, e é o único lugar que nenhum produto de saúde mental modela — porque o intervalo não fatura.",
     cue: "Atravessar",
     span: "sete dias",
+    measureLabel: "do tratamento acontece aqui",
   },
 
   question: {

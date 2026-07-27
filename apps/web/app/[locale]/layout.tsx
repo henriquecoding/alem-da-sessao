@@ -48,13 +48,15 @@ export default async function LocaleLayout({
             `suppressHydrationWarning` acima existe por causa deste atributo —
             o servidor não o pode conhecer, e é suposto assim. */}
         <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
-
-        {/* Without scripting nothing reveals the deferred content, so it has
-            to render in its final state. */}
-        <noscript>
-          <style>{`.reveal{opacity:1!important;transform:none!important}`}</style>
-        </noscript>
       </head>
+
+      {/* O `<noscript>` que aqui repunha `.reveal` desapareceu, e ainda bem:
+          só cobria scripting desligado, e o caso real era outro — a CSP a
+          recusar o bundle. Agora `.reveal` só esconde dentro de `.js-reveal`,
+          classe posta por quem sabe voltar a mostrar (`reveal-observer.tsx`),
+          e a CSP deixou de recusar seja o que for (ADR-030). São duas defesas
+          para a mesma falha, e é assim que deve ser: a da folha de estilos
+          continua a valer no dia em que o bundle falhar por outra razão. */}
       <body>
         {children}
         <RevealObserver />

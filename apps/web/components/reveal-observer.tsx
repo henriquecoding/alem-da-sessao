@@ -9,9 +9,11 @@ import { useEffect } from "react";
  * time they intersect the viewport, then released from observation — the
  * animation plays once and never re-runs on scroll-back.
  *
- * Two guarantees keep this from ever stranding content invisible:
- * `prefers-reduced-motion` short-circuits the whole thing in CSS, and the
- * `<noscript>` block in the layout un-hides everything when scripting is off.
+ * Nothing is ever stranded invisible: `prefers-reduced-motion` short-circuits
+ * the whole thing in CSS, and the hidden state itself is scoped to the
+ * `.js-reveal` class this component adds — so a browser that never runs it
+ * (scripting off, hydration failed, bundle refused by the CSP) simply renders
+ * the page as written.
  * A `MutationObserver` picks up nodes added later by the interactive engines.
  */
 export function RevealObserver() {
@@ -19,6 +21,12 @@ export function RevealObserver() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
+
+    // Assume o contrato antes de o cumprir: a partir daqui há quem volte a
+    // mostrar o que a folha de estilos esconde. Enquanto esta classe não
+    // existir, `.reveal` não esconde nada — é o que impede a página de ficar em
+    // branco quando este ficheiro nunca chega a correr.
+    document.documentElement.classList.add("js-reveal");
 
     const observer = new IntersectionObserver(
       (entries) => {
