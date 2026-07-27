@@ -3,6 +3,7 @@
 import {
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
   type KeyboardEvent,
@@ -31,6 +32,14 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Locale } from "@alem-da-sessao/i18n";
+import { getToolBySlug } from "@alem-da-sessao/tool-registry";
+import { renderLoadStructuresPlan } from "@alem-da-sessao/tool-registry/artifact";
+import { Arrival } from "@/components/experience-runtime/arrival";
+import { ArtifactView } from "@/components/experience-runtime/artifact-view";
+import {
+  Destination,
+  type DestinationChoice,
+} from "@/components/experience-runtime/destination";
 import {
   loadStructuresSchema,
   type PublicLoadStructureInput,
@@ -799,12 +808,55 @@ export function LoadStructuresExperience({
   const [nextSessionNote, setNextSessionNote] = useState("");
   const [anchored, setAnchored] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [mode, setMode] = useState<"editing" | "preview" | "shared">("editing");
+  // O ritual de cinco tempos (§7.2). "arrival" e "forming" são os dois tempos
+  // que o mercado inteiro salta.
+  const [mode, setMode] = useState<
+    "arrival" | "editing" | "forming" | "preview" | "shared" | "discarded"
+  >("arrival");
   const [publishing, setPublishing] = useState(false);
   const [publication, setPublication] = useState<{
     status: "approved" | "pending" | "rejected";
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const manifest = getToolBySlug("estruturas-de-carga")!;
+
+  /**
+   * O artefacto — a planta de cargas (§4.1). Determinística: a mesma
+   * configuração produz sempre a mesma planta, o que permite à pessoa
+   * reconhecer a sua estrutura entre sessões sem que nada a pontue.
+   *
+   * `formedAt` é congelado no primeiro render: se viesse do relógio a cada
+   * passagem, o artefacto deixaria de ser reproduzível.
+   */
+  const [formedAt] = useState(() => new Date().toISOString());
+
+  const artifactSvg = useMemo(
+    () =>
+      loads.length
+        ? renderLoadStructuresPlan(
+            {
+              loads: loads.map((load) => ({
+                id: load.id,
+                label: load.label,
+                impactScale: load.impactScale,
+                durationMonths: load.durationMonths,
+                ownership: load.ownership ?? "unclear",
+                movement: load.movement ?? "observe",
+              })),
+              support,
+              anchored,
+            },
+            {
+              toolId: manifest.id,
+              toolVersion: manifest.version,
+              locale,
+              createdAt: formedAt,
+            },
+          )
+        : null,
+    [loads, support, anchored, formedAt, locale, manifest.id, manifest.version],
+  );
 
   const totalMass = loads.reduce(
     (sum, load) => sum + load.durationMonths * load.impactScale,
@@ -1018,6 +1070,111 @@ export function LoadStructuresExperience({
     } finally {
       setPublishing(false);
     }
+  }
+
+  function chooseDestination(choice: DestinationChoice) {
+    if (choice === "discard") {
+      // "Sem rasto" tem de ser literal: o estado sai da memória no mesmo
+      // gesto, sem viagem ao servidor e sem nada para reverter.
+      setLoads([]);
+      setEffects([]);
+      setSupport("");
+      setHiddenFrom("");
+      setNextSessionNote("");
+      setAnchored(false);
+      setStage(0);
+      setMode("discarded");
+      return;
+    }
+    if (choice === "share") {
+      // Continua a passar pela validação: a pré-visualização só faz sentido
+      // se houver de facto algo selecionado para atravessar.
+      prepareShare();
+      return;
+    }
+    setSaved(true);
+  }
+
+  // -----------------------------------------------------------------------
+  // Tempo 1 — Chegada (§7.2). Antes de qualquer campo.
+  // -----------------------------------------------------------------------
+  if (mode === "arrival") {
+    return (
+      <Arrival
+        manifest={manifest}
+        locale={locale}
+        tone="ink"
+        onBegin={
+          <button
+            type="button"
+            onClick={() => setMode("editing")}
+            className={emberButton}
+          >
+            {t.continue}
+            <ArrowRight className="size-4" />
+          </button>
+        }
+      />
+    );
+  }
+
+  // -----------------------------------------------------------------------
+  // Tempo 3 — Formação, e tempo 5 — Destino (§7.2).
+  // -----------------------------------------------------------------------
+  if (mode === "forming" && artifactSvg) {
+    return (
+      <section className="mx-auto max-w-4xl">
+        <p className="enter font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--ember)]">
+          {locale === "pt-PT" ? "A planta" : "A planta"}
+        </p>
+        <h2 className="enter mt-3 text-balance font-serif text-4xl font-medium leading-[1.02] tracking-[-0.04em] text-[var(--ink-foreground)]">
+          {locale === "pt-PT"
+            ? "Esta é a estrutura que sustenta."
+            : "Esta é a estrutura que você sustenta."}
+        </h2>
+        <p className="enter mt-4 max-w-2xl text-sm leading-7 text-[var(--ink-muted)]">
+          {locale === "pt-PT"
+            ? "A largura vem do impacto que indicou, a altura da duração, a textura da proveniência. Nenhuma delas é uma nota: a planta regista forma, não valor."
+            : "A largura vem do impacto que você indicou, a altura da duração, a textura da proveniência. Nenhuma delas é uma nota: a planta registra forma, não valor."}
+        </p>
+
+        <ArtifactView
+          className="mt-9"
+          svg={artifactSvg}
+          locale={locale}
+          fileName={`estruturas-de-carga-${formedAt.slice(0, 10)}`}
+        />
+
+        <Destination
+          className="mt-12"
+          locale={locale}
+          mode={community ? "guest" : "account"}
+          onChoose={chooseDestination}
+        />
+      </section>
+    );
+  }
+
+  if (mode === "discarded") {
+    return (
+      <section className="mx-auto max-w-2xl rounded-[1.8rem] border border-[#373a42] bg-[#17191d] p-10 text-center">
+        <h2 className="font-serif text-3xl font-medium text-[var(--ink-foreground)]">
+          {locale === "pt-PT" ? "Não ficou nada." : "Não ficou nada."}
+        </h2>
+        <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-[var(--ink-muted)]">
+          {locale === "pt-PT"
+            ? "A planta desapareceu deste navegador e nunca chegou a sair dele."
+            : "A planta desapareceu deste navegador e nunca chegou a sair dele."}
+        </p>
+        <button
+          type="button"
+          onClick={() => setMode("arrival")}
+          className={cn(outlineButton, "mt-8")}
+        >
+          {t.restart}
+        </button>
+      </section>
+    );
   }
 
   if (mode === "shared") {
@@ -1757,21 +1914,17 @@ export function LoadStructuresExperience({
                 </p>
               )}
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+              {/* O trabalho acaba na Formação, nunca directamente na partilha.
+                  A pessoa vê a planta que construiu antes de decidir o destino
+                  dela — é a diferença entre escolher e ser encaminhada (§7.2). */}
+              <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() => setSaved(true)}
-                  className={outlineButton}
-                >
-                  {t.save}
-                </button>
-                <button
-                  type="button"
-                  onClick={prepareShare}
+                  onClick={() => setMode("forming")}
                   className={emberButton}
                 >
-                  {t.preview}
-                  <Eye className="size-4" />
+                  {locale === "pt-PT" ? "Ver a planta" : "Ver a planta"}
+                  <ArrowRight className="size-4" />
                 </button>
               </div>
             </div>

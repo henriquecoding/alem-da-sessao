@@ -132,5 +132,7 @@ export async function getProfessionalToday(): Promise<ProfessionalToday> {
 export async function getClientById(
   clientId: string,
 ): Promise<ClientSummary | null> {
-  return structuredClone(clients.find((client) => client.id === clientId) ?? null);
+  return structuredClone(
+    clients.find((client) => client.id === clientId) ?? null,
+  );
 }

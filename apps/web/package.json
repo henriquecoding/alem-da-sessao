@@ -11,7 +11,12 @@
     "test": "vitest",
     "test:run": "vitest run",
     "check:i18n": "node --import tsx scripts/check-i18n.ts",
-    "check:privacy": "node --import tsx scripts/check-privacy.ts"
+    "check:privacy": "node --import tsx scripts/check-privacy.ts",
+    "check:tools": "node --import tsx scripts/check-tools.ts",
+    "check:claims": "node --import tsx scripts/check-claims.ts",
+    "check:direction": "node --import tsx scripts/check-direction.ts",
+    "check:budgets": "node --import tsx scripts/check-budgets.ts",
+    "check:accessibility": "node --import tsx scripts/check-accessibility.ts"
   },
   "dependencies": {
     "@alem-da-sessao/authz": "workspace:*",

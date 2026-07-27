@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import {
   ArrowLeft,
   ArrowRight,
   Check,
   CircleHelp,
-  Eye,
   Lightbulb,
   LockKeyhole,
   MessageSquareText,
@@ -18,6 +17,16 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Locale } from "@alem-da-sessao/i18n";
+import { getToolBySlug } from "@alem-da-sessao/tool-registry";
+import { renderSessionInventoryConstellation } from "@alem-da-sessao/tool-registry/artifact";
+import { Arrival } from "@/components/experience-runtime/arrival";
+import { ArtifactView } from "@/components/experience-runtime/artifact-view";
+import {
+  Destination,
+  type DestinationChoice,
+} from "@/components/experience-runtime/destination";
+import { ShareGesture } from "@/components/experience-runtime/share-gesture";
+import { ShareReceipt } from "@/components/experience-runtime/share-receipt";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -158,15 +167,66 @@ const destinationKeys: DestinationKey[] = [
   "leave",
 ];
 
-export function SessionInventoryExperience({ locale }: { locale: Locale }) {
+export function SessionInventoryExperience({
+  locale,
+  /** `guest` corre a porta A: sem conta, sem persistência (§4.10). */
+  audience = "guest",
+}: {
+  locale: Locale;
+  audience?: "guest" | "account";
+}) {
   const t = copy[locale];
   const [stage, setStage] = useState(0);
   const [fragments, setFragments] = useState<Fragment[]>([]);
   const [note, setNote] = useState("");
-  const [mode, setMode] = useState<"editing" | "saved" | "sharing" | "done">(
-    "editing",
-  );
+  // O ritual de cinco tempos do §7.2. "arrival" e "forming" são os dois que o
+  // mercado inteiro salta, e são os que fazem isto ser um lugar.
+  const [mode, setMode] = useState<
+    | "arrival"
+    | "editing"
+    | "saved"
+    | "forming"
+    | "sharing"
+    | "done"
+    | "discarded"
+  >("arrival");
   const [error, setError] = useState(false);
+  /** Momento da travessia, para o recibo do §4.5. */
+  const [sharedAt, setSharedAt] = useState<Date | null>(null);
+
+  const manifest = getToolBySlug("inventario-da-sessao")!;
+
+  /**
+   * O artefacto. Determinístico por construção: a mesma seleção produz sempre
+   * a mesma constelação, o que permite compará-la entre sessões (§4.1).
+   *
+   * `createdAt` entra congelado no primeiro render da formação em vez de ser
+   * lido a cada render — se viesse do relógio a cada passagem, o artefacto
+   * deixaria de ser reproduzível.
+   */
+  const [formedAt] = useState(() => new Date().toISOString());
+
+  const artifactSvg = useMemo(() => {
+    const complete = fragments.filter((item) => item.state && item.destination);
+    if (!complete.length) return null;
+
+    return renderSessionInventoryConstellation(
+      {
+        fragments: complete.map((item) => ({
+          id: item.id,
+          label: item.label,
+          state: item.state!,
+          destination: item.destination!,
+        })),
+      },
+      {
+        toolId: manifest.id,
+        toolVersion: manifest.version,
+        locale,
+        createdAt: formedAt,
+      },
+    );
+  }, [fragments, formedAt, locale, manifest.id, manifest.version]);
 
   function toggleOption(option: (typeof t.options)[number]) {
     const [id, label, icon, tone] = option;
@@ -203,8 +263,113 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
     setStage(0);
     setFragments([]);
     setNote("");
-    setMode("editing");
+    setMode("arrival");
     setError(false);
+  }
+
+  function chooseDestination(choice: DestinationChoice) {
+    if (choice === "discard") {
+      // "Descartar sem rasto" tem de ser literal: o estado desaparece da
+      // memória no mesmo gesto, não fica à espera de um pedido ao servidor.
+      setFragments([]);
+      setNote("");
+      setStage(0);
+      setMode("discarded");
+      return;
+    }
+    if (choice === "share") {
+      setMode("sharing");
+      return;
+    }
+    // "download" e "account" ficam na formação: o objeto já está no ecrã e o
+    // descarregamento acontece sem sair da página.
+    setMode("saved");
+  }
+
+  // ---------------------------------------------------------------------
+  // Tempo 1 — Chegada (§7.2). Antes de qualquer campo.
+  // ---------------------------------------------------------------------
+  if (mode === "arrival") {
+    return (
+      <Arrival
+        manifest={manifest}
+        locale={locale}
+        onBegin={
+          <Button
+            size="lg"
+            className="w-fit"
+            onClick={() => setMode("editing")}
+          >
+            {locale === "pt-PT" ? "Começar" : "Começar"}
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Button>
+        }
+      />
+    );
+  }
+
+  // ---------------------------------------------------------------------
+  // Tempo 3 — Formação, e tempo 5 — Destino (§7.2).
+  // ---------------------------------------------------------------------
+  if (mode === "forming" && artifactSvg) {
+    return (
+      <div className="mx-auto max-w-4xl">
+        <p className="enter font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--accent-foreground)]">
+          {locale === "pt-PT" ? "O que ficou" : "O que ficou"}
+        </p>
+        <h2
+          className="enter mt-3 text-balance text-3xl font-bold tracking-[-0.045em]"
+          style={{ "--d": 1 } as CSSProperties}
+        >
+          {locale === "pt-PT"
+            ? "Isto é o seu inventário."
+            : "Isso é o seu inventário."}
+        </h2>
+        <p
+          className="enter mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-foreground)]"
+          style={{ "--d": 2 } as CSSProperties}
+        >
+          {locale === "pt-PT"
+            ? "Cada ponto é um fragmento que escolheu. Os traços ligam os que vão para o mesmo lugar. Nada aqui é uma nota."
+            : "Cada ponto é um fragmento que você escolheu. Os traços ligam os que vão para o mesmo lugar. Nada aqui é uma nota."}
+        </p>
+
+        <ArtifactView
+          className="mt-9"
+          svg={artifactSvg}
+          locale={locale}
+          fileName={`inventario-da-sessao-${formedAt.slice(0, 10)}`}
+        />
+
+        <Destination
+          className="mt-12"
+          locale={locale}
+          mode={audience}
+          onChoose={chooseDestination}
+        />
+      </div>
+    );
+  }
+
+  if (mode === "discarded") {
+    return (
+      <Card className="enter-scale mx-auto max-w-2xl">
+        <CardContent className="flex min-h-[380px] flex-col items-center justify-center p-8 text-center">
+          <h2 className="text-2xl font-bold tracking-[-0.04em]">
+            {locale === "pt-PT" ? "Não ficou nada." : "Não ficou nada."}
+          </h2>
+          <p className="mt-4 max-w-md text-sm leading-7 text-[var(--muted-foreground)]">
+            {locale === "pt-PT"
+              ? "O que escreveu desapareceu deste navegador e nunca chegou a sair dele."
+              : "O que você escreveu desapareceu deste navegador e nunca chegou a sair dele."}
+          </p>
+          <Button className="mt-8" variant="secondary" onClick={reset}>
+            <RotateCcw className="size-4" />
+            {t.restart as string}
+          </Button>
+        </CardContent>
+      </Card>
+    );
   }
 
   if (mode === "done") {
@@ -230,6 +395,18 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
           >
             {t.doneBody as string}
           </p>
+
+          {/* §4.5, quinto momento: o recibo. Uma confirmação diz que o sistema
+              funcionou; um recibo diz o que aconteceu com uma coisa da pessoa. */}
+          {sharedAt && (
+            <ShareReceipt
+              className="animate-crossing mt-7 w-full max-w-md text-left"
+              locale={locale}
+              sharedAt={sharedAt}
+              recipientName="Dra. Inês Almeida"
+            />
+          )}
+
           <div className="enter mt-8" style={{ "--d": 3 } as CSSProperties}>
             <Button onClick={reset}>
               <RotateCcw className="size-4" />
@@ -254,6 +431,14 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
             <h2 className="text-2xl font-bold">{t.preview as string}</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
               {t.previewBody as string}
+            </p>
+
+            {/* §4.5, segundo momento: uma linha humana antes do gesto. Diz
+                exatamente quem vê, o que vê, e o que continua a ser da pessoa. */}
+            <p className="bg-[var(--muted)]/50 mt-5 rounded-2xl border border-[var(--border)] p-4 text-sm leading-6">
+              {locale === "pt-PT"
+                ? "A Dra. Inês Almeida vai ver isto, e só isto. Continua a poder editar a sua versão — o que ela recebe não muda."
+                : "A Dra. Inês Almeida vai ver isso, e só isso. Você continua podendo editar a sua versão — o que ela recebe não muda."}
             </p>
             <div className="mt-7 space-y-3">
               {shared.map((fragment, index) => (
@@ -297,14 +482,24 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
                 <p className="mt-2 text-sm">{note}</p>
               </div>
             )}
-            <div className="mt-7 flex justify-end">
-              <Button
+            {/* §4.5, terceiro e quarto momentos: um gesto deliberado, com
+                alternativa por botão e teclado (WCAG 2.2 SC 2.5.7), e a
+                travessia como retorno visual em vez de um toast verde. */}
+            <div className="mt-8 border-t border-[var(--border)] pt-6">
+              <p className="mb-4 text-sm font-semibold">
+                {locale === "pt-PT"
+                  ? "Leve isto até à Dra. Inês."
+                  : "Leve isso até a Dra. Inês."}
+              </p>
+              <ShareGesture
+                locale={locale}
+                recipientName="Inês Almeida"
                 disabled={shared.length === 0}
-                onClick={() => setMode("done")}
-              >
-                <Eye className="size-4" />
-                {t.confirm as string}
-              </Button>
+                onCrossed={() => {
+                  setSharedAt(new Date());
+                  setMode("done");
+                }}
+              />
             </div>
           </CardContent>
         </Card>
@@ -630,19 +825,13 @@ export function SessionInventoryExperience({ locale }: { locale: Locale }) {
                 <ArrowRight className="size-4" />
               </Button>
             ) : (
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Button variant="secondary" onClick={() => setMode("saved")}>
-                  <LockKeyhole className="size-4" />
-                  {t.save as string}
-                </Button>
-                <Button
-                  disabled={!fragments.some((fragment) => fragment.share)}
-                  onClick={() => setMode("sharing")}
-                >
-                  <Eye className="size-4" />
-                  {t.share as string}
-                </Button>
-              </div>
+              // O trabalho acaba na Formação, nunca directamente na partilha.
+              // A pessoa vê o objeto que fez antes de decidir o destino dele —
+              // é a diferença entre escolher e ser encaminhada (§7.2).
+              <Button onClick={() => setMode("forming")}>
+                {locale === "pt-PT" ? "Ver o que ficou" : "Ver o que ficou"}
+                <ArrowRight className="size-4" />
+              </Button>
             )}
           </div>
         </CardContent>

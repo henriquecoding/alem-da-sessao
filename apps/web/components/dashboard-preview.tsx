@@ -21,8 +21,17 @@ export function DashboardPreview() {
         aria-hidden="true"
         className="bg-[var(--primary)]/10 animate-breathe absolute -inset-4 -z-10 rounded-[2.4rem] blur-2xl [animation-delay:-3.5s]"
       />
-      <div className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-[var(--surface)] shadow-[var(--shadow-xl)]">
-        <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3 sm:px-5">
+      {/* Isto é um retrato do produto, não o produto: um leitor de ecrã recebe
+          a descrição e não os controlos falsos que há lá dentro (WCAG 1.1.1). */}
+      <div
+        role="img"
+        aria-label="Retrato da área profissional: agenda do dia, próxima sessão com uma cliente e um aviso de partilha por rever. Todos os dados são fictícios."
+        className="overflow-hidden rounded-[1.8rem] border border-white/70 bg-[var(--surface)] shadow-[var(--shadow-xl)]"
+      >
+        <div
+          aria-hidden="true"
+          className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3 sm:px-5"
+        >
           <div className="flex items-center gap-2">
             <span className="size-2.5 rounded-full bg-[var(--accent)]" />
             <span className="size-2.5 rounded-full bg-[#edc868]" />
@@ -33,7 +42,10 @@ export function DashboardPreview() {
           </span>
         </div>
 
-        <div className="grid min-h-[390px] grid-cols-[76px_1fr] sm:grid-cols-[170px_1fr]">
+        <div
+          aria-hidden="true"
+          className="grid min-h-[390px] grid-cols-[76px_1fr] sm:grid-cols-[170px_1fr]"
+        >
           <aside className="bg-[var(--sidebar)] p-3 text-white sm:p-4">
             <div className="mb-8 flex items-center gap-2">
               <span className="grid size-8 place-items-center rounded-xl bg-white/10">
@@ -84,10 +96,12 @@ export function DashboardPreview() {
                 <p className="mt-1 text-xs text-white/65">
                   09:30 · Online · 50 min
                 </p>
-                <button className="mt-5 flex w-full items-center justify-between rounded-xl bg-white px-3 py-2.5 text-left text-xs font-bold text-[var(--foreground)]">
+                {/* Desenho de um botão, não um botão: era focável e anunciado
+                    como acionável sem fazer nada. */}
+                <span className="mt-5 flex w-full items-center justify-between rounded-xl bg-white px-3 py-2.5 text-left text-xs font-bold text-[var(--foreground)]">
                   Abrir contexto
                   <ChevronRight className="size-4" />
-                </button>
+                </span>
               </div>
 
               <div className="space-y-3">
