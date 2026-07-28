@@ -28,7 +28,7 @@ export const homePT = {
     sharedSide: "Atravessou por decisão",
     days: ["Sessão", "Dia 2", "Dia 3", "Hoje", "Dia 5", "Dia 6", "Sessão"],
     description:
-      "Uma folha de origami com sete dobras liga a sessão anterior à próxima. A folha ganha forma e abre uma ponte à medida que percorre a experiência.",
+      "Uma faixa de papel com sete dobras liga a sessão anterior à próxima. Conforme a escolha, uma folha ganha a forma reconhecível de um pássaro, uma raposa ou um barco e só atravessa por decisão explícita.",
   },
   ritual: {
     progress: "Passo {current} de {total}",
@@ -49,7 +49,7 @@ export const homePT = {
             id: "echo",
             label: "Algo ficou",
             hint: "Um peso, uma frase ou uma sensação que regressou.",
-            object: "Eco",
+            object: "Pássaro de regresso",
             response:
               "Reconhecer que ficou já é diferente de o perder até à próxima sessão.",
             tool: "Estruturas de Carga",
@@ -60,7 +60,7 @@ export const homePT = {
             id: "clarity",
             label: "Algo ganhou forma",
             hint: "Uma ligação que só apareceu depois da conversa.",
-            object: "Clareza",
+            object: "Raposa atenta",
             response:
               "Uma perceção pode conservar a sua forma sem ser transformada imediatamente numa conclusão.",
             tool: "Inventário da Sessão",
@@ -71,7 +71,7 @@ export const homePT = {
             id: "intention",
             label: "Algo quer seguir",
             hint: "Uma intenção que gostaria de levar consigo.",
-            object: "Intenção",
+            object: "Barco de partida",
             response:
               "Chegar preparado não significa chegar com tudo resolvido.",
             tool: "Inventário da Sessão",
@@ -167,7 +167,7 @@ export const homeBR: HomeCopy = {
     sharedSide: "Atravessou por decisão",
     days: ["Sessão", "Dia 2", "Dia 3", "Hoje", "Dia 5", "Dia 6", "Sessão"],
     description:
-      "Uma folha de origami com sete dobras liga a sessão anterior à próxima. A folha ganha forma e abre uma ponte à medida que percorre a experiência.",
+      "Uma faixa de papel com sete dobras liga a sessão anterior à próxima. Conforme a escolha, uma folha ganha a forma reconhecível de um pássaro, uma raposa ou um barco e só atravessa por decisão explícita.",
   },
   ritual: {
     progress: "Passo {current} de {total}",
@@ -188,7 +188,7 @@ export const homeBR: HomeCopy = {
             id: "echo",
             label: "Algo ficou",
             hint: "Um peso, uma frase ou uma sensação que voltou.",
-            object: "Eco",
+            object: "Pássaro de retorno",
             response:
               "Reconhecer que ficou já é diferente de perder isso até a próxima sessão.",
             tool: "Estruturas de Carga",
@@ -199,7 +199,7 @@ export const homeBR: HomeCopy = {
             id: "clarity",
             label: "Algo ganhou forma",
             hint: "Uma ligação que só apareceu depois da conversa.",
-            object: "Clareza",
+            object: "Raposa atenta",
             response:
               "Uma percepção pode conservar sua forma sem ser transformada imediatamente em uma conclusão.",
             tool: "Inventário da Sessão",
@@ -210,7 +210,7 @@ export const homeBR: HomeCopy = {
             id: "intention",
             label: "Algo quer seguir",
             hint: "Uma intenção que você gostaria de levar consigo.",
-            object: "Intenção",
+            object: "Barco de partida",
             response:
               "Chegar preparado não significa chegar com tudo resolvido.",
             tool: "Inventário da Sessão",

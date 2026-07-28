@@ -28,6 +28,8 @@ const surfaces = [
   "warning",
   "info",
   "danger",
+  "inventory",
+  "home-artifact",
   "primary",
   "accent",
   "shared",

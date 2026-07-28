@@ -313,7 +313,7 @@ function RitualCopy({
         ) : null}
 
         {step === 1 && selected ? (
-          <div className="home-artifact-card mt-8 rounded-2xl border border-[var(--home-line)] p-5">
+          <div className="home-artifact-card surface-home-artifact mt-8 rounded-2xl border p-5">
             <div className="flex items-start gap-4">
               <span
                 className="home-artifact-icon grid size-11 shrink-0 place-items-center rounded-2xl"
@@ -551,6 +551,7 @@ function Diorama({
     mode === "explore" ? copy.scene.previous : copy.returning.client.label;
   const rightLabel =
     mode === "explore" ? copy.scene.next : copy.returning.professional.label;
+  const model = momentToModel(moment);
 
   return (
     <figure
@@ -574,59 +575,275 @@ function Diorama({
         ) : null}
       </figcaption>
 
-      <div className="interval-perspective absolute inset-x-0 bottom-5 top-12">
-        <div className="interval-sky" aria-hidden="true">
-          <span className="interval-orbit interval-orbit-one" />
-          <span className="interval-orbit interval-orbit-two" />
-          <span className="interval-aurora interval-aurora-one" />
-          <span className="interval-aurora interval-aurora-two" />
-        </div>
-
-        <div className="interval-world" aria-hidden="true">
-          <div className="interval-plane">
-            <div className="origami-sheet">
+      <div
+        className="origami-stage absolute inset-x-0 bottom-4 top-12"
+        data-mode={mode}
+        data-step={step}
+        data-crossing={crossing}
+        data-model={model}
+        aria-hidden="true"
+      >
+        {mode === "returning" ? (
+          <div className="origami-returning-gallery">
+            <div className="origami-returning-model" data-tone="client">
+              <OrigamiModel key="returning-crane" model="crane" />
+              <span>{leftLabel}</span>
+            </div>
+            <div className="origami-returning-crease" />
+            <div className="origami-returning-model" data-tone="professional">
+              <OrigamiModel key="returning-boat" model="boat" />
+              <span>{rightLabel}</span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="origami-week-track">
               {copy.scene.days.map((day, index) => (
                 <span
                   key={`${day}-${index}`}
-                  className="origami-fold"
-                  style={{ "--i": index } as CSSProperties}
+                  className="origami-week-segment"
+                  data-current={index === 3 ? "true" : undefined}
                 >
-                  <span className="origami-fold-face" />
-                  <span className="origami-fold-shine" />
-                  <span className="origami-day-label">{day}</span>
+                  <span className="origami-week-face" />
+                  <span className="origami-week-crease" />
+                  <span className="origami-week-label">{day}</span>
                 </span>
               ))}
-              <span className="origami-crease origami-crease-one" />
-              <span className="origami-crease origami-crease-two" />
-              <span className="origami-crease origami-crease-three" />
             </div>
 
-            <span className="interval-gate interval-gate-left">
+            <div className="origami-session-anchor origami-session-anchor-left">
+              <span className="origami-session-fold" />
               <span>{leftLabel}</span>
-            </span>
-            <span className="interval-gate interval-gate-right">
+            </div>
+            <div className="origami-session-anchor origami-session-anchor-right">
+              <span className="origami-session-fold" />
               <span>{rightLabel}</span>
-            </span>
+            </div>
 
-            <span className="interval-marker">
-              <span className="origami-token">
-                <span className="origami-token-face origami-token-face-a" />
-                <span className="origami-token-face origami-token-face-b" />
-                <span className="origami-token-face origami-token-face-c" />
-                <span className="origami-token-fold" />
-              </span>
+            <div className="origami-model-position">
+              <span className="origami-model-ground" />
+              <OrigamiModel key={model} model={model} />
               {markerLabel ? (
-                <span className="interval-marker-label">{markerLabel}</span>
+                <span className="origami-model-label">{markerLabel}</span>
               ) : null}
-            </span>
-
-            <span className="interval-form interval-form-one" />
-            <span className="interval-form interval-form-two" />
-            <span className="interval-form interval-form-three" />
-          </div>
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </figure>
+  );
+}
+
+type OrigamiModelId = "sheet" | "crane" | "fox" | "boat";
+
+function momentToModel(moment: MomentId | null): OrigamiModelId {
+  if (moment === "echo") return "crane";
+  if (moment === "clarity") return "fox";
+  if (moment === "intention") return "boat";
+  return "sheet";
+}
+
+/**
+ * Modelos vetoriais próprios, construídos como papel dobrado e não como
+ * polígonos decorativos. A silhueta continua legível sem as linhas internas;
+ * as facetas só explicam de onde vem o volume.
+ */
+function OrigamiModel({ model }: { model: OrigamiModelId }) {
+  if (model === "crane") {
+    return (
+      <svg
+        className="origami-model"
+        data-origami-model="crane"
+        viewBox="0 0 260 180"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <g className="origami-model-facets">
+          <polygon
+            className="origami-face origami-face-a"
+            points="128,68 24,31 88,101"
+          />
+          <polygon
+            className="origami-face origami-face-b"
+            points="128,68 88,101 130,127"
+          />
+          <polygon
+            className="origami-face origami-face-c"
+            points="128,68 188,26 169,101"
+          />
+          <polygon
+            className="origami-face origami-face-d"
+            points="128,68 169,101 130,127"
+          />
+          <polygon
+            className="origami-face origami-face-b"
+            points="88,101 36,120 103,114"
+          />
+          <polygon
+            className="origami-face origami-face-c"
+            points="169,101 191,66 184,112"
+          />
+          <polygon
+            className="origami-face origami-face-a"
+            points="191,66 203,30 211,47"
+          />
+          <polygon
+            className="origami-face origami-face-d"
+            points="203,30 218,39 240,44 211,47"
+          />
+        </g>
+        <g className="origami-creases">
+          <path d="M128 68 88 101 130 127 169 101Z" />
+          <path d="M24 31 128 68 188 26" />
+          <path d="M88 101 103 114M169 101 184 112M191 66 211 47" />
+        </g>
+        <circle className="origami-detail" cx="210" cy="38.5" r="1.7" />
+      </svg>
+    );
+  }
+
+  if (model === "fox") {
+    return (
+      <svg
+        className="origami-model"
+        data-origami-model="fox"
+        viewBox="45 5 150 165"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <g className="origami-model-facets">
+          <polygon
+            className="origami-face origami-face-c"
+            points="74,56 96,66 80,18"
+          />
+          <polygon
+            className="origami-face origami-face-b"
+            points="144,66 166,56 160,18"
+          />
+          <polygon
+            className="origami-face origami-face-a"
+            points="74,56 96,66 120,104 78,128"
+          />
+          <polygon
+            className="origami-face origami-face-b"
+            points="96,66 120,45 120,104"
+          />
+          <polygon
+            className="origami-face origami-face-c"
+            points="120,45 144,66 120,104"
+          />
+          <polygon
+            className="origami-face origami-face-d"
+            points="144,66 166,56 162,128 120,104"
+          />
+          <polygon
+            className="origami-face origami-face-a"
+            points="78,128 120,104 120,153"
+          />
+          <polygon
+            className="origami-face origami-face-b"
+            points="120,104 162,128 120,153"
+          />
+          <polygon
+            className="origami-face origami-face-d"
+            points="101,115 120,104 120,139"
+          />
+          <polygon
+            className="origami-face origami-face-c"
+            points="120,104 139,115 120,139"
+          />
+        </g>
+        <g className="origami-creases">
+          <path d="M80 18 96 66 120 45 144 66 160 18" />
+          <path d="M74 56 78 128 120 153 162 128 166 56" />
+          <path d="M96 66 120 104 144 66M78 128 120 104 162 128" />
+        </g>
+        <path
+          className="origami-detail"
+          d="m91 91 8-3-5 7ZM149 91l-8-3 5 7ZM115 135h10l-5 5Z"
+        />
+      </svg>
+    );
+  }
+
+  if (model === "boat") {
+    return (
+      <svg
+        className="origami-model"
+        data-origami-model="boat"
+        viewBox="0 0 260 180"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <g className="origami-model-facets">
+          <polygon
+            className="origami-face origami-face-a"
+            points="128,20 128,101 42,101"
+          />
+          <polygon
+            className="origami-face origami-face-b"
+            points="128,20 95,101 128,101"
+          />
+          <polygon
+            className="origami-face origami-face-c"
+            points="134,43 216,101 134,101"
+          />
+          <polygon
+            className="origami-face origami-face-d"
+            points="134,43 183,101 134,101"
+          />
+          <polygon
+            className="origami-face origami-face-b"
+            points="40,105 220,105 184,150 76,150"
+          />
+          <polygon
+            className="origami-face origami-face-a"
+            points="40,105 130,122 76,150"
+          />
+          <polygon
+            className="origami-face origami-face-c"
+            points="220,105 130,122 184,150"
+          />
+          <polygon
+            className="origami-face origami-face-d"
+            points="76,150 130,122 184,150"
+          />
+        </g>
+        <g className="origami-creases">
+          <path d="M128 20v81H42ZM134 43v58h82Z" />
+          <path d="M40 105h180l-36 45H76Z" />
+          <path d="m40 105 90 17 90-17M76 150l54-28 54 28" />
+        </g>
+      </svg>
+    );
+  }
+
+  return (
+    <svg
+      className="origami-model"
+      data-origami-model="sheet"
+      viewBox="0 0 220 180"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g className="origami-model-facets">
+        <polygon
+          className="origami-face origami-face-a"
+          points="110,18 202,90 110,162 18,90"
+        />
+        <polygon
+          className="origami-face origami-face-b"
+          points="110,18 110,90 18,90"
+        />
+        <polygon
+          className="origami-face origami-face-c"
+          points="202,90 110,90 110,162"
+        />
+      </g>
+      <g className="origami-creases">
+        <path d="M110 18v144M18 90h184M18 90l92 72M202 90l-92 72" />
+      </g>
+    </svg>
   );
 }
 

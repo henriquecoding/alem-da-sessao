@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { getMessages } from "@alem-da-sessao/i18n";
 import { describe, expect, it } from "vitest";
@@ -5,7 +7,7 @@ import { IntervalStudio } from "@/components/home/interval-studio";
 
 describe("homepage origami experience", () => {
   it("requires an intentional choice before folding the interval", () => {
-    render(
+    const { container } = render(
       <IntervalStudio
         copy={getMessages("pt-PT").home}
         locale="pt-PT"
@@ -20,11 +22,39 @@ describe("homepage origami experience", () => {
 
     expect(continueButton).toBeEnabled();
     expect(
+      container.querySelector('[data-origami-model="fox"]'),
+    ).toBeInTheDocument();
+    expect(
       screen.getByText(
         "Uma perceção pode conservar a sua forma sem ser transformada imediatamente numa conclusão.",
       ),
     ).toBeInTheDocument();
   });
+
+  it.each([
+    ["Algo ficou", "crane", 8],
+    ["Algo ganhou forma", "fox", 10],
+    ["Algo quer seguir", "boat", 8],
+  ])(
+    "turns %s into a recognizable faceted %s model",
+    (option, model, minimumFaces) => {
+      const { container } = render(
+        <IntervalStudio
+          copy={getMessages("pt-PT").home}
+          locale="pt-PT"
+          segment="pt-pt"
+        />,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: new RegExp(option) }));
+
+      const figure = container.querySelector(`[data-origami-model="${model}"]`);
+      expect(figure).toBeInTheDocument();
+      expect(figure?.querySelectorAll("polygon").length).toBeGreaterThanOrEqual(
+        minimumFaces,
+      );
+    },
+  );
 
   it("makes privacy and deliberate sharing separate visible states", () => {
     render(
@@ -85,5 +115,17 @@ describe("homepage origami experience", () => {
 
     expect(container.querySelector("input")).toBeNull();
     expect(container.querySelector("textarea")).toBeNull();
+  });
+
+  it("keeps the compact navigation through tablet widths", () => {
+    const header = readFileSync(
+      join(process.cwd(), "components/public-header.tsx"),
+      "utf8",
+    );
+
+    expect(header).toContain("lg:flex");
+    expect(header).toContain("lg:hidden");
+    expect(header).not.toContain("md:flex");
+    expect(header).not.toContain("md:hidden");
   });
 });

@@ -213,3 +213,28 @@ describe("engine de superfícies", () => {
     expect(registered).toEqual(declared);
   });
 });
+
+describe("fundos editoriais localizados", () => {
+  const publicInventory = readFileSync(
+    join(
+      process.cwd(),
+      "app/[locale]/(public)/experiencias/inventario-da-sessao/page.tsx",
+    ),
+    "utf8",
+  );
+  const clientInventory = readFileSync(
+    join(
+      process.cwd(),
+      "app/[locale]/(client)/cuidado/experiencias/inventario-da-sessao/page.tsx",
+    ),
+    "utf8",
+  );
+
+  it.each([
+    ["público", publicInventory],
+    ["cliente", clientInventory],
+  ])("keeps the %s inventory canvas on a theme-aware surface", (_, source) => {
+    expect(source).toContain("surface-inventory");
+    expect(source).not.toMatch(/linear-gradient\([^)]*(?:#eef3fa|#f7edf4)/i);
+  });
+});

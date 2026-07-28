@@ -32,7 +32,7 @@ export function PublicHeader({ segment }: { segment: LocaleSegment }) {
         <span className="whitespace-nowrap">Além da Sessão</span>
       </Link>
 
-      <nav className="hidden items-center gap-7 text-sm font-semibold text-[var(--muted-foreground)] md:flex">
+      <nav className="hidden items-center gap-7 text-sm font-semibold text-[var(--muted-foreground)] lg:flex">
         {links.map((link) => (
           <Link
             key={link.href}
@@ -45,7 +45,7 @@ export function PublicHeader({ segment }: { segment: LocaleSegment }) {
       </nav>
 
       <div className="flex items-center gap-2">
-        <details className="group relative md:hidden">
+        <details className="group relative lg:hidden">
           <summary
             aria-label={messages.common.openMenu}
             className="grid size-11 cursor-pointer list-none place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] shadow-[var(--shadow-xs)] marker:content-none"

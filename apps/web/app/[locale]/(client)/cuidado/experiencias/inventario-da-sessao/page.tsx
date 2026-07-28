@@ -14,7 +14,7 @@ export default async function SessionInventoryPage({
   requireRunnableTool("inventario-da-sessao", "client");
 
   return (
-    <div className="-mx-4 -mt-6 min-h-[calc(100vh-60px)] bg-[linear-gradient(145deg,var(--background)_0%,#eef3fa_48%,#f7edf4_100%)] px-4 py-7 sm:-mx-6 sm:px-6 lg:-mx-8 lg:-mt-8 lg:px-8 lg:py-10">
+    <div className="experience-inventory-canvas surface-inventory -mx-4 -mt-6 min-h-[calc(100vh-60px)] px-4 py-7 sm:-mx-6 sm:px-6 lg:-mx-8 lg:-mt-8 lg:px-8 lg:py-10">
       <div className="mx-auto mb-12 flex max-w-6xl items-center justify-between">
         <Link
           href={`/${segment}/cuidado/experiencias`}

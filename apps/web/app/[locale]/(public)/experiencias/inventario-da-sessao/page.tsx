@@ -18,7 +18,7 @@ export default async function PublicSessionInventoryPage({
   requireRunnableTool("inventario-da-sessao", "public");
 
   return (
-    <main className="min-h-screen bg-[linear-gradient(145deg,var(--background)_0%,#eef3fa_48%,#f7edf4_100%)] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+    <main className="experience-inventory-canvas surface-inventory min-h-screen px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <div className="mx-auto mb-12 flex max-w-6xl flex-wrap items-center justify-between gap-4">
         <Link
           href={localPath(segment, "/experiencias")}

@@ -84,13 +84,14 @@ estúdios de interação como a [Lusion](https://lusion.co/).
 No entanto, a homepage não precisa de WebGL para produzir materialidade. A
 orientação da [web.dev](https://web.dev/articles/animations-and-performance)
 é privilegiar `transform` e `opacity` para evitar layout e paint durante
-animações. A cena foi, portanto, construída em CSS 3D:
+animações. A cena foi, portanto, construída com SVG semântico e CSS:
 
 - nenhum Three.js;
 - nenhum canvas;
 - nenhuma imagem hero;
 - nenhum vídeo;
 - nenhum ciclo `requestAnimationFrame`;
+- silhuetas vetoriais estáveis, sem dependência de rasterização externa;
 - transformações só quando o estado muda;
 - formas ambientais lentas apenas quando o sistema permite movimento.
 
@@ -98,14 +99,53 @@ A experiência alternativa respeita `prefers-reduced-motion`, cuja função é
 remover ou substituir movimento não essencial
 ([MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40media/prefers-reduced-motion)).
 
-## 3. Direção de arte: uma única folha
+### 2.4 Origami reconhecível e contraste contextual
+
+A primeira implementação confundia “geométrico” com “origami”: triângulos
+soltos, portais e um losango central produziam profundidade, mas não um objeto
+reconhecível. O estudo de _crease patterns_ de
+[Robert J. Lang](https://langorigami.com/crease-patterns/) mostrou a distinção
+necessária: o padrão de dobras explica a estrutura escondida do modelo, mas não
+substitui a sua forma exterior. A abordagem de _polygon packing_ e desenho
+estrutural descrita em
+[_Origami Design Secrets_](https://langorigami.com/publication/origami-design-secrets-2nd-edition/)
+foi traduzida para uma regra visual adequada à web:
+
+1. a silhueta identifica o animal ou objeto sem linhas internas;
+2. cada faceta tem função anatómica ou estrutural;
+3. uma linha de dobra nunca inventa um volume que o contorno não sustenta;
+4. o modelo usa uma aresta própria, mais escura que todas as faces;
+5. sombra e movimento confirmam o papel, mas não carregam o reconhecimento.
+
+O segundo problema era cromático. Uma paleta suave não autoriza contraste
+suave. As técnicas [G18](https://www.w3.org/WAI/WCAG22/Techniques/general/G18),
+[G207](https://www.w3.org/WAI/WCAG22/Techniques/general/G207.html) e
+[G209](https://www.w3.org/WAI/WCAG22/Techniques/general/G209.html) do WCAG
+exigem verificar texto, ícones e limites no fundo imediatamente adjacente. A
+falha [F83](https://www.w3.org/WAI/WCAG22/Techniques/failures/F83.html)
+documenta precisamente o risco de imagens ou gradientes tornarem partes do
+texto ilegíveis.
+
+Por isso, a implementação deixou de reutilizar cores de conteúdo diretamente
+como superfícies. Cada tema tem agora contratos separados para:
+
+- tela;
+- painel;
+- artefacto;
+- texto principal e secundário;
+- face clara, intermédia e escura de cada origami;
+- aresta e linha de dobra.
+
+## 3. Direção de arte: papel que conserva identidade
 
 O Lost Letters Room foi usado como referência de qualidade, não como biblioteca
 de elementos. O princípio aproveitado é a presença de um objeto central que
 carrega o ritual inteiro. Não foram transportados envelopes, cartas,
 arquivistas, bibliotecas, selos ou a estética de arquivo.
 
-No Além da Sessão, esse objeto é uma folha de origami.
+No Além da Sessão, esse objeto é o mesmo papel em diferentes formas. A faixa de
+sete dobras preserva a continuidade temporal; o pássaro, a raposa e o barco dão
+uma identidade inequívoca ao que a pessoa escolheu.
 
 ### Por que origami
 
@@ -137,21 +177,22 @@ Não há modal, redirecionamento automático ou perfil persistente.
 
 ### Ato 1 — Notar
 
-A folha está quase plana, dividida em sete planos. A pessoa escolhe uma forma
-abstrata:
+A faixa está quase plana, dividida em sete segmentos. A pessoa escolhe uma
+intenção que ganha uma forma reconhecível:
 
-- algo ficou;
-- algo ganhou forma;
-- algo quer seguir.
+- algo ficou: pássaro de regresso;
+- algo ganhou forma: raposa atenta;
+- algo quer seguir: barco de partida.
 
-Não existe campo de texto. A escolha apenas altera cor, posição e forma do
-pequeno objeto de papel.
+Não existe campo de texto. A escolha altera silhueta, facetas, cor e a
+descrição textual do objeto de papel.
 
 ### Ato 2 — Dar forma
 
-Os sete planos fecham-se à volta do objeto. A página revela uma engine adequada
-ao tipo de escolha e deixa explícito que uma experiência não é uma caixa de
-texto: tem objetos, relações, estados e decisões.
+O objeto aproxima-se e a página revela uma engine adequada ao tipo de escolha.
+A faixa continua visível como contexto, sem tentar transformar sete
+quadriláteros no próprio animal. Fica explícito que uma experiência não é uma
+caixa de texto: tem objetos, relações, estados e decisões.
 
 ### Ato 3 — Decidir
 
@@ -191,6 +232,12 @@ continua visível e legível, mas subordinada à experiência.
 - O ritual funciona por botões; não depende de arraste.
 - O estado é anunciado por texto, não apenas por cor ou movimento.
 - A cena é decorativa para tecnologias assistivas e tem uma descrição textual.
+- Cada origami continua reconhecível sem cor; cor e linhas internas apenas
+  reforçam a silhueta.
+- Superfícies editoriais e artefactos usam tokens próprios para tema claro e
+  escuro; não existe texto sobre gradiente de contraste desconhecido.
+- As facetas e os ícones mantêm uma aresta contrastante mesmo quando o papel e
+  o fundo pertencem à mesma família cromática.
 - Sem JavaScript, a mensagem, a proposta e as rotas principais continuam no
   HTML; a interatividade é uma camada progressiva.
 - As secções abaixo da dobra são renderizadas de imediato; a homepage não
@@ -213,4 +260,6 @@ Antes da integração:
 7. `prefers-reduced-motion`;
 8. PT-PT e PT-BR;
 9. links para experiência, demo, cliente, profissional e segurança;
-10. confirmação de que não existe deploy.
+10. silhuetas do pássaro, da raposa e do barco em claro e escuro;
+11. contraste dos artefactos e do Inventário da Sessão no pior ponto do fundo;
+12. confirmação de que não existe deploy.
