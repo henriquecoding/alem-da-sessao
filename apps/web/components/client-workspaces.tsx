@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   CalendarCheck2,
   CalendarClock,
@@ -17,6 +17,7 @@ import {
   Video,
   X,
 } from "lucide-react";
+import type { Locale } from "@alem-da-sessao/i18n";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,16 +35,14 @@ import { cn } from "@/lib/utils";
 const upcomingSessions = [
   {
     id: 1,
-    date: "29 jul",
-    weekday: "Quarta-feira",
+    dayOffset: 1,
     time: "09:30",
     modality: "Online",
     professional: "Dra. Inês Almeida",
   },
   {
     id: 2,
-    date: "12 ago",
-    weekday: "Quarta-feira",
+    dayOffset: 15,
     time: "09:30",
     modality: "Presencial",
     professional: "Dra. Inês Almeida",
@@ -53,33 +52,70 @@ const upcomingSessions = [
 const sessionHistory = [
   {
     id: 3,
-    date: "15 jul",
+    dayOffset: -13,
     time: "09:30",
     modality: "Online",
     status: "Realizada",
   },
   {
     id: 4,
-    date: "01 jul",
+    dayOffset: -27,
     time: "09:30",
     modality: "Presencial",
     status: "Realizada",
   },
   {
     id: 5,
-    date: "17 jun",
+    dayOffset: -41,
     time: "09:30",
     modality: "Online",
     status: "Realizada",
   },
 ];
 
-export function ClientSessionsWorkspace() {
+function dateAtOffset(dayOffset: number) {
+  const date = new Date();
+  date.setUTCDate(date.getUTCDate() + dayOffset);
+  return date;
+}
+
+export function ClientSessionsWorkspace({ locale }: { locale: Locale }) {
   const [tab, setTab] = useState<"upcoming" | "history">("upcoming");
   const [requestOpen, setRequestOpen] = useState(false);
   const [preferredDay, setPreferredDay] = useState("Quarta-feira");
   const [period, setPeriod] = useState("Manhã");
   const [notice, setNotice] = useState("");
+  const localizedUpcoming = useMemo(
+    () =>
+      upcomingSessions.map((session) => {
+        const date = dateAtOffset(session.dayOffset);
+        return {
+          ...session,
+          date: new Intl.DateTimeFormat(locale, {
+            day: "2-digit",
+            month: "short",
+            timeZone: "UTC",
+          }).format(date),
+          weekday: new Intl.DateTimeFormat(locale, {
+            weekday: "long",
+            timeZone: "UTC",
+          }).format(date),
+        };
+      }),
+    [locale],
+  );
+  const localizedHistory = useMemo(
+    () =>
+      sessionHistory.map((session) => ({
+        ...session,
+        date: new Intl.DateTimeFormat(locale, {
+          day: "2-digit",
+          month: "short",
+          timeZone: "UTC",
+        }).format(dateAtOffset(session.dayOffset)),
+      })),
+    [locale],
+  );
 
   function submitRequest() {
     setNotice(
@@ -189,7 +225,7 @@ export function ClientSessionsWorkspace() {
 
       {tab === "upcoming" ? (
         <div className="grid gap-5 lg:grid-cols-2">
-          {upcomingSessions.map((session, index) => (
+          {localizedUpcoming.map((session, index) => (
             <Card
               key={session.id}
               className={
@@ -231,7 +267,9 @@ export function ClientSessionsWorkspace() {
                     <p className="mt-1 text-xs text-[var(--muted-foreground)]">
                       {session.modality === "Online"
                         ? "Ligação protegida"
-                        : "Lisboa"}
+                        : locale === "pt-BR"
+                          ? "São Paulo"
+                          : "Lisboa"}
                     </p>
                   </div>
                 </div>
@@ -268,7 +306,7 @@ export function ClientSessionsWorkspace() {
       ) : (
         <Card>
           <CardContent className="space-y-2 p-5">
-            {sessionHistory.map((session) => (
+            {localizedHistory.map((session) => (
               <div
                 key={session.id}
                 className="grid gap-3 rounded-2xl border border-[var(--border)] p-4 sm:grid-cols-[1fr_120px_120px_auto] sm:items-center"
@@ -291,20 +329,23 @@ export function ClientSessionsWorkspace() {
   );
 }
 
-export function ClientAccountWorkspace() {
+export function ClientAccountWorkspace({
+  initialLocale,
+}: {
+  initialLocale: Locale;
+}) {
   const [preferences, setPreferences] = useState({
     sessionReminders: true,
     experienceReminders: false,
     shareReceipts: true,
     productEmails: false,
   });
-  const [locale, setLocale] = useState("pt-PT");
+  const [locale, setLocale] = useState<Locale>(initialLocale);
   const [sessions, setSessions] = useState([
-    { id: 1, device: "Edge · Windows", location: "Setúbal, PT", current: true },
+    { id: 1, device: "Edge · Windows", current: true },
     {
       id: 2,
       device: "Safari · iPhone",
-      location: "Setúbal, PT",
       current: false,
     },
   ]);
@@ -361,7 +402,7 @@ export function ClientAccountWorkspace() {
               <span className="mb-2 block text-xs font-bold">Localização</span>
               <select
                 value={locale}
-                onChange={(event) => setLocale(event.target.value)}
+                onChange={(event) => setLocale(event.target.value as Locale)}
                 className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 text-sm"
               >
                 <option value="pt-PT">Portugal · Português de Portugal</option>
@@ -446,7 +487,7 @@ export function ClientAccountWorkspace() {
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-bold">{session.device}</p>
                   <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-                    {session.location}
+                    {locale === "pt-BR" ? "São Paulo, BR" : "Setúbal, PT"}
                   </p>
                 </div>
                 {session.current ? (

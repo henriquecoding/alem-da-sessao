@@ -105,26 +105,42 @@ export function bridgeWindowIsOpen(
   return current >= closes - bridgeWindows.incomingHours * 3_600_000;
 }
 
-const fixtureInterval: CareInterval = {
-  id: "interval_fixture_01",
-  state: "closing",
-  opensAt: "2026-07-20T09:20:00.000Z",
-  closesAt: "2026-07-27T08:30:00.000Z",
-  artifactCount: 2,
-  bridges: [
-    {
-      direction: "outgoing",
-      body: "Fiquei com a ideia de que estou a pedir autorização para descansar.",
-      writtenAt: "2026-07-20T20:14:00.000Z",
-      shared: true,
-    },
-  ],
-};
+function makeFixtureInterval(): CareInterval {
+  const now = new Date();
+  const daysUntilMonday = (8 - now.getUTCDay()) % 7 || 7;
+  const nextMonday = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate() + daysUntilMonday,
+    8,
+    30,
+  );
+  // Mantém uma ponte disponível no protótipo local independentemente do dia
+  // em que Henrique o abrir. O calendário de demonstração continua futuro,
+  // mas o ritual nunca surge todo fechado por causa de uma data fossilizada.
+  const opensAt = now.getTime() - 18 * 3_600_000;
+
+  return {
+    id: "interval_fixture_01",
+    state: nextMonday - now.getTime() <= 24 * 3_600_000 ? "closing" : "open",
+    opensAt: new Date(opensAt).toISOString(),
+    closesAt: new Date(nextMonday).toISOString(),
+    artifactCount: 2,
+    bridges: [
+      {
+        direction: "outgoing",
+        body: "Fiquei com a ideia de que estou a pedir autorização para descansar.",
+        writtenAt: new Date(opensAt + 10 * 3_600_000).toISOString(),
+        shared: true,
+      },
+    ],
+  };
+}
 
 export async function getCurrentInterval(): Promise<CareInterval> {
-  return structuredClone(fixtureInterval);
+  return structuredClone(makeFixtureInterval());
 }
 
 export async function getProfessionalIntervalView(): Promise<ProfessionalIntervalView> {
-  return toProfessionalView(structuredClone(fixtureInterval));
+  return toProfessionalView(structuredClone(makeFixtureInterval()));
 }

@@ -32,7 +32,7 @@ export function CountUp({
   locale = "pt-PT",
   decimals = 0,
   suffix = "",
-  durationMs = 900,
+  durationMs = 550,
   active = true,
   className,
 }: {

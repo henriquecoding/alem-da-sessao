@@ -88,7 +88,7 @@ function SupportGesture({
   const [ownStructure, setOwnStructure] = useState(false);
   const frame = useRef<number | null>(null);
   const startedAt = useRef(0);
-  const duration = 1600;
+  const duration = 900;
   const isPortugal = locale === "pt-PT";
 
   function stop(reset = true) {

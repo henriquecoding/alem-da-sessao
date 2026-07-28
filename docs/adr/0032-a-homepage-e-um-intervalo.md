@@ -11,7 +11,7 @@ intercambiável**: trocando o logótipo e a paleta, servia qualquer SaaS.
 Isso não é uma crítica estética. A tese deste produto é que ele não é
 substituível por nenhum dos incumbentes (§1.4); uma homepage com a forma de
 todos eles contradiz a tese antes de a enunciar. O §6.8 chama-lhe o terceiro
-teste de qualidade — *isto podia pertencer a outro produto?* — e a resposta era
+teste de qualidade — _isto podia pertencer a outro produto?_ — e a resposta era
 sim, a tudo.
 
 ## A decisão
@@ -25,11 +25,11 @@ Cinco tempos, deliberadamente os mesmos cinco do ritual das experiências
 2. **Os momentos.** Seis linhas de uma semana qualquer, com hora, no
    infinitivo. É a parte que não vende nada. Se duas forem reconhecidas, o
    resto do argumento já não precisa de ser feito.
-3. **O argumento.** A pergunta óbvia — *então porque é que ninguém fez isto?* —
+3. **O argumento.** A pergunta óbvia — _então porque é que ninguém fez isto?_ —
    respondida com os incentivos de EHRs, marketplaces e apps D2C, em vez de
    logótipos de clientes que não existem.
 4. **O gesto.** O `ShareGesture` verdadeiro, não uma reconstituição. A tese —
-   *escrever é privado, atravessar é uma decisão* — é sobre a **duração** de um
+   _escrever é privado, atravessar é uma decisão_ — é sobre a **duração** de um
    ato, e uma frase a explicá-la não convence ninguém. Arrastar durante um
    segundo e ver o recibo do outro lado convence em silêncio. Se o gesto se
    partir em produção, parte-se aqui à vista de toda a gente.
@@ -39,7 +39,7 @@ Cinco tempos, deliberadamente os mesmos cinco do ritual das experiências
 
 ## A pergunta de chegada, e o que ela não faz
 
-Uma pergunta única perto do topo — *o que o traz aqui?* — reordena o resto:
+Uma pergunta única perto do topo — _o que o traz aqui?_ — reordena o resto:
 quem acompanha pessoas recebe o argumento antes dos momentos, quem está em
 processo recebe o oposto, e a porta correspondente lidera. Não bloqueia, não é
 obrigatória, e a página inteira funciona sem lhe tocar.

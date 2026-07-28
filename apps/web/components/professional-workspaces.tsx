@@ -21,6 +21,7 @@ import {
   WalletCards,
   X,
 } from "lucide-react";
+import type { Locale } from "@alem-da-sessao/i18n";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +35,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { MetricCard } from "@/components/metric-card";
 import { PageHeading } from "@/components/page-heading";
+import { formatCurrency, timeZoneFor } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 function LocalNotice({ children }: { children: React.ReactNode }) {
@@ -53,26 +55,26 @@ const reportPeriods = {
     sessions: "47",
     attendance: "94%",
     experiences: "18",
-    revenue: "€ 2.480",
+    revenue: 2480,
     bars: [45, 62, 51, 74, 68, 86],
   },
   "90": {
     sessions: "132",
     attendance: "92%",
     experiences: "49",
-    revenue: "€ 7.120",
+    revenue: 7120,
     bars: [58, 70, 64, 81, 76, 92],
   },
   "180": {
     sessions: "259",
     attendance: "93%",
     experiences: "91",
-    revenue: "€ 13.940",
+    revenue: 13940,
     bars: [61, 66, 73, 77, 83, 89],
   },
 } as const;
 
-export function ReportsWorkspace() {
+export function ReportsWorkspace({ locale }: { locale: Locale }) {
   const [period, setPeriod] = useState<keyof typeof reportPeriods>("30");
   const [notice, setNotice] = useState("");
   const data = reportPeriods[period];
@@ -147,7 +149,7 @@ export function ReportsWorkspace() {
         />
         <MetricCard
           label="Recebimentos"
-          value={data.revenue}
+          value={formatCurrency(data.revenue, locale)}
           detail="Registo profissional"
           icon={CircleDollarSign}
           tone="lemon"
@@ -502,12 +504,13 @@ const initialPayments: Payment[] = [
   },
 ];
 
-export function FinanceWorkspace() {
+export function FinanceWorkspace({ locale }: { locale: Locale }) {
   const [payments, setPayments] = useState(initialPayments);
   const [showForm, setShowForm] = useState(false);
   const [client, setClient] = useState("");
   const [amount, setAmount] = useState("55");
   const [notice, setNotice] = useState("");
+  const currency = locale === "pt-BR" ? "R$" : "€";
 
   const totals = useMemo(
     () => ({
@@ -545,7 +548,7 @@ export function FinanceWorkspace() {
       <PageHeading
         eyebrow="Registos do consultório"
         title="Financeiro"
-        description="Pagamentos das sessões separados da futura assinatura da plataforma."
+        description="Registos de pagamentos das sessões, separados da assinatura da plataforma."
         action={
           <Button onClick={() => setShowForm(true)}>
             <Plus className="size-4" />
@@ -572,7 +575,9 @@ export function FinanceWorkspace() {
               />
             </label>
             <label>
-              <span className="mb-2 block text-xs font-bold">Valor (€)</span>
+              <span className="mb-2 block text-xs font-bold">
+                Valor ({currency})
+              </span>
               <Input
                 type="number"
                 min="1"
@@ -597,14 +602,14 @@ export function FinanceWorkspace() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           label="Recebido"
-          value={`€ ${totals.received}`}
+          value={formatCurrency(totals.received, locale)}
           detail="No conjunto fictício"
           icon={WalletCards}
           tone="lilac"
         />
         <MetricCard
           label="Por receber"
-          value={`€ ${totals.pending}`}
+          value={formatCurrency(totals.pending, locale)}
           detail="2 registos"
           icon={Clock3}
           tone="lemon"
@@ -618,7 +623,7 @@ export function FinanceWorkspace() {
         />
         <MetricCard
           label="Taxa registada"
-          value="€ 55"
+          value={formatCurrency(55, locale)}
           detail="Valor mais frequente"
           icon={CircleDollarSign}
           tone="accent"
@@ -647,7 +652,9 @@ export function FinanceWorkspace() {
               <span className="text-xs text-[var(--muted-foreground)]">
                 {payment.date}
               </span>
-              <strong className="text-sm">€ {payment.amount}</strong>
+              <strong className="text-sm">
+                {formatCurrency(payment.amount, locale)}
+              </strong>
               <button
                 type="button"
                 onClick={() =>
@@ -682,7 +689,11 @@ export function FinanceWorkspace() {
   );
 }
 
-export function ProfessionalSettingsWorkspace() {
+export function ProfessionalSettingsWorkspace({
+  initialLocale,
+}: {
+  initialLocale: Locale;
+}) {
   const [settings, setSettings] = useState({
     online: true,
     presential: true,
@@ -696,7 +707,7 @@ export function ProfessionalSettingsWorkspace() {
     thursday: true,
     friday: false,
   });
-  const [locale, setLocale] = useState("pt-PT");
+  const [locale, setLocale] = useState<Locale>(initialLocale);
   const [saved, setSaved] = useState(false);
 
   const set = (key: keyof typeof settings, value: boolean) => {
@@ -816,7 +827,7 @@ export function ProfessionalSettingsWorkspace() {
               <select
                 value={locale}
                 onChange={(event) => {
-                  setLocale(event.target.value);
+                  setLocale(event.target.value as Locale);
                   setSaved(false);
                 }}
                 className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 text-sm"
@@ -827,7 +838,7 @@ export function ProfessionalSettingsWorkspace() {
             </label>
             <label className="block">
               <span className="mb-2 block text-xs font-bold">Fuso horário</span>
-              <Input value="Europe/Lisbon" readOnly />
+              <Input value={timeZoneFor(locale)} readOnly />
             </label>
           </CardContent>
         </Card>

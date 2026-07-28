@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { getToolBySlug, toolCanRun } from "@alem-da-sessao/tool-registry";
 import {
   attachCommunityCookie,
   communityIdentity,
-  isSameOrigin,
 } from "@/lib/community/identity";
+import { isSameOrigin } from "@/lib/community/origin";
 import { supportLoadStructure } from "@/lib/community/store";
+import { toolRuntime } from "@/lib/runtime";
 
 const postIdSchema = z.uuid();
 
@@ -13,6 +15,11 @@ export async function POST(
   request: NextRequest,
   context: { params: Promise<{ postId: string }> },
 ) {
+  const tool = getToolBySlug("estruturas-de-carga");
+  if (!tool || !toolCanRun(tool, toolRuntime(), "public")) {
+    return NextResponse.json({ error: "tool-unavailable" }, { status: 404 });
+  }
+
   if (!isSameOrigin(request)) {
     return NextResponse.json({ error: "invalid-origin" }, { status: 403 });
   }

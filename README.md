@@ -13,6 +13,11 @@ qualquer projeto Supabase.
 - motor de experiências versionado e extensível;
 - duas engines interativas completas em modo local;
 - workspaces funcionais para profissional, cliente e administração;
+- autenticação e autorização por superfície no modo Supabase, com MFA/AAL2
+  obrigatório para profissionais e administração;
+- fixtures confinadas ao modo local, sem fallback silencioso em produção;
+- gates automáticos de lançamento, segurança, acessibilidade, contraste e
+  orçamento real de bundles;
 - nenhuma integração conceptual ou técnica com o Lost Letters Room;
 - nenhum uso de IA para diagnóstico, prescrição ou substituição profissional.
 
@@ -35,8 +40,8 @@ um seletor de demonstração para as três áreas.
 ## Validar
 
 ```bash
-pnpm check
-pnpm build
+pnpm verify:release
+pnpm audit --prod
 ```
 
 ## Estrutura
@@ -50,6 +55,7 @@ packages/tool-registry    manifesto das experiências
 packages/validation       schemas partilhados
 supabase/clinical         migrations do plano clínico
 supabase/public           migrations do plano público
+supabase/platform         migrations comerciais, sem dados clínicos
 docs                      decisões, segurança e execução local
 ```
 

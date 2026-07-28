@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { LoadStructuresExperience } from "@/components/load-structures-experience";
 import { resolveLocale } from "@/lib/locale";
+import { requireRunnableTool } from "@/lib/tool-access";
 
 export default async function LoadStructuresPage({
   params,
@@ -14,6 +15,7 @@ export default async function LoadStructuresPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale, segment } = await resolveLocale(params);
+  requireRunnableTool("estruturas-de-carga", "client");
   const isPortugal = locale === "pt-PT";
 
   return (
@@ -64,8 +66,8 @@ export default async function LoadStructuresPage({
               </p>
               <p className="mt-4 text-xs leading-6 text-[#858b96]">
                 {isPortugal
-                  ? "Cinco etapas · cerca de 12 minutos · respostas reversíveis"
-                  : "Cinco etapas · cerca de 12 minutos · respostas reversíveis"}
+                  ? "Cinco etapas · cerca de 7 minutos · respostas reversíveis"
+                  : "Cinco etapas · cerca de 7 minutos · respostas reversíveis"}
               </p>
             </div>
           </header>

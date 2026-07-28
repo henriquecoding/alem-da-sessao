@@ -463,6 +463,7 @@ type Gate = {
   label: string;
   description: string;
   complete: boolean;
+  locked?: boolean;
 };
 
 type CatalogTool = {
@@ -477,7 +478,7 @@ const initialCatalog: CatalogTool[] = [
   {
     id: 1,
     name: "Estruturas de Carga",
-    version: "0.2.0",
+    version: "0.4.0",
     status: "Demonstração",
     gates: [
       {
@@ -485,6 +486,7 @@ const initialCatalog: CatalogTool[] = [
         label: "Revisão clínica",
         description: "Linguagem, limites e utilização acompanhada",
         complete: false,
+        locked: true,
       },
       {
         id: "privacy",
@@ -509,7 +511,7 @@ const initialCatalog: CatalogTool[] = [
   {
     id: 2,
     name: "Inventário da Sessão",
-    version: "0.2.0",
+    version: "0.3.0",
     status: "Demonstração",
     gates: [
       {
@@ -517,6 +519,7 @@ const initialCatalog: CatalogTool[] = [
         label: "Revisão clínica",
         description: "Objetivo, limites e riscos de interpretação",
         complete: false,
+        locked: true,
       },
       {
         id: "privacy",
@@ -548,6 +551,7 @@ export function AdminExperiencesWorkspace() {
   const completed = selected.gates.filter((gate) => gate.complete).length;
 
   function toggleGate(gateId: Gate["id"]) {
+    if (selected.gates.find((gate) => gate.id === gateId)?.locked) return;
     setCatalog((current) =>
       current.map((tool) =>
         tool.id === selectedId
@@ -672,6 +676,7 @@ export function AdminExperiencesWorkspace() {
                 <Switch
                   label={gate.label}
                   checked={gate.complete}
+                  disabled={gate.locked}
                   onChange={() => toggleGate(gate.id)}
                 />
               </div>
@@ -680,9 +685,9 @@ export function AdminExperiencesWorkspace() {
               <div className="flex gap-3">
                 <ShieldAlert className="size-5 shrink-0 text-[var(--info)]" />
                 <p className="text-xs leading-6 text-[var(--muted-foreground)]">
-                  Marcar um gate nesta demonstração valida o fluxo
-                  administrativo, não substitui avaliação por profissionais,
-                  testes com utilizadores nem documentação de evidência.
+                  A revisão clínica está bloqueada por código: só um registo
+                  externo assinado pode alterá-la. Os restantes switches validam
+                  apenas o fluxo local e nunca publicam a versão real.
                 </p>
               </div>
             </div>
@@ -696,7 +701,7 @@ export function AdminExperiencesWorkspace() {
 export function AdminSettingsWorkspace() {
   const [flags, setFlags] = useState({
     professionalInvites: true,
-    clientSelfStart: true,
+    clientSelfStart: false,
     shareSnapshots: true,
     publicDirectory: false,
     billingAdapter: false,
@@ -741,38 +746,41 @@ export function AdminSettingsWorkspace() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {[
+            {(
               [
-                "professionalInvites",
-                "Convites profissionais",
-                "Criar equipas no modo local",
-              ],
-              [
-                "clientSelfStart",
-                "Início autónomo",
-                "Cliente pode abrir experiências publicadas",
-              ],
-              [
-                "shareSnapshots",
-                "Snapshots seletivos",
-                "Partilha explícita e revogável",
-              ],
-              [
-                "publicDirectory",
-                "Diretório público",
-                "Perfis profissionais verificados",
-              ],
-              [
-                "billingAdapter",
-                "Adaptador de faturação",
-                "Integração comercial externa",
-              ],
-              [
-                "maintenanceBanner",
-                "Aviso de manutenção",
-                "Mensagem global sem conteúdo clínico",
-              ],
-            ].map(([key, title, description]) => (
+                [
+                  "professionalInvites",
+                  "Convites profissionais",
+                  "Criar equipas no modo local",
+                ],
+                [
+                  "clientSelfStart",
+                  "Início autónomo",
+                  "Cliente pode abrir experiências publicadas",
+                  true,
+                ],
+                [
+                  "shareSnapshots",
+                  "Snapshots seletivos",
+                  "Partilha explícita e revogável",
+                ],
+                [
+                  "publicDirectory",
+                  "Diretório público",
+                  "Perfis profissionais verificados",
+                ],
+                [
+                  "billingAdapter",
+                  "Adaptador de faturação",
+                  "Integração comercial externa",
+                ],
+                [
+                  "maintenanceBanner",
+                  "Aviso de manutenção",
+                  "Mensagem global sem conteúdo clínico",
+                ],
+              ] as const
+            ).map(([key, title, description, locked]) => (
               <div
                 key={key}
                 className="flex items-center gap-4 rounded-2xl border border-[var(--border)] p-4"
@@ -789,6 +797,7 @@ export function AdminSettingsWorkspace() {
                 <Switch
                   label={title}
                   checked={flags[key as keyof typeof flags]}
+                  disabled={Boolean(locked)}
                   onChange={(value) => update(key as keyof typeof flags, value)}
                 />
               </div>

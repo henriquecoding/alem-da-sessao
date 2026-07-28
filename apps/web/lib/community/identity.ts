@@ -38,15 +38,3 @@ export function attachCommunityCookie(
     maxAge: 60 * 60 * 24 * 180,
   });
 }
-
-export function isSameOrigin(request: NextRequest) {
-  const origin = request.headers.get("origin");
-  if (!origin) return true;
-  try {
-    const requestHost =
-      request.headers.get("x-forwarded-host") ?? request.headers.get("host");
-    return Boolean(requestHost) && new URL(origin).host === requestHost;
-  } catch {
-    return false;
-  }
-}

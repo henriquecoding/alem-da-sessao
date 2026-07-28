@@ -10,6 +10,7 @@ import { LoadStructuresCommunity } from "@/components/load-structures-community"
 import { LoadStructuresExperience } from "@/components/load-structures-experience";
 import { listPublicLoadStructures } from "@/lib/community/store";
 import { localPath, resolveLocale } from "@/lib/locale";
+import { requireRunnableTool } from "@/lib/tool-access";
 
 export const metadata: Metadata = {
   title: "Estruturas de Carga — experiência gratuita",
@@ -25,6 +26,7 @@ export default async function PublicLoadStructuresPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale, segment } = await resolveLocale(params);
+  requireRunnableTool("estruturas-de-carga", "public");
   const isPortugal = locale === "pt-PT";
   const posts = await listPublicLoadStructures();
 
@@ -74,8 +76,8 @@ export default async function PublicLoadStructuresPage({
               </p>
               <p className="mt-4 text-xs leading-6 text-[#858b96]">
                 {isPortugal
-                  ? "Cinco etapas · cerca de 12 minutos · publicação opcional"
-                  : "Cinco etapas · cerca de 12 minutos · publicação opcional"}
+                  ? "Cinco etapas · cerca de 7 minutos · publicação opcional"
+                  : "Cinco etapas · cerca de 7 minutos · publicação opcional"}
               </p>
             </div>
           </header>

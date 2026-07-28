@@ -5,32 +5,26 @@
    ========================================================================== */
 
 /* ==========================================================================
-   Base — relatório v2 §6.3
+   Luz de Intervalo — base de marca
 
-   A paleta anterior era lilás sobre cinzento frio, com pastéis saturados. Isso
-   é a armadilha *wellness* nomeada no §6.1 — infantiliza o cliente e
-   desqualifica o produto aos olhos do profissional que paga — e o gradiente
-   roxo-azul é literalmente o anti-padrão #4.
-
-   Esta é a substituição: base creme quente, primário verde profundo e
-   contido, e um único acento âmbar reservado ao gesto de partilha. Onde havia
-   pastéis há agora pigmentos — cores que parecem material, não rebuçado.
+   A direção validada combina uma base mineral quase branca, tinta violeta e
+   superfícies pastel suaves. Violeta é a única cor de ação. Teal comunica
+   sucesso, coral aquece detalhes e âmbar continua reservado ao gesto de
+   partilha. As câmaras autorais podem ter paleta própria sem contaminar o
+   sistema operativo de cuidado.
    ========================================================================== */
 
 :root {
-  --background: light-dark(#f8f6f2, #17191a);
-  --background-deep: light-dark(#f0ede5, #121415);
-  --foreground: light-dark(#1c1f22, #ece9e3);
-  --surface: light-dark(#fdfdfc, #1e2120);
-  --surface-strong: light-dark(#ffffff, #252827);
-  --muted: light-dark(#ebe9e5, #292c2b);
-  /* Escurecido de #5e656e para dar folga aos pigmentos: o que estava
-     apertado era o texto, não a cor de fundo. Melhora o contraste em toda a
-     interface de caminho, não só nas superfícies novas. */
-  --muted-foreground: light-dark(#555c65, #a3a49f);
-  --primary: light-dark(#3c6252, #7fb39c);
-  --primary-strong: light-dark(#2e4c40, #99c6b1);
-  --primary-foreground: light-dark(#fbfaf8, #14201b);
+  --background: light-dark(#f7f5f8, #18161d);
+  --background-deep: light-dark(#eeeaf2, #121017);
+  --foreground: light-dark(#282431, #f2eef6);
+  --surface: light-dark(#fffcfa, #211e28);
+  --surface-strong: light-dark(#ffffff, #292530);
+  --muted: light-dark(#ebe7ef, #2f2a38);
+  --muted-foreground: light-dark(#625b6b, #b8b1c4);
+  --primary: light-dark(#6848c6, #b9a8f5);
+  --primary-strong: light-dark(#51349f, #cbbefa);
+  --primary-foreground: light-dark(#ffffff, #21143e);
 
   /* O acento de marca é terracota queimada: quente, mas nunca confundível com
      o âmbar de `--shared`, que só existe na partilha. */
@@ -41,36 +35,35 @@
 
   /* Texto *sobre* cada superfície de acento. Sem estes tokens cada uso
      escrevia `text-white`, que é uma cor fixa: no tema escuro `--primary`
-     passa a verde claro e o branco por cima desaparece. `check:contrast`
+     passa a violeta claro e o branco por cima desaparece. `check:contrast`
      recusa cores fixas justamente por isso. */
   --on-accent: light-dark(#fdf7f4, #22120c);
   --on-destructive: light-dark(#fdf6f5, #2a1210);
   --on-shared: #2b1a08;
 
-  /* Pigmentos, não pastéis. Todos derivados da mesma base quente e
-     dessaturados o suficiente para nunca competirem com o texto. */
-  --pigment-sage: light-dark(#c9e5d4, #1f2926);
-  --pigment-sage-edge: light-dark(#3f8a63, #79d3a6);
-  --pigment-clay: light-dark(#f8d6bd, #2a2422);
-  --pigment-clay-edge: light-dark(#b96634, #f0a273);
-  --pigment-sand: light-dark(#f8ecbc, #282622);
-  --pigment-sand-edge: light-dark(#9c7a17, #e4c563);
-  --pigment-stone: light-dark(#dee3e8, #24272a);
-  --pigment-stone-edge: light-dark(#6b7683, #9fadbb);
-  --pigment-ochre: light-dark(#fadfa6, #292620);
-  --pigment-ochre-edge: light-dark(#a37a15, #e8bc5c);
-  --pigment-rose: light-dark(#fad6dc, #2a2326);
-  --pigment-rose-edge: light-dark(#c05470, #f79cb1);
-  --pigment-sky: light-dark(#cfe1f5, #21272e);
-  --pigment-sky-edge: light-dark(#3d76ac, #88b8e8);
-  --pigment-plum: light-dark(#e7d9f2, #262330);
-  --pigment-plum-edge: light-dark(#7d57a8, #bb9ae2);
+  /* Pastel é superfície; a aresta, mais intensa, transporta hierarquia. */
+  --pigment-sage: light-dark(#d7ecee, #1f2a2d);
+  --pigment-sage-edge: light-dark(#2f7e82, #78c9cd);
+  --pigment-clay: light-dark(#f6d3c4, #30231f);
+  --pigment-clay-edge: light-dark(#b95e43, #f09a7f);
+  --pigment-sand: light-dark(#f7e6a8, #302b1e);
+  --pigment-sand-edge: light-dark(#8b6c13, #e6c75f);
+  --pigment-stone: light-dark(#dceaf7, #202936);
+  --pigment-stone-edge: light-dark(#497aa5, #91bae0);
+  --pigment-ochre: light-dark(#f7e6a8, #302b1e);
+  --pigment-ochre-edge: light-dark(#8b6c13, #e6c75f);
+  --pigment-rose: light-dark(#f4d6e2, #30232c);
+  --pigment-rose-edge: light-dark(#a95072, #e69cba);
+  --pigment-sky: light-dark(#dceaf7, #202936);
+  --pigment-sky-edge: light-dark(#497aa5, #91bae0);
+  --pigment-plum: light-dark(#ded6fa, #29243a);
+  --pigment-plum-edge: light-dark(#6848c6, #b9a8f5);
 
-  --highlight-yellow: #e0bb6b;
-  --border: light-dark(#d7d2cb, #323533);
-  --border-strong: light-dark(#c2bcb2, #454846);
-  --ring: light-dark(#396a56, #7fb39c);
-  --success: light-dark(#2c6152, #7fc4a8);
+  --highlight-yellow: #f2cf63;
+  --border: light-dark(#dcd6e2, #3b3545);
+  --border-strong: light-dark(#c8bfd0, #51485e);
+  --ring: light-dark(#6848c6, #b9a8f5);
+  --success: light-dark(#25676c, #80cbd0);
   --success-soft: light-dark(var(--pigment-sage), #22302a);
   --warning: light-dark(#7a5518, #ddba71);
   --warning-soft: light-dark(var(--pigment-ochre), #35301c);
@@ -80,22 +73,20 @@
   --destructive-strong: light-dark(#96241e, #f0a09a);
   --destructive-soft: light-dark(#f6e2df, #37211f);
 
-  /* 0.875rem em vez de 1.35rem. O raio grande era metade da leitura
-     "wellness": cantos muito redondos lêem como app de meditação. */
-  --radius-lg: 0.875rem;
-  --radius-sm: 0.5rem;
+  --radius-lg: 1.25rem;
+  --radius-sm: 0.75rem;
 
   /* A barra lateral é escura nos dois temas — é uma superfície invariante, e
      por isso tem o seu próprio conjunto de tokens em vez de `text-white` e
      `bg-white/12` espalhados. Sem estes, cada uso era uma cor cega ao tema à
      espera de partir. */
-  --sidebar: light-dark(#1f2422, #121413);
-  --sidebar-foreground: light-dark(#f1efe9, #ece9e3);
-  --sidebar-muted: #a8ada9;
-  --sidebar-raised: #2b312e;
-  --sidebar-raised-strong: #363d39;
-  --sidebar-border: #343b37;
-  --scrim: rgba(12, 14, 13, 0.55);
+  --sidebar: light-dark(#231e2d, #121017);
+  --sidebar-foreground: light-dark(#f6f2fa, #f2eef6);
+  --sidebar-muted: #b8b1c4;
+  --sidebar-raised: #302941;
+  --sidebar-raised-strong: #3b3350;
+  --sidebar-border: #453c59;
+  --scrim: rgba(22, 17, 30, 0.58);
 
   /* Dark editorial surface shared by the Estruturas de Carga engine. */
   --ink: #15171b;
@@ -130,9 +121,9 @@
   --shadow-xl:
     0 4px 10px var(--shadow-contact), 0 38px 88px var(--shadow-ambient-xl);
   --shadow-primary:
-    0 1px 2px rgba(30, 48, 40, 0.22), 0 8px 22px rgba(30, 48, 40, 0.18);
+    0 1px 2px rgba(54, 37, 105, 0.2), 0 8px 22px rgba(81, 52, 159, 0.18);
   --shadow-primary-strong:
-    0 2px 4px rgba(30, 48, 40, 0.26), 0 14px 32px rgba(30, 48, 40, 0.24);
+    0 2px 4px rgba(54, 37, 105, 0.24), 0 14px 32px rgba(81, 52, 159, 0.24);
   --shadow-ember:
     0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(188, 101, 50, 0.18);
 
@@ -173,8 +164,9 @@
   /* ------------------------------------------------------------------------
      Cores *sobre* superfícies fortes
 
-     Uma superfície forte inverte a polaridade da página: verde escuro no tema
-     claro, verde claro no escuro. Um texto que herde `--foreground` sobre ela
+     Uma superfície forte inverte a polaridade da página: violeta escuro no
+     tema claro, violeta claro no escuro. Um texto que herde `--foreground`
+     sobre ela
      desaparece — e desapareceu, em produção, em cartões inteiros.
 
      Cada superfície forte traz por isso o seu conjunto completo: o texto
@@ -182,9 +174,9 @@
      um parágrafo de apoio sobre a superfície sem inventar uma cor à mão, e
      inventar cores à mão foi exatamente como isto se partiu.
      ------------------------------------------------------------------------ */
-  --on-primary: light-dark(#fbfaf8, #10201a);
-  --on-primary-muted: light-dark(#d3e0da, #1c3a2f);
-  --on-primary-line: light-dark(#5b7f6f, #5d9784);
+  --on-primary: light-dark(#ffffff, #21143e);
+  --on-primary-muted: light-dark(#ede8fb, #3c2b68);
+  --on-primary-line: light-dark(#8e76d8, #8f79d0);
 
   --on-accent-muted: light-dark(#fdf1ec, #3b1a10);
   --on-accent-line: light-dark(#c07a60, #b06c4c);
@@ -504,11 +496,11 @@
      gesto. Se remover a animação e nada ficar menos compreensível, remova.
 
      | Contexto                         | Duração     | Curva                    |
-     | Care OS — estado                 | 180–220 ms  | --ease-care              |
+     | Care OS — estado                 | 140–180 ms  | --ease-care              |
      | Care OS — navegação              | 0 ms        | —                        |
-     | Experiência — revelação de etapa | 400–600 ms  | --ease-out-expo          |
-     | Experiência — formação           | 800–1400 ms | --ease-forming           |
-     | Partilha — travessia da ponte    | 600–900 ms  | --ease-in-out-quart      |
+     | Experiência — revelação de etapa | 280–420 ms  | --ease-out-expo          |
+     | Experiência — formação           | 600–750 ms  | --ease-forming           |
+     | Partilha — travessia da ponte    | 400–500 ms  | --ease-in-out-quart      |
      ------------------------------------------------------------------------ */
   --ease-care: cubic-bezier(0.2, 0, 0, 1);
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
@@ -517,20 +509,20 @@
   --ease-forming: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
 
-  --duration-care: 200ms;
-  --duration-step: 500ms;
-  --duration-forming: 1100ms;
-  --duration-crossing: 780ms;
+  --duration-care: 160ms;
+  --duration-step: 360ms;
+  --duration-forming: 700ms;
+  --duration-crossing: 450ms;
 
-  --animate-rise: rise 0.72s var(--ease-out-quint) both;
-  --animate-fade: fade 0.5s var(--ease-out-quint) both;
-  --animate-scale-in: scale-in 0.42s var(--ease-out-quint) both;
-  --animate-drawer-in: drawer-in 0.34s var(--ease-out-quint) both;
-  --animate-drawer-out: drawer-out 0.24s var(--ease-in-out-quart) both;
-  --animate-backdrop-in: fade 0.26s var(--ease-out-quint) both;
-  --animate-backdrop-out: fade-out 0.24s var(--ease-out-quint) both;
-  --animate-sheet-in: sheet-in 0.5s var(--ease-out-quint) both;
-  --animate-pop: pop 0.34s var(--ease-spring) both;
+  --animate-rise: rise 0.4s var(--ease-out-quint) both;
+  --animate-fade: fade 0.28s var(--ease-out-quint) both;
+  --animate-scale-in: scale-in 0.32s var(--ease-out-quint) both;
+  --animate-drawer-in: drawer-in 0.22s var(--ease-out-quint) both;
+  --animate-drawer-out: drawer-out 0.16s var(--ease-in-out-quart) both;
+  --animate-backdrop-in: fade 0.16s var(--ease-out-quint) both;
+  --animate-backdrop-out: fade-out 0.16s var(--ease-out-quint) both;
+  --animate-sheet-in: sheet-in 0.32s var(--ease-out-quint) both;
+  --animate-pop: pop 0.24s var(--ease-spring) both;
   --animate-shimmer: shimmer 2.4s linear infinite;
   --animate-breathe: breathe 7s ease-in-out infinite;
   --animate-float: float 9s ease-in-out infinite;
@@ -701,7 +693,8 @@
   --color-card: var(--surface);
   --color-border: var(--border);
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Newsreader Variable", ui-serif, Georgia, serif;
+  --font-serif:
+    Iowan Old Style, Palatino Linotype, Book Antiqua, Georgia, ui-serif, serif;
 }
 
 /* ==========================================================================
@@ -779,8 +772,13 @@ p {
 }
 
 .editorial {
-  font-family: "Newsreader Variable", ui-serif, Georgia, serif;
-  font-optical-sizing: auto;
+  font-family:
+    Iowan Old Style,
+    Palatino Linotype,
+    Book Antiqua,
+    Georgia,
+    ui-serif,
+    serif;
 }
 
 .tabular {
@@ -833,31 +831,31 @@ p {
 
 @media (prefers-reduced-motion: no-preference) {
   .enter {
-    animation: rise 0.72s var(--ease-out-quint) both;
+    animation: rise 0.4s var(--ease-out-quint) both;
   }
 
   .enter-fade {
-    animation: fade 0.6s var(--ease-out-quint) both;
+    animation: fade 0.28s var(--ease-out-quint) both;
   }
 
   .enter-scale {
-    animation: scale-in 0.62s var(--ease-out-quint) both;
+    animation: scale-in 0.32s var(--ease-out-quint) both;
   }
 
   /* Declared after the shorthands above, which would otherwise reset it. */
   .enter,
   .enter-fade,
   .enter-scale {
-    animation-delay: calc(var(--d, 0) * 75ms);
+    animation-delay: calc(var(--d, 0) * 40ms);
   }
 
   .js-reveal .reveal {
     opacity: 0;
     transform: translate3d(0, 1.25rem, 0);
     transition:
-      opacity 0.7s var(--ease-out-quint),
-      transform 0.7s var(--ease-out-quint);
-    transition-delay: calc(var(--d, 0) * 80ms);
+      opacity 0.42s var(--ease-out-quint),
+      transform 0.42s var(--ease-out-quint);
+    transition-delay: calc(var(--d, 0) * 50ms);
   }
 
   .js-reveal .reveal.is-revealed {
@@ -893,16 +891,16 @@ p {
 
 @media (prefers-reduced-motion: no-preference) {
   .draw-x {
-    animation: draw-x 1s var(--ease-forming) both;
+    animation: draw-x 0.55s var(--ease-forming) both;
   }
 
   .draw-y {
-    animation: draw-y 0.52s var(--ease-out-expo) both;
+    animation: draw-y 0.32s var(--ease-out-expo) both;
   }
 
   .draw-x,
   .draw-y {
-    animation-delay: calc(var(--d, 0) * 90ms);
+    animation-delay: calc(var(--d, 0) * 45ms);
   }
 }
 
@@ -1090,7 +1088,7 @@ p {
     transparent 62%
   );
   transform: translateX(-100%);
-  transition: transform 900ms var(--ease-out-expo);
+  transition: transform 500ms var(--ease-out-expo);
 }
 
 @media (hover: hover) {
@@ -1151,8 +1149,8 @@ p {
   /* A formação em etapas continua escalonada, porque é o escalonamento que
      comunica "isto está a ser construído a partir do que escreveu". */
   .forming-step {
-    animation: forming-reduced 320ms linear both !important;
-    animation-delay: calc(var(--d, 0) * 160ms) !important;
+    animation: forming-reduced 240ms linear both !important;
+    animation-delay: calc(var(--d, 0) * 90ms) !important;
   }
 
   .lift:hover,
@@ -1165,7 +1163,7 @@ p {
    atraso — o artefacto monta-se peça a peça em vez de aparecer inteiro. */
 @media (prefers-reduced-motion: no-preference) {
   .forming-step {
-    animation: forming 0.9s var(--ease-forming) both;
-    animation-delay: calc(var(--d, 0) * 180ms);
+    animation: forming 0.65s var(--ease-forming) both;
+    animation-delay: calc(var(--d, 0) * 100ms);
   }
 }

@@ -25,12 +25,12 @@ function contrast(first: string, second: string) {
 
 describe("Luz de Intervalo palette", () => {
   it.each([
-    ["foreground/background", "#1C1F22", "#F8F6F2"],
-    ["muted foreground/surface", "#5E656E", "#FDFDFC"],
-    ["primary foreground/primary", "#FBFAF8", "#3C6252"],
+    ["foreground/background", "#282431", "#F7F5F8"],
+    ["muted foreground/surface", "#625B6B", "#FFFCFA"],
+    ["primary foreground/primary", "#FFFFFF", "#6848C6"],
     ["accent foreground/accent soft", "#7A3A24", "#F2E2D9"],
-    ["sidebar foreground/sidebar", "#F1EFE9", "#1F2422"],
-    ["sidebar/highlight", "#1F2422", "#E0BB6B"],
+    ["sidebar foreground/sidebar", "#F6F2FA", "#231E2D"],
+    ["sidebar/highlight", "#231E2D", "#F2CF63"],
   ])("%s meets WCAG AA for normal text", (_, first, second) => {
     expect(contrast(first, second)).toBeGreaterThanOrEqual(4.5);
   });
@@ -69,9 +69,9 @@ describe("semântica de sensibilidade (§6.3)", () => {
 /** A segunda paleta do modo escuro, que não é uma inversão da primeira. */
 describe("paleta escura (§6.3)", () => {
   it.each([
-    ["foreground/background", "#ECE9E3", "#17191A"],
-    ["muted foreground/surface", "#A3A49F", "#1E2120"],
-    ["primary/background", "#7FB39C", "#17191A"],
+    ["foreground/background", "#F2EEF6", "#18161D"],
+    ["muted foreground/surface", "#B8B1C4", "#211E28"],
+    ["primary/background", "#B9A8F5", "#18161D"],
     ["private/private surface", "#9DBDAE", "#23282A"],
     ["shared foreground/shared surface", "#F0C48A", "#33281C"],
   ])("%s meets WCAG AA for normal text", (_, first, second) => {

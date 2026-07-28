@@ -286,9 +286,12 @@ describe("invariantes do artefacto (§4.1)", () => {
 });
 
 describe("invariantes do manifesto (§10.3)", () => {
-  it("nenhuma experiência pública passa sem gate de auto-iniciação", () => {
+  it("demonstrações pendentes só correm no runtime fixture", () => {
     for (const manifest of manifests) {
-      expect(guestModeIsPermitted(manifest), manifest.id).toBe(true);
+      expect(guestModeIsPermitted(manifest, "fixture"), manifest.id).toBe(true);
+      expect(guestModeIsPermitted(manifest, "production"), manifest.id).toBe(
+        false,
+      );
     }
   });
 

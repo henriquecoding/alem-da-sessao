@@ -32,7 +32,6 @@ export function Arrival({
   tone?: "light" | "ink";
 }) {
   const ink = tone === "ink";
-  const gate = manifest.capabilities.canSelfStart;
   const guest = manifest.capabilities.canRunAsGuest;
 
   const promises = [
@@ -154,10 +153,10 @@ export function Arrival({
         ))}
       </ul>
 
-      {/* §4.9 — a declaração de não-monitorização é obrigatória sempre que o
-          gate de auto-iniciação está ativo e a experiência corre em modo
-          convidado. Está aqui, na Chegada, e não escondida no rodapé. */}
-      {guest && gate !== false && gate.unattendedNotice && (
+      {/* A declaração de não-monitorização é obrigatória em qualquer runtime
+          convidado, incluindo a demonstração local que ainda não constitui
+          aprovação clínica. Está aqui, na Chegada, e não no rodapé. */}
+      {guest && (
         <p
           className={cn(
             "enter mt-6 flex items-start gap-3 rounded-2xl border border-dashed p-4 text-sm leading-6",

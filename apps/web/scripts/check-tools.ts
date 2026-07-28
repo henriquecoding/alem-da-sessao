@@ -92,12 +92,26 @@ for (const tool of manifests) {
     );
   }
 
-  // §10.3 — a regra derivada: publicar sem gate é impossível.
-  if (!guestModeIsPermitted(tool)) {
+  // §10.3 — produção e demonstração são estados distintos. Um manifesto
+  // `demo-ready` pode ser exercitado localmente, mas nunca satisfaz o gate
+  // público real.
+  if (
+    tool.status === "published" &&
+    tool.capabilities.canRunAsGuest &&
+    !guestModeIsPermitted(tool, "production")
+  ) {
     fail(
       tool,
-      "canRunAsGuest: true exige canSelfStart !== false (§4.9). Não se oferece publicamente uma experiência que não passou pelo gate.",
+      "status published + canRunAsGuest exige revisão clínica aprovada e gate de auto-iniciação completo (§4.9).",
     );
+  }
+
+  if (tool.status !== "published" && guestModeIsPermitted(tool, "production")) {
+    fail(tool, "uma ferramenta não publicada ficou executável em produção.");
+  }
+
+  if (tool.status === "demo-ready" && !guestModeIsPermitted(tool, "fixture")) {
+    fail(tool, "uma demonstração local deixou de ser executável em fixture.");
   }
 
   // §4.9 — o gate, quando existe, tem de estar completo.

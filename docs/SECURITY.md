@@ -24,6 +24,13 @@ prontidão clínica.
   a moderação e estruturas com expiração;
 - apoio sem texto, identidade, perfil ou contacto direto;
 - nenhuma IA clínica, chat, áudio ou vídeo.
+- autenticação obrigatória fora do modo fixture e MFA/AAL2 para superfícies
+  profissionais e administrativas;
+- permissões clínicas limitadas por papel e relação de cuidado ativa;
+- faturação isolada noutro projeto Supabase, sem joins ou chaves para o plano
+  clínico;
+- lançamento público bloqueado por evidências externas verificáveis, nunca por
+  um boolean isolado.
 
 ## Antes de dados reais
 
@@ -41,6 +48,9 @@ prontidão clínica.
 
 ## Comunicação de vulnerabilidades
 
-Enquanto o projeto for privado, registe a ocorrência diretamente com o
-proprietário sem colocar dados, tokens ou provas sensíveis numa issue. O canal
-público de segurança só será definido antes do beta.
+O repositório pode estar publicamente visível, mas uma vulnerabilidade não deve
+ser descrita numa issue pública. Use **Security → Report a vulnerability** no
+GitHub quando o formulário privado estiver disponível. Se não estiver, contacte
+o proprietário através do perfil verificado sem enviar dados pessoais, tokens
+ou uma prova explorável. Um contacto dedicado e SLA são gates obrigatórios
+antes do beta.
