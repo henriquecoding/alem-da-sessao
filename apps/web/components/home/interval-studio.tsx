@@ -1,6 +1,13 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+} from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -51,6 +58,8 @@ export function IntervalStudio({
   const [step, setStep] = useState<RitualStep>(0);
   const [moment, setMoment] = useState<MomentId | null>(null);
   const [crossing, setCrossing] = useState<CrossingState>("private");
+  const exploreTabRef = useRef<HTMLButtonElement>(null);
+  const returningTabRef = useRef<HTMLButtonElement>(null);
 
   const selected = useMemo(
     () =>
@@ -64,6 +73,27 @@ export function IntervalStudio({
     if (next === "explore") return;
     setStep(0);
     setCrossing("private");
+  };
+
+  const focusVisitMode = (next: VisitMode) => {
+    setVisitMode(next);
+    const target =
+      next === "explore" ? exploreTabRef.current : returningTabRef.current;
+    target?.focus();
+  };
+
+  const handleVisitModeKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    let next: VisitMode | null = null;
+
+    if (event.key === "Home") next = "explore";
+    if (event.key === "End") next = "returning";
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      next = mode === "explore" ? "returning" : "explore";
+    }
+    if (!next) return;
+
+    event.preventDefault();
+    focusVisitMode(next);
   };
 
   const restart = () => {
@@ -113,23 +143,29 @@ export function IntervalStudio({
           <div className="enter mt-10" style={{ "--d": 2 } as CSSProperties}>
             <div className="home-mode-switch mx-auto" role="tablist">
               <button
+                ref={exploreTabRef}
                 id="home-explore-tab"
                 type="button"
                 role="tab"
                 aria-selected={mode === "explore"}
                 aria-controls="home-experience-panel"
+                tabIndex={mode === "explore" ? 0 : -1}
                 onClick={() => setVisitMode("explore")}
+                onKeyDown={handleVisitModeKeyDown}
                 className="min-h-11 rounded-full px-4 text-sm font-semibold outline-none transition-[background-color,color,box-shadow] duration-200 focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
               >
                 {copy.shell.exploreTab}
               </button>
               <button
+                ref={returningTabRef}
                 id="home-return-tab"
                 type="button"
                 role="tab"
                 aria-selected={mode === "returning"}
                 aria-controls="home-experience-panel"
+                tabIndex={mode === "returning" ? 0 : -1}
                 onClick={() => setVisitMode("returning")}
+                onKeyDown={handleVisitModeKeyDown}
                 className="min-h-11 rounded-full px-4 text-sm font-semibold outline-none transition-[background-color,color,box-shadow] duration-200 focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
               >
                 {copy.shell.returnTab}
@@ -223,12 +259,20 @@ function RitualCopy({
   onBack: () => void;
   onRestart: () => void;
 }) {
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null);
+  const previousStep = useRef(step);
   const stepCopy =
     step === 0
       ? copy.ritual.steps.notice
       : step === 1
         ? copy.ritual.steps.form
         : copy.ritual.steps.decide;
+
+  useEffect(() => {
+    if (previousStep.current === step) return;
+    previousStep.current = step;
+    stepHeadingRef.current?.focus({ preventScroll: true });
+  }, [step]);
 
   return (
     <>
@@ -258,7 +302,11 @@ function RitualCopy({
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--accent-foreground)]">
           {stepCopy.number} · {stepCopy.name}
         </p>
-        <h2 className="mt-4 text-balance text-[clamp(2rem,1.45rem+2vw,3rem)] font-semibold leading-[1.02] tracking-[-0.05em]">
+        <h2
+          ref={stepHeadingRef}
+          tabIndex={-1}
+          className="mt-4 text-balance text-[clamp(2rem,1.45rem+2vw,3rem)] font-semibold leading-[1.02] tracking-[-0.05em] outline-none"
+        >
           {stepCopy.title}
         </h2>
         <p className="mt-5 max-w-[45ch] text-pretty leading-7 text-[var(--muted-foreground)]">

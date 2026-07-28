@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { getMessages } from "@alem-da-sessao/i18n";
 import { describe, expect, it } from "vitest";
 import { IntervalStudio } from "@/components/home/interval-studio";
@@ -102,6 +102,63 @@ describe("homepage origami experience", () => {
     expect(
       screen.getByRole("link", { name: /Entrar na área profissional/ }),
     ).toHaveAttribute("href", "/pt-br/pro/hoje");
+  });
+
+  it("implements the complete keyboard pattern for the visit mode tabs", () => {
+    render(
+      <IntervalStudio
+        copy={getMessages("pt-PT").home}
+        locale="pt-PT"
+        segment="pt-pt"
+      />,
+    );
+
+    const explore = screen.getByRole("tab", { name: "Conhecer o espaço" });
+    const returning = screen.getByRole("tab", { name: "Já utilizo" });
+
+    expect(explore).toHaveAttribute("tabindex", "0");
+    expect(returning).toHaveAttribute("tabindex", "-1");
+
+    explore.focus();
+    fireEvent.keyDown(explore, { key: "ArrowRight" });
+
+    expect(returning).toHaveFocus();
+    expect(returning).toHaveAttribute("aria-selected", "true");
+    expect(returning).toHaveAttribute("tabindex", "0");
+    expect(explore).toHaveAttribute("tabindex", "-1");
+
+    fireEvent.keyDown(returning, { key: "Home" });
+    expect(explore).toHaveFocus();
+    expect(explore).toHaveAttribute("aria-selected", "true");
+
+    fireEvent.keyDown(explore, { key: "End" });
+    expect(returning).toHaveFocus();
+    expect(returning).toHaveAttribute("aria-selected", "true");
+  });
+
+  it("moves focus to the new heading after every ritual transition", async () => {
+    render(
+      <IntervalStudio
+        copy={getMessages("pt-PT").home}
+        locale="pt-PT"
+        segment="pt-pt"
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Algo ficou/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+
+    const formHeading = screen.getByRole("heading", {
+      name: "Uma folha pode guardar mais do que uma resposta.",
+    });
+    await waitFor(() => expect(formHeading).toHaveFocus());
+
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+
+    const decisionHeading = screen.getByRole("heading", {
+      name: "Existir não é o mesmo que partilhar.",
+    });
+    await waitFor(() => expect(decisionHeading).toHaveFocus());
   });
 
   it("does not request intimate text in the public ritual", () => {
