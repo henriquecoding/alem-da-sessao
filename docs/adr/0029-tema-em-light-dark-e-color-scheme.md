@@ -26,9 +26,15 @@ A escolha de tema não troca folhas de estilo nem propaga uma classe: muda
 `color-scheme` na raiz, e todos os `light-dark()` resolvem de outro lado.
 
 ```css
-:root                     { color-scheme: light dark; }
-:root[data-theme="light"] { color-scheme: light; }
-:root[data-theme="dark"]  { color-scheme: dark; }
+:root {
+  color-scheme: light dark;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
 ```
 
 O que isto compra não é elegância — é que **o erro deixa de ser escrevível**.

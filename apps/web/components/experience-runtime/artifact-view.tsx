@@ -38,7 +38,7 @@ export function ArtifactView({
   useEffect(() => {
     // Deixa a formação correr antes de anunciar o resultado a quem usa leitor
     // de ecrã, para não interromper a leitura da etapa anterior.
-    const timer = window.setTimeout(() => setFormed(true), 1200);
+    const timer = window.setTimeout(() => setFormed(true), 700);
     return () => window.clearTimeout(timer);
   }, []);
 

@@ -21,8 +21,13 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import { localeFromSegment, type LocaleSegment } from "@alem-da-sessao/i18n";
-import { useEffect, useState } from "react";
+import {
+  getMessages,
+  localeFromSegment,
+  type LocaleSegment,
+  type Messages,
+} from "@alem-da-sessao/i18n";
+import { useEffect, useRef, useState } from "react";
 import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeSwitcher } from "@/components/theme-switcher";
@@ -34,68 +39,64 @@ type Surface = "professional" | "client" | "admin";
 
 const navigation = {
   professional: [
-    { label: "Hoje", href: "/pro/hoje", icon: LayoutDashboard },
-    { label: "Agenda", href: "/pro/agenda", icon: CalendarDays },
-    { label: "Clientes", href: "/pro/clientes", icon: ContactRound },
-    { label: "Experiências", href: "/pro/experiencias", icon: Sparkles },
-    { label: "Relatórios", href: "/pro/relatorios", icon: ChartNoAxesCombined },
-    { label: "Financeiro", href: "/pro/financeiro", icon: CircleDollarSign },
-    { label: "Equipa", href: "/pro/equipa", icon: UsersRound },
-    { label: "Definições", href: "/pro/definicoes", icon: Settings2 },
+    { key: "today", href: "/pro/hoje", icon: LayoutDashboard },
+    { key: "schedule", href: "/pro/agenda", icon: CalendarDays },
+    { key: "clients", href: "/pro/clientes", icon: ContactRound },
+    { key: "experiences", href: "/pro/experiencias", icon: Sparkles },
+    { key: "reports", href: "/pro/relatorios", icon: ChartNoAxesCombined },
+    { key: "finance", href: "/pro/financeiro", icon: CircleDollarSign },
+    { key: "team", href: "/pro/equipa", icon: UsersRound },
+    { key: "settings", href: "/pro/definicoes", icon: Settings2 },
   ],
   client: [
-    { label: "Hoje", href: "/cuidado/hoje", icon: HeartHandshake },
-    { label: "Sessões", href: "/cuidado/sessoes", icon: CalendarDays },
-    { label: "Experiências", href: "/cuidado/experiencias", icon: Sparkles },
-    { label: "Partilhas", href: "/cuidado/partilhas", icon: ClipboardCheck },
-    { label: "Conta", href: "/cuidado/conta", icon: Settings2 },
+    { key: "today", href: "/cuidado/hoje", icon: HeartHandshake },
+    { key: "sessions", href: "/cuidado/sessoes", icon: CalendarDays },
+    { key: "experiences", href: "/cuidado/experiencias", icon: Sparkles },
+    { key: "shares", href: "/cuidado/partilhas", icon: ClipboardCheck },
+    { key: "account", href: "/cuidado/conta", icon: Settings2 },
   ],
   admin: [
-    { label: "Operação", href: "/admin/operacao", icon: Activity },
-    { label: "Profissionais", href: "/admin/profissionais", icon: ShieldCheck },
-    { label: "Organizações", href: "/admin/organizacoes", icon: UsersRound },
-    { label: "Experiências", href: "/admin/experiencias", icon: Sparkles },
-    { label: "Definições", href: "/admin/definicoes", icon: Settings2 },
+    { key: "operation", href: "/admin/operacao", icon: Activity },
+    {
+      key: "professionals",
+      href: "/admin/profissionais",
+      icon: ShieldCheck,
+    },
+    { key: "organizations", href: "/admin/organizacoes", icon: UsersRound },
+    { key: "experiences", href: "/admin/experiencias", icon: Sparkles },
+    { key: "settings", href: "/admin/definicoes", icon: Settings2 },
   ],
-} as const;
-
-const surfaceIdentity: Record<
+} as const satisfies Record<
   Surface,
-  { name: string; subtitle: string; initials: string }
-> = {
-  professional: {
-    name: "Dra. Inês Almeida",
-    subtitle: "Psicóloga · demo",
-    initials: "IA",
-  },
-  client: {
-    name: "Marta Oliveira",
-    subtitle: "Espaço privado · demo",
-    initials: "MO",
-  },
-  admin: {
-    name: "Henrique",
-    subtitle: "Administração · demo",
-    initials: "HP",
-  },
-};
+  readonly {
+    key: keyof Messages["nav"];
+    href: string;
+    icon: typeof Activity;
+  }[]
+>;
 
 function NavigationItems({
   surface,
   segment,
   collapsed,
+  messages,
   onNavigate,
 }: {
   surface: Surface;
   segment: LocaleSegment;
   collapsed: boolean;
+  messages: Messages;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Navegação principal" className="flex flex-col gap-1.5">
+    <nav
+      aria-label={messages.shell.primaryNavigation}
+      className="flex flex-col gap-1.5"
+    >
       {navigation[surface].map((item) => {
+        const label = messages.nav[item.key];
         const href = `/${segment}${item.href}`;
         const active =
           pathname === href ||
@@ -109,7 +110,7 @@ function NavigationItems({
             href={href}
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
-            title={collapsed ? item.label : undefined}
+            title={collapsed ? label : undefined}
             className={cn(
               "group/nav relative flex min-h-11 items-center gap-3 overflow-hidden rounded-2xl px-3 text-sm font-semibold outline-none",
               "ease-(--ease-out-quint) transition-[background-color,color,transform] duration-200 focus-visible:ring-2 focus-visible:ring-[var(--sidebar-foreground)]",
@@ -121,12 +122,12 @@ function NavigationItems({
           >
             <item.icon
               className={cn(
-                "ease-(--ease-spring) size-[18px] shrink-0 transition-transform duration-500",
+                "ease-(--ease-spring) size-[18px] shrink-0 transition-transform duration-200",
                 !active && "group-hover/nav:scale-110",
               )}
               aria-hidden="true"
             />
-            {!collapsed && <span className="truncate">{item.label}</span>}
+            {!collapsed && <span className="truncate">{label}</span>}
           </Link>
         );
       })}
@@ -147,10 +148,16 @@ export function AppShell({
   // "closing" keeps the drawer mounted for the length of its exit animation,
   // so dismissing it reads as a movement rather than a disappearance.
   const [drawer, setDrawer] = useState<"closed" | "open" | "closing">("closed");
-  const identity = surfaceIdentity[surface];
+  const locale = localeFromSegment(segment);
+  const messages = getMessages(locale);
+  const identity = messages.shell.identities[surface];
   const mobileItems = navigation[surface].slice(0, 4);
   const pathname = usePathname();
   const drawerOpen = drawer !== "closed";
+  const drawerRef = useRef<HTMLElement | null>(null);
+  const openerRef = useRef<HTMLButtonElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const bottomNavRef = useRef<HTMLElement | null>(null);
 
   function closeDrawer() {
     setDrawer((current) => (current === "open" ? "closing" : current));
@@ -158,135 +165,180 @@ export function AppShell({
 
   useEffect(() => {
     if (drawer !== "closing") return;
-    const timer = window.setTimeout(() => setDrawer("closed"), 260);
+    const timer = window.setTimeout(() => {
+      setDrawer("closed");
+      openerRef.current?.focus();
+    }, 180);
     return () => window.clearTimeout(timer);
   }, [drawer]);
 
   useEffect(() => {
     if (!drawerOpen) return;
 
+    const panel = drawerRef.current;
+    const focusable = panel
+      ? Array.from(
+          panel.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          ),
+        )
+      : [];
+    focusable[0]?.focus();
+
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") closeDrawer();
+      if (event.key === "Escape") {
+        closeDrawer();
+        return;
+      }
+      if (event.key !== "Tab" || focusable.length === 0) return;
+
+      const first = focusable[0]!;
+      const last = focusable.at(-1)!;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
 
     // The page behind a modal drawer must not scroll with it.
     const previousOverflow = document.body.style.overflow;
+    const content = contentRef.current;
+    const bottomNav = bottomNavRef.current;
     document.body.style.overflow = "hidden";
+    if (content) content.inert = true;
+    if (bottomNav) bottomNav.inert = true;
     document.addEventListener("keydown", onKeyDown);
 
     return () => {
       document.body.style.overflow = previousOverflow;
+      if (content) content.inert = false;
+      if (bottomNav) bottomNav.inert = false;
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [drawerOpen]);
 
   return (
     <div className="min-h-screen bg-[var(--background)] lg:flex">
-      <aside
-        className={cn(
-          "surface-sidebar sticky top-0 hidden h-screen shrink-0 flex-col p-4 text-[var(--sidebar-foreground)] lg:flex",
-          "duration-400 ease-(--ease-out-quint) transition-[width]",
-          collapsed ? "w-[84px]" : "w-[248px]",
-        )}
-      >
-        <div
+      <div ref={contentRef} className="contents">
+        <aside
           className={cn(
-            "mb-8 flex min-h-12 items-center gap-3",
-            collapsed && "justify-center",
+            "surface-sidebar sticky top-0 hidden h-screen shrink-0 flex-col p-4 text-[var(--sidebar-foreground)] lg:flex",
+            "ease-(--ease-out-quint) transition-[width] duration-200",
+            collapsed ? "w-[84px]" : "w-[248px]",
           )}
         >
-          <BrandMark className="surface-sidebar-raised" />
-          {!collapsed && (
-            <div className="enter-fade min-w-0">
-              <p className="truncate text-sm font-bold tracking-[-0.025em]">
-                Além da Sessão
-              </p>
-              <p className="mt-0.5 text-[10px] text-[var(--sidebar-muted)]">
-                demonstração local
-              </p>
-            </div>
-          )}
-        </div>
-
-        <NavigationItems
-          surface={surface}
-          segment={segment}
-          collapsed={collapsed}
-        />
-
-        <div className="mt-auto">
           <div
             className={cn(
-              "surface-sidebar-raised mb-2 flex items-center gap-3 rounded-2xl p-2",
+              "mb-8 flex min-h-12 items-center gap-3",
               collapsed && "justify-center",
             )}
           >
-            <span className="surface-primary grid size-9 shrink-0 place-items-center rounded-xl text-xs font-bold text-[var(--primary-foreground)]">
-              {identity.initials}
-            </span>
+            <BrandMark className="surface-sidebar-raised" />
             {!collapsed && (
               <div className="enter-fade min-w-0">
-                <p className="truncate text-xs font-bold">{identity.name}</p>
-                <p className="truncate text-[10px] text-[var(--sidebar-muted)]">
-                  {identity.subtitle}
+                <p className="truncate text-sm font-bold tracking-[-0.025em]">
+                  Além da Sessão
+                </p>
+                <p className="mt-0.5 text-[10px] text-[var(--sidebar-muted)]">
+                  {messages.shell.localDemo}
                 </p>
               </div>
             )}
           </div>
-          <button
-            type="button"
-            onClick={() => setCollapsed((value) => !value)}
-            className="flex min-h-11 w-full items-center justify-center rounded-2xl text-[var(--sidebar-muted)] transition-colors duration-200 hover:bg-[var(--sidebar-raised)] hover:text-[var(--sidebar-foreground)]"
-            aria-label={collapsed ? "Expandir navegação" : "Recolher navegação"}
-            aria-expanded={!collapsed}
-          >
-            {/* One chevron that rotates, rather than two that swap. */}
-            <ChevronLeft
-              className={cn(
-                "duration-400 ease-(--ease-out-quint) size-4 transition-transform",
-                collapsed && "rotate-180",
-              )}
-              aria-hidden="true"
-            />
-          </button>
-        </div>
-      </aside>
 
-      <div className="min-w-0 flex-1">
-        <div className="bg-[var(--background)]/92 sticky top-0 z-30 border-b border-[var(--border)] px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-[1420px] items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="secondary"
-                size="icon"
-                className="lg:hidden"
-                onClick={() => setDrawer("open")}
-                aria-label="Abrir navegação"
-              >
-                <Menu className="size-5" />
-              </Button>
-              <Badge tone="warning">Dados fictícios</Badge>
+          <NavigationItems
+            surface={surface}
+            segment={segment}
+            collapsed={collapsed}
+            messages={messages}
+          />
+
+          <div className="mt-auto">
+            <div
+              className={cn(
+                "surface-sidebar-raised mb-2 flex items-center gap-3 rounded-2xl p-2",
+                collapsed && "justify-center",
+              )}
+            >
+              <span className="surface-primary grid size-9 shrink-0 place-items-center rounded-xl text-xs font-bold text-[var(--primary-foreground)]">
+                {identity.initials}
+              </span>
+              {!collapsed && (
+                <div className="enter-fade min-w-0">
+                  <p className="truncate text-xs font-bold">{identity.name}</p>
+                  <p className="truncate text-[10px] text-[var(--sidebar-muted)]">
+                    {identity.subtitle}
+                  </p>
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5">
-                <LocaleSwitcher segment={segment} compact />
-                <ThemeSwitcher locale={localeFromSegment(segment)} />
+            <button
+              type="button"
+              onClick={() => setCollapsed((value) => !value)}
+              className="flex min-h-11 w-full items-center justify-center rounded-2xl text-[var(--sidebar-muted)] transition-colors duration-200 hover:bg-[var(--sidebar-raised)] hover:text-[var(--sidebar-foreground)]"
+              aria-label={
+                collapsed
+                  ? messages.shell.expandNavigation
+                  : messages.shell.collapseNavigation
+              }
+              aria-expanded={!collapsed}
+            >
+              {/* One chevron that rotates, rather than two that swap. */}
+              <ChevronLeft
+                className={cn(
+                  "ease-(--ease-out-quint) size-4 transition-transform duration-200",
+                  collapsed && "rotate-180",
+                )}
+                aria-hidden="true"
+              />
+            </button>
+          </div>
+        </aside>
+
+        <div className="min-w-0 flex-1">
+          <div className="bg-[var(--background)]/92 sticky top-0 z-30 border-b border-[var(--border)] px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
+            <div className="mx-auto flex max-w-[1420px] items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="lg:hidden"
+                  onClick={(event) => {
+                    openerRef.current = event.currentTarget;
+                    setDrawer("open");
+                  }}
+                  aria-label={messages.common.openMenu}
+                >
+                  <Menu className="size-5" />
+                </Button>
+                <Badge tone="warning">{messages.shell.fictionalData}</Badge>
               </div>
-              <Button
-                asChild
-                variant="secondary"
-                size="sm"
-                className="hidden sm:flex"
-              >
-                <Link href={`/${segment}/demo`}>Mudar de área</Link>
-              </Button>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
+                  <LocaleSwitcher segment={segment} compact />
+                  <ThemeSwitcher locale={locale} />
+                </div>
+                <Button
+                  asChild
+                  variant="secondary"
+                  size="sm"
+                  className="hidden sm:flex"
+                >
+                  <Link href={`/${segment}/demo`}>
+                    {messages.common.switchArea}
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <main className="mx-auto w-full max-w-[1420px] px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-10 lg:pt-8">
-          {children}
-        </main>
+          <main className="mx-auto w-full max-w-[1420px] px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-10 lg:pt-8">
+            {children}
+          </main>
+        </div>
       </div>
 
       {drawerOpen && (
@@ -294,7 +346,7 @@ export function AppShell({
           className="fixed inset-0 z-50 lg:hidden"
           role="dialog"
           aria-modal="true"
-          aria-label="Navegação principal"
+          aria-label={messages.shell.primaryNavigation}
         >
           {/* Enter and exit are separate keyframes rather than a transition:
               a freshly mounted element has no previous state to move from. */}
@@ -306,9 +358,10 @@ export function AppShell({
                 : "animate-backdrop-out",
             )}
             onClick={closeDrawer}
-            aria-label="Fechar navegação"
+            aria-label={messages.common.closeMenu}
           />
           <aside
+            ref={drawerRef}
             className={cn(
               "surface-sidebar relative flex h-full w-[min(88vw,340px)] flex-col p-5 text-[var(--sidebar-foreground)] shadow-2xl",
               drawer === "open" ? "animate-drawer-in" : "animate-drawer-out",
@@ -322,7 +375,7 @@ export function AppShell({
               <button
                 className="grid size-11 place-items-center rounded-2xl text-[var(--sidebar-muted)] transition-colors duration-200 hover:bg-[var(--sidebar-raised)] hover:text-[var(--sidebar-foreground)]"
                 onClick={closeDrawer}
-                aria-label="Fechar navegação"
+                aria-label={messages.common.closeMenu}
               >
                 <X className="size-5" />
               </button>
@@ -331,6 +384,7 @@ export function AppShell({
               surface={surface}
               segment={segment}
               collapsed={false}
+              messages={messages}
               onNavigate={closeDrawer}
             />
             <div className="mt-auto">
@@ -339,7 +393,7 @@ export function AppShell({
                 className="flex min-h-11 items-center gap-3 rounded-2xl px-3 text-sm font-semibold text-[var(--sidebar-muted)] transition-colors duration-200 hover:bg-[var(--sidebar-raised)] hover:text-[var(--sidebar-foreground)]"
               >
                 <LogOut className="size-[18px]" />
-                Sair da demonstração
+                {messages.shell.exitDemo}
               </Link>
             </div>
           </aside>
@@ -347,20 +401,22 @@ export function AppShell({
       )}
 
       <nav
-        aria-label="Navegação principal mobile"
+        ref={bottomNavRef}
+        aria-label={messages.shell.mobileNavigation}
         className="surface-sidebar fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[1.35rem] border border-[var(--border)] p-1.5 text-[var(--sidebar-foreground)] shadow-[0_16px_50px_rgba(35,30,45,.35)] lg:hidden"
       >
         {mobileItems.map((item) => {
+          const label = messages.nav[item.key];
           const href = `/${segment}${item.href}`;
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
             <Link
               key={item.href}
               href={href}
-              aria-label={item.label}
+              aria-label={label}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "group/tab flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold",
+                "group/tab flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[10px] font-semibold",
                 "ease-(--ease-out-quint) transition-[background-color,color] duration-200",
                 // Two conflicting background classes used to fight here; the
                 // yellow only won by source order.
@@ -369,19 +425,22 @@ export function AppShell({
                   : "text-[var(--sidebar-muted)] active:bg-[var(--sidebar-raised)]",
               )}
             >
-              <item.icon className="ease-(--ease-spring) size-[17px] transition-transform duration-500 group-active/tab:scale-90" />
-              <span className="max-w-full truncate">{item.label}</span>
+              <item.icon className="ease-(--ease-spring) size-[17px] transition-transform duration-200 group-active/tab:scale-90" />
+              <span className="max-w-full truncate">{label}</span>
             </Link>
           );
         })}
         <button
           type="button"
-          onClick={() => setDrawer("open")}
-          aria-label="Mais opções"
-          className="flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[9px] font-semibold text-[var(--sidebar-muted)] transition-colors duration-200 active:bg-[var(--sidebar-raised)]"
+          onClick={(event) => {
+            openerRef.current = event.currentTarget;
+            setDrawer("open");
+          }}
+          aria-label={messages.shell.moreOptions}
+          className="flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[10px] font-semibold text-[var(--sidebar-muted)] transition-colors duration-200 active:bg-[var(--sidebar-raised)]"
         >
           <Menu className="size-[17px]" />
-          <span>Mais</span>
+          <span>{messages.shell.more}</span>
         </button>
       </nav>
     </div>

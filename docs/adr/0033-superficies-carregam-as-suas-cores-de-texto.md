@@ -18,8 +18,8 @@ que o modelo estava errado, não a cor.
 
 **Nunca se aplica uma cor de fundo. Aplica-se uma superfície.**
 
-Uma superfície declara o seu fundo *e redefine os tokens de texto no seu
-próprio escopo*:
+Uma superfície declara o seu fundo _e redefine os tokens de texto no seu
+próprio escopo_:
 
 ```css
 .surface-primary {
@@ -45,7 +45,7 @@ Duas famílias, e a distinção é tudo:
 ## As três peças que a tornam uma engine e não uma convenção
 
 1. **`check:contrast` valida as receitas, não os usos.** Se
-   `.surface-primary` estiver certa, *todos* os seus descendentes estão
+   `.surface-primary` estiver certa, _todos_ os seus descendentes estão
    certos, incluindo os que ainda não foram escritos. Vinte receitas × dois
    temas × texto e texto secundário, exaustivamente. Quatro das receitas
    originais falharam nesta verificação e foram corrigidas **no token**, que é

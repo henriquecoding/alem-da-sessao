@@ -49,7 +49,7 @@ export function ShareGesture({
 
   useEffect(() => {
     if (!crossed) return;
-    const timer = window.setTimeout(onCrossed, 900);
+    const timer = window.setTimeout(onCrossed, 450);
     return () => window.clearTimeout(timer);
   }, [crossed, onCrossed]);
 

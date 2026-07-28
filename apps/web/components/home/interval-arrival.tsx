@@ -44,9 +44,9 @@ export function IntervalArrival({
   locale: Locale;
 }) {
   // A contagem entra depois de a régua ter crescido e de os dois traços terem
-  // assentado — 1,5 s, que é onde o traçado acaba.
+  // assentado — sem obrigar a pessoa a esperar por ornamentação.
   const [counting, setCounting] = useState(false);
-  useChoreography((timeline) => timeline.beat(1500, () => setCounting(true)));
+  useChoreography((timeline) => timeline.beat(800, () => setCounting(true)));
 
   return (
     <section
@@ -91,16 +91,16 @@ export function IntervalArrival({
                 lá estão. */}
             <span
               className="draw-x absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[repeating-linear-gradient(to_right,var(--accent)_0_3px,transparent_3px_11px)] opacity-70"
-              style={{ "--d": 11, animationDuration: "600ms" } as CSSProperties}
+              style={{ "--d": 8, animationDuration: "400ms" } as CSSProperties}
             />
 
             <span
               className="draw-y surface-primary absolute left-0 top-1/2 h-9 w-[3px] -translate-y-1/2 rounded-full"
-              style={{ "--d": 8 } as CSSProperties}
+              style={{ "--d": 5 } as CSSProperties}
             />
             <span
               className="draw-y surface-primary absolute right-0 top-1/2 h-9 w-[3px] -translate-y-1/2 rounded-full opacity-45"
-              style={{ "--d": 10 } as CSSProperties}
+              style={{ "--d": 7 } as CSSProperties}
             />
 
             {/* «Está aqui», a 38% da travessia. Não ao meio: estar a meio de
@@ -148,6 +148,7 @@ export function IntervalArrival({
                 suffix="%"
                 locale={locale}
                 active={counting}
+                durationMs={550}
               />
             </strong>
             <span className="mt-2 block font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--muted-foreground)]">

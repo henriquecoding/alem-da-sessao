@@ -29,6 +29,18 @@ begin
   if has_table_privilege('authenticated', 'jobs.outbox_events', 'select') then
     raise exception 'authenticated must not read jobs.outbox_events directly';
   end if;
+
+  if not exists (
+    select 1
+    from pg_proc procedure_meta
+    join pg_namespace schema_meta
+      on schema_meta.oid = procedure_meta.pronamespace
+    where schema_meta.nspname = 'care'
+      and procedure_meta.proname = 'can_access_client'
+      and procedure_meta.prosecdef
+  ) then
+    raise exception 'care.can_access_client must remain security definer';
+  end if;
 end
 $$;
 

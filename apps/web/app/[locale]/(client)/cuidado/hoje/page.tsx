@@ -10,6 +10,7 @@ import { IntervalPlace } from "@/components/interval-place";
 import { SessionBridge } from "@/components/session-bridge";
 import { SensitivityNote } from "@/components/sensitivity";
 import { Button } from "@/components/ui/button";
+import { timeZoneFor } from "@/lib/format";
 import { localPath, resolveLocale } from "@/lib/locale";
 
 /**
@@ -42,11 +43,23 @@ export default async function ClientTodayPage({
   const messages = getMessages(locale);
   const pt = locale === "pt-PT";
 
-  // A hora de referência das janelas da ponte. Fixa nesta demonstração para
-  // que o ecrã seja reproduzível; em produção vem do relógio do servidor.
-  const now = new Date("2026-07-27T07:00:00.000Z");
+  const now = new Date();
   const outgoingOpen = bridgeWindowIsOpen("outgoing", interval, now);
   const incomingOpen = bridgeWindowIsOpen("incoming", interval, now);
+  const nextSession = interval.closesAt
+    ? new Date(interval.closesAt)
+    : new Date(now.getTime() + 7 * 86_400_000);
+  const nextSessionDate = new Intl.DateTimeFormat(locale, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    timeZone: timeZoneFor(locale),
+  }).format(nextSession);
+  const nextSessionTime = new Intl.DateTimeFormat(locale, {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: timeZoneFor(locale),
+  }).format(nextSession);
 
   return (
     <div className="mx-auto w-full max-w-[46rem]">
@@ -132,7 +145,7 @@ export default async function ClientTodayPage({
         <h2 className="text-sm font-semibold">{messages.client.nextSession}</h2>
         <div className="mt-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
           <p className="text-xl font-semibold tracking-[-0.02em]">
-            Segunda-feira, 27 de julho
+            {nextSessionDate}
           </p>
           <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--muted-foreground)]">
             <div className="inline-flex items-center gap-2">
@@ -141,7 +154,7 @@ export default async function ClientTodayPage({
                 className="size-4 text-[var(--primary)]"
                 aria-hidden="true"
               />
-              <dd className="tabular">09:30 · 50 minutos</dd>
+              <dd className="tabular">{nextSessionTime} · 50 minutos</dd>
             </div>
             <div className="inline-flex items-center gap-2">
               <dt className="sr-only">{pt ? "Modalidade" : "Modalidade"}</dt>

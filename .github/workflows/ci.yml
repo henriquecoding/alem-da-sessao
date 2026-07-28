@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -26,13 +30,14 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Validate
-        run: pnpm check
-
-      - name: Build locally
+      - name: Validate release candidate locally
         env:
           APP_ENV: local
+          PUBLIC_LAUNCH_ENABLED: "false"
           NEXT_PUBLIC_APP_ENV: local
           NEXT_PUBLIC_DATA_MODE: fixture
           NEXT_PUBLIC_APP_URL: http://localhost:3000
-        run: pnpm build
+        run: pnpm verify:release
+
+      - name: Audit production dependencies
+        run: pnpm audit --prod

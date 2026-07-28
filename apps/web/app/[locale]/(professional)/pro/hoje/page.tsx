@@ -12,12 +12,14 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
-import { getProfessionalToday } from "@alem-da-sessao/db";
-import { getProfessionalIntervalView } from "@alem-da-sessao/db/intervals";
 import { getMessages } from "@alem-da-sessao/i18n";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatTime } from "@/lib/format";
+import { formatTime, timeZoneFor } from "@/lib/format";
+import {
+  getProfessionalDashboardData,
+  getProfessionalIntervalSummary,
+} from "@/lib/data/professional";
 import { cn } from "@/lib/utils";
 import { pigmentSurface } from "@/lib/pigment";
 import { localPath, resolveLocale } from "@/lib/locale";
@@ -46,13 +48,19 @@ export default async function ProfessionalTodayPage({
 }) {
   const [{ locale, segment }, data, intervalView] = await Promise.all([
     resolveLocale(params),
-    getProfessionalToday(),
+    getProfessionalDashboardData(),
     // A projeção profissional do intervalo: existência e snapshots, nunca
     // conteúdo nem sinais de atividade (§4.4, §10.6.5).
-    getProfessionalIntervalView(),
+    getProfessionalIntervalSummary(),
   ]);
   const messages = getMessages(locale);
   const nextAppointment = data.nextAppointment;
+  const contextDate = new Intl.DateTimeFormat(locale, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    timeZone: timeZoneFor(locale),
+  }).format(nextAppointment ? new Date(nextAppointment.startsAt) : new Date());
 
   const pending = [
     {
@@ -92,7 +100,7 @@ export default async function ProfessionalTodayPage({
       <header className="enter mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-[var(--border)] pb-5">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
-            Segunda-feira, 27 de julho · {data.organizationName}
+            {contextDate} · {data.organizationName}
           </p>
           <h1 className="mt-1.5 text-2xl font-semibold tracking-[-0.025em]">
             {messages.professional.greeting}
@@ -176,13 +184,17 @@ export default async function ProfessionalTodayPage({
               <span className="text-[var(--muted-foreground)]">
                 Partilhas por rever{" "}
                 <strong className="tabular text-[var(--foreground)]">
-                  {intervalView.sharedSnapshotCount}
+                  {intervalView?.sharedSnapshotCount ?? 0}
                 </strong>
               </span>
               <span className="text-[var(--muted-foreground)]">
                 Intervalo{" "}
                 <strong className="text-[var(--foreground)]">
-                  {intervalView.state === "closing" ? "a fechar" : "aberto"}
+                  {intervalView
+                    ? intervalView.state === "closing"
+                      ? "a fechar"
+                      : "aberto"
+                    : "sem intervalo ativo"}
                 </strong>
               </span>
               <span className="text-[var(--muted-foreground)]">

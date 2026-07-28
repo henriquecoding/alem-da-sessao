@@ -41,35 +41,62 @@ export type ProfessionalToday = {
   };
 };
 
-const appointments: Appointment[] = [
-  {
-    id: "apt_fixture_01",
-    clientId: "client_fixture_01",
-    clientName: "Marta Oliveira",
-    startsAt: "2026-07-27T08:30:00.000Z",
-    endsAt: "2026-07-27T09:20:00.000Z",
-    status: "confirmed",
-    modality: "online",
-  },
-  {
-    id: "apt_fixture_02",
-    clientId: "client_fixture_02",
-    clientName: "Rui Martins",
-    startsAt: "2026-07-27T10:00:00.000Z",
-    endsAt: "2026-07-27T10:50:00.000Z",
-    status: "confirmed",
-    modality: "presential",
-  },
-  {
-    id: "apt_fixture_03",
-    clientId: "client_fixture_03",
-    clientName: "Beatriz Costa",
-    startsAt: "2026-07-27T13:30:00.000Z",
-    endsAt: "2026-07-27T14:20:00.000Z",
-    status: "held",
-    modality: "online",
-  },
-];
+function nextMondayUtc() {
+  const now = new Date();
+  const daysUntilMonday = (8 - now.getUTCDay()) % 7 || 7;
+  return Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate() + daysUntilMonday,
+  );
+}
+
+function fixtureAppointmentTime(
+  dayOffset: number,
+  hour: number,
+  minute: number,
+) {
+  return new Date(
+    nextMondayUtc() +
+      dayOffset * 86_400_000 +
+      hour * 3_600_000 +
+      minute * 60_000,
+  );
+}
+
+function makeFixtureAppointments(): Appointment[] {
+  return [
+    {
+      id: "apt_fixture_01",
+      clientId: "client_fixture_01",
+      clientName: "Marta Oliveira",
+      startsAt: fixtureAppointmentTime(0, 8, 30).toISOString(),
+      endsAt: fixtureAppointmentTime(0, 9, 20).toISOString(),
+      status: "confirmed",
+      modality: "online",
+    },
+    {
+      id: "apt_fixture_02",
+      clientId: "client_fixture_02",
+      clientName: "Rui Martins",
+      startsAt: fixtureAppointmentTime(1, 10, 0).toISOString(),
+      endsAt: fixtureAppointmentTime(1, 10, 50).toISOString(),
+      status: "confirmed",
+      modality: "presential",
+    },
+    {
+      id: "apt_fixture_03",
+      clientId: "client_fixture_03",
+      clientName: "Beatriz Costa",
+      startsAt: fixtureAppointmentTime(2, 13, 30).toISOString(),
+      endsAt: fixtureAppointmentTime(2, 14, 20).toISOString(),
+      status: "held",
+      modality: "online",
+    },
+  ];
+}
+
+const appointments = makeFixtureAppointments();
 
 const clients: ClientSummary[] = [
   {
@@ -125,14 +152,29 @@ export const fixtureProfessionalToday: ProfessionalToday = {
 };
 
 export async function getProfessionalToday(): Promise<ProfessionalToday> {
-  // The fixture adapter is intentionally server-safe and contains no real data.
-  return structuredClone(fixtureProfessionalToday);
+  // The fixture adapter is intentionally server-safe and contains no real
+  // data. Appointment dates are refreshed so the local prototype never opens
+  // with a stale "next session".
+  const freshAppointments = makeFixtureAppointments();
+  const freshClients = clients.map((client, index) => ({
+    ...client,
+    nextAppointment:
+      freshAppointments[index]?.startsAt ?? client.nextAppointment,
+  }));
+
+  return structuredClone({
+    ...fixtureProfessionalToday,
+    nextAppointment: freshAppointments[0] ?? null,
+    appointments: freshAppointments,
+    clients: freshClients,
+  });
 }
 
 export async function getClientById(
   clientId: string,
 ): Promise<ClientSummary | null> {
+  const data = await getProfessionalToday();
   return structuredClone(
-    clients.find((client) => client.id === clientId) ?? null,
+    data.clients.find((client) => client.id === clientId) ?? null,
   );
 }

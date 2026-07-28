@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, LockKeyhole } from "lucide-react";
 import { SessionInventoryExperience } from "@/components/session-inventory-experience";
 import { localPath, resolveLocale } from "@/lib/locale";
+import { requireRunnableTool } from "@/lib/tool-access";
 
 export const metadata: Metadata = {
   title: "Inventário da Sessão — experiência gratuita",
@@ -14,6 +15,7 @@ export default async function PublicSessionInventoryPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale, segment } = await resolveLocale(params);
+  requireRunnableTool("inventario-da-sessao", "public");
 
   return (
     <main className="min-h-screen bg-[linear-gradient(145deg,var(--background)_0%,#eef3fa_48%,#f7edf4_100%)] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">

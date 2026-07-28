@@ -4,6 +4,7 @@ export type ToolStatus =
   "draft" | "clinical-review" | "demo-ready" | "published" | "retired";
 
 export type ToolLocale = "pt-PT" | "pt-BR";
+export type ToolRuntime = "fixture" | "production";
 
 /**
  * O gate de auto-iniciação — relatório v2 §4.9 e §10.3.
@@ -130,13 +131,10 @@ export const toolRegistry = [
     audience: ["public", "client", "professional"],
     locales: ["pt-PT", "pt-BR"],
     capabilities: {
-      canSelfStart: {
-        reviewedBy: "revisão clínica pendente — demonstração local",
-        reviewedAt: "2026-07-27",
-        riskTier: "moderate",
-        crisisResourcesLocale: ["pt-PT", "pt-BR"],
-        unattendedNotice: true,
-      },
+      // A demonstração local é deliberadamente diferente de aprovação
+      // clínica. Enquanto a revisão estiver pendente, produção não pode
+      // inferir autorização a partir de texto livre num campo de revisor.
+      canSelfStart: false,
       canAssign: true,
       canRunAsGuest: true,
       supportsDraftSave: true,
@@ -173,8 +171,8 @@ export const toolRegistry = [
           ember: "#d58b57",
           line: "#32353d",
         },
-        editorialFont: "Newsreader",
-        bundleBudgetKb: 110,
+        editorialFont: "system serif stack",
+        bundleBudgetKb: 120,
       },
     },
     review: {
@@ -201,13 +199,7 @@ export const toolRegistry = [
     audience: ["public", "client"],
     locales: ["pt-PT", "pt-BR"],
     capabilities: {
-      canSelfStart: {
-        reviewedBy: "revisão clínica pendente — demonstração local",
-        reviewedAt: "2026-07-27",
-        riskTier: "low",
-        crisisResourcesLocale: ["pt-PT", "pt-BR"],
-        unattendedNotice: true,
-      },
+      canSelfStart: false,
       canAssign: true,
       canRunAsGuest: true,
       supportsDraftSave: true,
@@ -266,10 +258,39 @@ export function getToolBySlug(slug: string): ToolManifest | undefined {
  * Não se pode oferecer publicamente uma experiência que não passou pelo gate
  * de auto-iniciação.
  */
-export function guestModeIsPermitted(manifest: ToolManifest): boolean {
-  return manifest.capabilities.canRunAsGuest
-    ? manifest.capabilities.canSelfStart !== false
-    : true;
+export function guestModeIsPermitted(
+  manifest: ToolManifest,
+  runtime: ToolRuntime = "production",
+): boolean {
+  if (!manifest.capabilities.canRunAsGuest) return false;
+
+  if (runtime === "fixture") {
+    return manifest.status === "demo-ready" || manifest.status === "published";
+  }
+
+  return (
+    manifest.status === "published" &&
+    manifest.review.clinicalStatus === "approved" &&
+    manifest.capabilities.canSelfStart !== false
+  );
+}
+
+/**
+ * Uma ferramenta pode aparecer num catálogo profissional antes de ser
+ * publicável. Abrir o motor, porém, continua sujeito ao mesmo gate que a rota.
+ */
+export function toolCanRun(
+  manifest: ToolManifest,
+  runtime: ToolRuntime,
+  audience: "public" | "client" | "professional",
+): boolean {
+  if (!manifest.audience.includes(audience)) return false;
+  if (runtime === "fixture") return manifest.status === "demo-ready";
+  if (manifest.status !== "published") return false;
+
+  return audience === "public"
+    ? guestModeIsPermitted(manifest, runtime)
+    : manifest.review.clinicalStatus === "approved";
 }
 
 export type { ArtifactRenderer };

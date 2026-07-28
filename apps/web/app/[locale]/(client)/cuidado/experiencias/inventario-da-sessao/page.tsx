@@ -3,6 +3,7 @@ import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { SessionInventoryExperience } from "@/components/session-inventory-experience";
 import { resolveLocale } from "@/lib/locale";
+import { requireRunnableTool } from "@/lib/tool-access";
 
 export default async function SessionInventoryPage({
   params,
@@ -10,6 +11,7 @@ export default async function SessionInventoryPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale, segment } = await resolveLocale(params);
+  requireRunnableTool("inventario-da-sessao", "client");
 
   return (
     <div className="-mx-4 -mt-6 min-h-[calc(100vh-60px)] bg-[linear-gradient(145deg,var(--background)_0%,#eef3fa_48%,#f7edf4_100%)] px-4 py-7 sm:-mx-6 sm:px-6 lg:-mx-8 lg:-mt-8 lg:px-8 lg:py-10">

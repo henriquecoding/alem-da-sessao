@@ -1,28 +1,54 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/inter";
-import "@fontsource-variable/newsreader";
 import "../globals.css";
-import { locales } from "@alem-da-sessao/i18n";
+import { getMessages, locales } from "@alem-da-sessao/i18n";
 import { RevealObserver } from "@/components/reveal-observer";
 import { resolveLocale } from "@/lib/locale";
 import { themeBootstrapScript } from "@/lib/preferences";
+import { publicLaunchIsEnabled } from "@/lib/runtime";
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://alemdasessao.com"),
-  title: {
-    default: "Além da Sessão",
-    template: "%s · Além da Sessão",
-  },
-  description:
-    "Continuidade terapêutica conduzida por profissionais, com privacidade e presença humana.",
-  applicationName: "Além da Sessão",
-  robots: {
-    index: false,
-    follow: false,
-    noarchive: true,
-    nocache: true,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale, segment } = await resolveLocale(params);
+  const messages = getMessages(locale);
+  const launched = publicLaunchIsEnabled();
+
+  return {
+    metadataBase: new URL("https://alemdasessao.com"),
+    title: {
+      default: "Além da Sessão",
+      template: "%s · Além da Sessão",
+    },
+    description: messages.public.description,
+    applicationName: "Além da Sessão",
+    alternates: {
+      canonical: `/${segment}`,
+      languages: {
+        "pt-PT": "/pt-pt",
+        "pt-BR": "/pt-br",
+        "x-default": "/pt-pt",
+      },
+    },
+    openGraph: {
+      type: "website",
+      locale: locale.replace("-", "_"),
+      siteName: "Além da Sessão",
+      title: "Além da Sessão",
+      description: messages.public.description,
+    },
+    robots: launched
+      ? { index: true, follow: true }
+      : {
+          index: false,
+          follow: false,
+          noarchive: true,
+          nocache: true,
+        },
+  };
+}
 
 export function generateStaticParams() {
   return locales.map((locale) => ({

@@ -1,16 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { publicLoadStructureSchema } from "@alem-da-sessao/validation";
+import { getToolBySlug, toolCanRun } from "@alem-da-sessao/tool-registry";
 import {
   attachCommunityCookie,
   communityIdentity,
-  isSameOrigin,
 } from "@/lib/community/identity";
+import { isSameOrigin } from "@/lib/community/origin";
 import {
   listPublicLoadStructures,
   publishLoadStructure,
 } from "@/lib/community/store";
+import { toolRuntime } from "@/lib/runtime";
+
+function communityIsAvailable() {
+  const tool = getToolBySlug("estruturas-de-carga");
+  return Boolean(tool && toolCanRun(tool, toolRuntime(), "public"));
+}
 
 export async function GET() {
+  if (!communityIsAvailable()) {
+    return NextResponse.json({ error: "tool-unavailable" }, { status: 404 });
+  }
+
   try {
     const posts = await listPublicLoadStructures();
     return NextResponse.json(
@@ -30,6 +41,10 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  if (!communityIsAvailable()) {
+    return NextResponse.json({ error: "tool-unavailable" }, { status: 404 });
+  }
+
   if (!isSameOrigin(request)) {
     return NextResponse.json({ error: "invalid-origin" }, { status: 403 });
   }
