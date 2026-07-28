@@ -30,8 +30,25 @@ import type { AuthoredModel, Vec3 } from "@alem-da-sessao/origami-core";
  */
 
 /** Onde os lados dobram. A um quarto da largura, cada painel chega ao eixo. */
-const HINGE = 0.25;
-const LEAN = 128;
+/*
+  A dobradiça não está no quarto da folha.
+
+  A dobra de portas clássica tem as dobradiças a ±0,25, para que os dois
+  painéis se encontrem no centro quando fecham. Aqui não fecham — ficam de pé —
+  e nessa posição o quarto da folha dá montantes de 0,25 contra um vão de 0,50.
+  Visto do palco, que olha de cima, isso é um tabuleiro e não uma passagem.
+
+  A ±0,13 os montantes ficam com 0,37 e o vão com 0,26: altos e estreitos, que é
+  o que faz uma passagem ser reconhecível como passagem. Continuam a ser duas
+  dobras paralelas e independentes — o princípio da dobra de portas — sem a
+  restrição de se encontrarem, que não servia para nada aqui.
+*/
+const HINGE = 0.13;
+/*
+  88° e não 128°: a 128° os painéis passam da perpendicular e caem sobre a base,
+  o que em silhueta é um cartão vergado. De pé, o vão entre eles existe.
+*/
+const LEAN = 88;
 
 const h = HINGE;
 

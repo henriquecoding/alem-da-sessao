@@ -96,7 +96,7 @@ export function OrigamiScene({
         de destruir e recriar o contexto WebGL. Um contexto novo por cada
         escolha seria trabalho real de GPU para não mudar um pixel do resultado.
       */}
-      <OrigamiCanvas modelId={model} clip={clip} />
+      <OrigamiCanvas modelId={model} clip={clip} paper={paper} />
     </figure>
   );
 }

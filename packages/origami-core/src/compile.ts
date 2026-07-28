@@ -100,6 +100,28 @@ export type CompiledOrigamiAsset = {
     readonly center: Vec3;
     /** Metade da altura do volume de visualização, já com margem. */
     readonly halfExtent: number;
+    /**
+     * O enquadramento frame a frame, no plano da câmara.
+     *
+     * Um enquadramento só, ajustado ao maior frame, é ajustado à folha plana —
+     * que é sempre o maior de todos, porque dobrar encolhe. O objeto dobrado
+     * ficava com um terço do quadro e descentrado, num palco escuro e vazio.
+     * Fixar no resultado tinha o defeito simétrico: a folha inicial saía fora.
+     *
+     * Não há um número que sirva os dois, porque a pergunta estava mal posta.
+     * A câmara acompanha: cada frame traz o seu centro e a sua meia-altura, e o
+     * runtime interpola-os entre keyframes como interpola as posições. A folha
+     * enche o quadro, e continua a enchê-lo depois de fechada.
+     *
+     * `right` e `up` são o centro projetado nos eixos da câmara. A componente
+     * em `forward` não existe de propósito: numa projeção ortográfica deslocar
+     * a câmara ao longo do eixo de visão não muda um pixel.
+     */
+    readonly framing: {
+      readonly right: readonly number[];
+      readonly up: readonly number[];
+      readonly halfExtent: readonly number[];
+    };
   };
   readonly lighting: typeof ORIGAMI_LIGHTING;
   readonly paper: {
@@ -320,27 +342,53 @@ export function compileModel(
   //    início da animação.
   const basis = cameraBasis();
   const padding = options.padding ?? 0.12;
+
+  const framingRight: number[] = [];
+  const framingUp: number[] = [];
+  const framingHalfExtent: number[] = [];
   let halfExtent = 0;
+
   for (const frame of positionFrames) {
+    let minRight = Infinity;
+    let maxRight = -Infinity;
+    let minUp = Infinity;
+    let maxUp = -Infinity;
+
     for (const point of frame) {
-      halfExtent = Math.max(
-        halfExtent,
-        Math.abs(dot(point, basis.right)),
-        Math.abs(dot(point, basis.up)),
-      );
+      const r = dot(point, basis.right);
+      const u = dot(point, basis.up);
+      if (r < minRight) minRight = r;
+      if (r > maxRight) maxRight = r;
+      if (u < minUp) minUp = u;
+      if (u > maxUp) maxUp = u;
     }
+
+    const centreRight = (minRight + maxRight) / 2;
+    const centreUp = (minUp + maxUp) / 2;
+    /*
+      Meia-altura a partir do lado maior e não de cada eixo por si: o quadro é
+      quadrado, e ajustar largura e altura em separado esticaria o objeto.
+    */
+    const half =
+      (Math.max(maxRight - minRight, maxUp - minUp) / 2) * (1 + padding);
+
+    framingRight.push(centreRight);
+    framingUp.push(centreUp);
+    // Um frame degenerado — todos os pontos coincidentes — daria zero e uma
+    // divisão por zero na matriz. Não deve acontecer, e custa uma guarda.
+    framingHalfExtent.push(Math.max(half, 1e-6));
+    halfExtent = Math.max(halfExtent, half);
   }
-  halfExtent *= 1 + padding;
 
   const finalFrame = centred[centred.length - 1]!;
   const finalDiagnostics = diagnoseFrame(mesh, finalFrame.positions);
 
-  const fallback = renderFallbackSvg(
-    mesh,
-    finalFrame.positions,
-    basis,
-    halfExtent,
-  );
+  const lastIndex = positionFrames.length - 1;
+  const fallback = renderFallbackSvg(mesh, finalFrame.positions, basis, {
+    right: framingRight[lastIndex]!,
+    up: framingUp[lastIndex]!,
+    halfExtent: framingHalfExtent[lastIndex]!,
+  });
 
   const clips = buildClips(centred);
 
@@ -363,6 +411,11 @@ export function compileModel(
       up: ORIGAMI_VIEW_UP,
       center: [0, 0, 0],
       halfExtent,
+      framing: {
+        right: framingRight,
+        up: framingUp,
+        halfExtent: framingHalfExtent,
+      },
     },
     lighting: ORIGAMI_LIGHTING,
     paper: {
@@ -442,16 +495,20 @@ function renderFallbackSvg(
   mesh: OrigamiMesh,
   positions: readonly Vec3[],
   basis: { forward: Vec3; right: Vec3; up: Vec3 },
-  halfExtent: number,
+  // O enquadramento deste frame, e não o da faixa toda: a silhueta que chega no
+  // HTML mostra o objeto fechado, e tem de o mostrar do tamanho a que o canvas
+  // o vai desenhar. Com a meia-altura global, o SVG desenhava o objeto pequeno
+  // e o canvas desenhava-o grande — e a troca entre os dois dava um salto.
+  framing: { right: number; up: number; halfExtent: number },
 ): CompiledOrigamiAsset["fallback"] {
   const size = 256;
   const project = (point: Vec3): [number, number, number] => {
-    const x = dot(point, basis.right);
-    const y = dot(point, basis.up);
+    const x = dot(point, basis.right) - framing.right;
+    const y = dot(point, basis.up) - framing.up;
     const depth = dot(point, basis.forward);
     return [
-      ((x / halfExtent) * 0.5 + 0.5) * size,
-      (0.5 - (y / halfExtent) * 0.5) * size,
+      ((x / framing.halfExtent) * 0.5 + 0.5) * size,
+      (0.5 - (y / framing.halfExtent) * 0.5) * size,
       depth,
     ];
   };
