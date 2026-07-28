@@ -230,10 +230,47 @@ humano por definição, e os campos `approval` em `provenance.json` estão todos
 **O renderizador não tem teste de GPU.** `jsdom` não tem WebGL2. O que está
 testado é o que decide quando desenhar e com que cor.
 
+**Padrões de vincos já podem entrar por SVG — e a fronteira do grou mudou de
+sítio, mas não desapareceu.**
+
+`pnpm origami:import` lê um padrão pela convenção de cor do traço e produz os
+mesmos três ficheiros que `origami:compile`. O trabalho a sério não é o parser:
+é encontrar as faces da subdivisão planar a partir de linhas soltas — soldar
+vértices com tolerância relativa, partir cada segmento em cruzamentos e junções
+em T, e percorrer meias-arestas ordenadas por ângulo. Está em
+`packages/origami-core/src/planar.ts`, com a conta que o protege: a soma das
+áreas das faces tem de igualar a área do contorno, que é o único invariante que
+apanha um cruzamento por partir.
+
+O que isto **não** resolve é o que a §5 já dizia. O importador entrega a
+geometria; continua a não haver modelo de camadas nem deteção de contacto. Um
+padrão tradicional levado ao fim atravessa-se, e é por isso que
+`bakeModel` ganhou `selfIntersection: "measure"` — ver a ADR 0034. A troca é
+explícita: forma reconhecível em troca de papel que se atravessa, com a
+contagem gravada na proveniência.
+
+Duas coisas ficaram fixadas em teste por causa disto, e são as duas que
+custaram a encontrar:
+
+- **A convenção de sinal é do modelo inteiro ou não é de nenhum.** O ângulo
+  diedro só é positivo para um vale se `apexA` estiver à esquerda da aresta
+  dirigida `p1→p2`, e isso depende do sentido em que a aresta é declarada e da
+  ordem das faces, em conjunto. Com metade dos vincos na convenção invertida
+  nada falha — a folha é íntegra, a topologia está correta — e o modelo
+  simplesmente assenta longe do alvo. A base preliminar importada parava a 121°.
+- **O importador não corrige o que lê.** Um padrão 4/4 no vértice central viola
+  o teorema de Maekawa (num vértice interior que dobra plano, montes menos vales
+  é ±2) e não fecha. O importador entrega-o na mesma, e é o bake que responde
+  com números em vez de uma forma inventada. Com 5/3, o mesmo caminho reproduz a
+  base preliminar que `origami-pipeline.test.ts` constrói à mão: 2° do alvo,
+  zero interseções.
+
 ## 6. Como se verifica
 
 ```bash
 pnpm origami:compile              # autora, valida, simula, compila
+pnpm origami:import --svg <ficheiro> --id <modelo> \
+  --attribution <quem> --license <licença>
 pnpm check:origami-runtime        # assets vs fonte, limites, fronteira
 pnpm check                        # tudo, incluindo o acima
 pnpm dev                          # /dev/origami-lab, secção 0

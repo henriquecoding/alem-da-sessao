@@ -26,6 +26,7 @@
     "check:origami": "pnpm --filter @alem-da-sessao/web check:origami",
     "check:origami-runtime": "pnpm --filter @alem-da-sessao/web check:origami-runtime",
     "origami:compile": "pnpm --filter @alem-da-sessao/origami-tools compile",
+    "origami:import": "pnpm --filter @alem-da-sessao/origami-tools run import-svg",
     "origami:inspect": "pnpm --filter @alem-da-sessao/origami-tools inspect",
     "check:built-bundles": "pnpm --filter @alem-da-sessao/web check:built-bundles",
     "check:release-readiness": "pnpm --filter @alem-da-sessao/web check:release-readiness",

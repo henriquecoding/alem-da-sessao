@@ -68,6 +68,33 @@ export type BakeOptions = SolverOptions & {
   readonly strainLimit: number;
   /** Acima disto o modelo não chegou onde o autor disse que chegava. */
   readonly angleToleranceDegrees: number;
+  /**
+   * O que fazer quando o papel se atravessa a si próprio.
+   *
+   * `"reject"` — o bake falha. É o que os modelos autorados deste repositório
+   * usam, e continua a ser o valor por omissão: quando se escolhe cada ângulo à
+   * mão, uma face a passar através de outra é um erro de autoria e não uma
+   * propriedade do modelo.
+   *
+   * `"measure"` — o bake devolve o resultado e a contagem fica em
+   * `BakeDiagnostics.final.selfIntersectionCount`, que segue para a
+   * proveniência do asset.
+   *
+   * Existe por causa dos padrões importados, e a razão é estrutural. Este
+   * solver dobra uma malha triangulada fixa por dobradiças: não tem modelo de
+   * camadas nem deteção de contacto (`docs/ORIGAMI_RUNTIME.md` §5). Um padrão
+   * tradicional qualquer — o grou é o exemplo — só tem forma reconhecível
+   * porque as camadas se empilham, e sem modelo de camadas o papel atravessa-se
+   * a caminho dela. Com `"reject"`, esses padrões não produzem nada; com
+   * `"measure"`, produzem uma forma **e** o número que diz o quanto ela é
+   * fisicamente impossível.
+   *
+   * A troca é essa e está registada: forma reconhecível contra papel que se
+   * atravessa. O número não desaparece — passa a acompanhar o modelo até à
+   * proveniência, para que nunca se possa dizer que aquele objeto é papel a
+   * dobrar-se sem contradizer o próprio ficheiro.
+   */
+  readonly selfIntersection: "reject" | "measure";
   /** Três vértices que repõem cada frame no referencial da folha. */
   readonly anchor?: FrameAnchor;
 };
@@ -86,6 +113,7 @@ export const DEFAULT_BAKE_OPTIONS: BakeOptions = {
   restDisplacement: 1e-7,
   strainLimit: 0.0025,
   angleToleranceDegrees: 6,
+  selfIntersection: "reject",
 };
 
 /**
@@ -411,7 +439,10 @@ export function bakeModel(
     };
   }
 
-  if (diagnostics.final.selfIntersectionCount > 0) {
+  if (
+    options.selfIntersection === "reject" &&
+    diagnostics.final.selfIntersectionCount > 0
+  ) {
     return {
       ok: false,
       reason: "SELF_INTERSECTION",

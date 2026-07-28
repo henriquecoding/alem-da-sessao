@@ -48,6 +48,21 @@ a cinco atribuições de aresta (`B`, `M`, `V`, `F`, `J`) e estendida com campos
 `ads:` — a extensão por prefixo que o próprio formato prevê. Nenhum código da
 implementação de referência é usado.
 
+## Padrões de vincos importados
+
+`pnpm origami:import` lê um padrão de vincos em SVG pela convenção de cor do
+traço — a mesma do OrigamiSimulator: `#ff0000` monte, `#0000ff` vale, `#000000`
+fronteira, `#ffff00` triangulação. A convenção foi lida em `js/pattern.js` do
+repositório citado acima; nenhum código foi copiado.
+
+**Um padrão importado vem de alguém.** O comando exige `--attribution` e
+`--license`, e os dois ficam gravados em `provenance.json` junto ao hash do SVG
+de origem. Um modelo importado sem proveniência não se produz — é a única
+recusa deste comando que não é geométrica.
+
+Nenhum padrão de terceiros está hoje neste repositório. Quando algum entrar,
+entra com uma linha nesta secção.
+
 ## Modelos
 
 Os padrões de vincos em `apps/web/public/origami/*/source.fold` foram autorados

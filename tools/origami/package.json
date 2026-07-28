@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "compile": "node --import tsx compile.ts",
+    "import-svg": "node --import tsx import.ts",
     "inspect": "node --import tsx inspect.ts"
   },
   "dependencies": {
