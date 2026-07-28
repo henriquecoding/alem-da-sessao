@@ -59,7 +59,7 @@ autor:
 | ---------- | ------------------------------------- | ------------------------------------------------- |
 | `box`      | caixa masu                            | meia-base, altura e a trajetória do canto         |
 | `envelope` | base blintz (quatro cantos ao centro) | profundidade das abas e o ângulo de fecho de 148° |
-| `gate`     | dobra de portas                       | posição da dobradiça e a inclinação de 128°       |
+| `gate`     | dobra de portas                       | posição da dobradiça e a inclinação de 88°        |
 
 A geometria concreta de cada um está derivada no ficheiro correspondente em
 `tools/origami/models/`.

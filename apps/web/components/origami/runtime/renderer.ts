@@ -43,6 +43,13 @@ import {
  * `readonly`. Copiar é mais honesto do que um `as number[]`: o cast diria ao
  * TypeScript que o GL não escreve no array, e ninguém verificou isso.
  */
+function normalise(
+  v: readonly [number, number, number],
+): [number, number, number] {
+  const length = Math.hypot(v[0], v[1], v[2]) || 1;
+  return [v[0] / length, v[1] / length, v[2] / length];
+}
+
 function vec3(values: readonly [number, number, number]): Float32Array {
   return Float32Array.of(values[0], values[1], values[2]);
 }
@@ -67,6 +74,7 @@ export class OrigamiRenderer {
   private indexBuffer: WebGLBuffer | null = null;
   private vao: WebGLVertexArrayObject | null = null;
   private viewProjection: Float32Array | null = null;
+  private aspect = 1;
   private colours: PaperColours | null = null;
   private lastFrameA = -1;
   private lastFrameB = -1;
@@ -163,12 +171,13 @@ export class OrigamiRenderer {
       this.canvas.height = height;
     }
 
+    this.aspect = width / height;
     this.viewProjection = orthographicViewProjection(
       this.asset.camera.viewDirection,
       this.asset.camera.up,
       this.asset.camera.center,
       this.asset.camera.halfExtent,
-      width / height,
+      this.aspect,
     );
   }
 
@@ -213,6 +222,17 @@ export class OrigamiRenderer {
 
     const frameA = this.clampFrame(snapshot.frameA);
     const frameB = this.clampFrame(snapshot.frameB);
+
+    /*
+      A câmara acompanha a dobragem.
+
+      Enquadrar pela maior extensão de toda a faixa é enquadrar pela folha
+      plana, que é sempre a maior — dobrar encolhe. O objeto fechado ficava com
+      um terço do quadro. Aqui o enquadramento vem do frame, interpolado entre
+      os dois keyframes com o mesmo `mix` das posições, e a folha enche o quadro
+      do princípio ao fim.
+    */
+    this.frameCamera(frameA, frameB, snapshot.mix);
     if (frameA !== this.lastFrameA) {
       this.bindFrame(gl, frameA, POSITION_A, NORMAL_A);
       this.lastFrameA = frameA;
@@ -231,7 +251,11 @@ export class OrigamiRenderer {
     gl.uniform1f(uniforms.u_opacity!, snapshot.opacity);
     gl.uniform3fv(uniforms.u_scale!, vec3(this.asset.track.scale));
     gl.uniform3fv(uniforms.u_offset!, vec3(this.asset.track.offset));
-    gl.uniformMatrix4fv(uniforms.u_viewProjection!, false, viewProjection);
+    gl.uniformMatrix4fv(
+      uniforms.u_viewProjection!,
+      false,
+      this.viewProjection ?? viewProjection,
+    );
 
     const light = this.asset.lighting;
     gl.uniform3fv(uniforms.u_keyDirection!, vec3(light.keyDirection));
@@ -252,6 +276,63 @@ export class OrigamiRenderer {
       0,
     );
     gl.bindVertexArray(null);
+  }
+
+  /**
+   * Reconstrói a matriz da câmara para o instante que está a ser desenhado.
+   *
+   * Custa uma matriz 4×4 por frame desenhado, e só há frames desenhados durante
+   * uma transição. Uma cena parada continua a custar zero.
+   */
+  private frameCamera(frameA: number, frameB: number, mix: number): void {
+    const framing = this.asset.camera.framing;
+    const count = framing.halfExtent.length;
+    if (count === 0) return;
+
+    const a = Math.min(frameA, count - 1);
+    const b = Math.min(frameB, count - 1);
+    const t = Math.max(0, Math.min(1, mix));
+    const lerp = (values: readonly number[]) =>
+      values[a]! + (values[b]! - values[a]!) * t;
+
+    const right = lerp(framing.right);
+    const up = lerp(framing.up);
+    const halfExtent = Math.max(lerp(framing.halfExtent), 1e-6);
+
+    const basis = this.cameraBasisVectors();
+    const centre: [number, number, number] = [
+      basis.right[0] * right + basis.up[0] * up,
+      basis.right[1] * right + basis.up[1] * up,
+      basis.right[2] * right + basis.up[2] * up,
+    ];
+
+    this.viewProjection = orthographicViewProjection(
+      this.asset.camera.viewDirection,
+      this.asset.camera.up,
+      centre,
+      halfExtent,
+      this.aspect,
+    );
+  }
+
+  /** A mesma base que o compilador usou, reconstruída a partir do asset. */
+  private cameraBasisVectors(): {
+    right: readonly [number, number, number];
+    up: readonly [number, number, number];
+  } {
+    const f = normalise(this.asset.camera.viewDirection);
+    const worldUp = this.asset.camera.up;
+    const right = normalise([
+      f[1] * worldUp[2] - f[2] * worldUp[1],
+      f[2] * worldUp[0] - f[0] * worldUp[2],
+      f[0] * worldUp[1] - f[1] * worldUp[0],
+    ]);
+    const up: [number, number, number] = [
+      right[1] * f[2] - right[2] * f[1],
+      right[2] * f[0] - right[0] * f[2],
+      right[0] * f[1] - right[1] * f[0],
+    ];
+    return { right, up };
   }
 
   private clampFrame(frame: number): number {
