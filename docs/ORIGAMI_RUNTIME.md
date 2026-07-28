@@ -9,7 +9,7 @@ inalterada. Não houve deploy.
 ## 1. O que mudou em relação à especificação recebida
 
 A especificação foi escrita contra `main` em `bd827d7`. `main` está em `7b7359f`
-e o commit `af2dfa2` já corrigiu parte do diagnóstico: `interval-studio.tsx` foi
+e o commit `af2dfa2` já corrigiu parte da auditoria: `interval-studio.tsx` foi
 apagado, o teste que contava polígonos desapareceu, os modelos passaram a
 partilhar uma tabela de vértices, o `stroke` por face saiu, existe uma máquina
 de estados explícita e o `/dev/origami-lab` já lá está.
@@ -129,38 +129,53 @@ essa medição e nada falhou.** Foi o painel do laboratório que o mostrou.
 
 ## 5. O que não está feito
 
-**`boat` e `crane` não existem.** Não estão no registo e não têm asset. Ambos
-são modelos sequenciais tradicionais — o barco de papel dobra-se ao meio, abre,
-volta a dobrar; o grou passa pela base de pássaro com camadas a deslizarem umas
-sobre as outras. O sistema de etapas construído aqui é a peça que os torna
-exprimíveis, mas cada um precisa da sua sequência autorada e verificada, e o
-grou provavelmente precisa também de tratamento de contacto que este solver não
-tem. A especificação manda fazer um de cada vez com gate individual (§Fase 5), e
-é o que está a acontecer.
+**`boat` e `crane` não passam o gate de reconhecimento.**
 
-A homepage continua a usar as figuras SVG anteriores, incluindo o barco e o
-grou. Não há regressão: o sistema novo vive ao lado, no laboratório.
+O barco foi autorado e dobra: quilha em três troços, quatro diagonais, dois
+vértices de grau quatro. Fecha com 0,0014% de deformação, 3,47° do alvo e zero
+interseções — todos os números passam. O que falha é o único critério que
+nenhum número mede: **em silhueta lê-se como uma tina.** O casco é raso e as
+pontas não sobem acima do bordo, que é exatamente o que faz um barco ser um
+barco. Fica em `tools/origami/models/boat.ts`, fora do registo, com o que
+aprendi pelo caminho:
+
+- Um vértice de grau quatro é o mais pequeno que sai do plano — com três vincos
+  a folha é rígida.
+- Dois vincos colineares nesse vértice degeneram-no: a folha dobra como um
+  livro e as diagonais nunca entram. A quilha tem de quebrar.
+- Um vértice de grau quatro só dobra com **três vincos de um tipo e um do
+  outro**. Com dois e dois fica preso no plano.
+- Os quatro ângulos não são independentes: há um grau de liberdade. Pedir-lhes
+  valores arbitrários é pedir uma configuração que não existe, e o
+  `origami:inspect --angles` existe para dizer quais é que a folha aceita.
+
+O que falta é proporção, não estrutura: a quilha precisa de dobrar mais fundo
+do que estas diagonais permitem, o que provavelmente exige um segundo par de
+vincos a meio do costado para o bordo subir sem levar o fundo atrás.
+
+O grou não foi tentado. É um modelo sequencial com camadas que deslizam umas
+sobre as outras, e precisa da base de pássaro — vinte e tal faces e uma
+sequência de etapas — além de tratamento de contacto que este solver não tem.
+
+**Consequência para o produto:** enquanto isto for verdade, a homepage não pode
+deixar de ter as figuras SVG. «Barco» e «Grou» são o que a cópia promete em
+PT-PT e PT-BR, e não há forma de os servir sem eles. Os outros quatro modelos
+já usam geometria real.
 
 **Não há capturas automatizadas.** O contact sheet e os testes visuais com
 Playwright não foram feitos. O painel do laboratório mostra padrão de vincos,
-objeto e medições lado a lado, que é o que permite a revisão humana; a
-automatização das capturas fica por fazer.
+objeto e medições lado a lado, e o `origami:inspect` imprime a silhueta no
+terminal — foi assim que o barco foi reprovado.
 
-**O teste de reconhecimento não foi feito.** É humano por definição — três
-pessoas a nomear a forma em silhueta em dois segundos — e nenhuma assertion o
-substitui. Os campos `approval` em `provenance.json` estão todos a `false`, e é
-verificado por teste que assim seja.
+**O teste de reconhecimento humano não foi feito** para os quatro que passam. É
+humano por definição, e os campos `approval` em `provenance.json` estão todos a
+`false`.
 
 **Espessura de papel e sombra projetada não estão implementadas.** A cena usa
-`depth buffer` e material de frente/avesso; camadas exatamente coincidentes
-podem produzir z-fighting em ângulos rasantes. Não aconteceu nos quatro modelos
-atuais.
+`depth buffer` e material de frente/avesso.
 
-**O renderizador não tem teste de GPU.** `jsdom` não tem WebGL2, e fingi-lo com
-um duplo não provaria nada sobre desenhar. O que está testado é o que decide
-quando desenhar (linha de tempo) e com que cor (conversão sRGB→linear).
-
----
+**O renderizador não tem teste de GPU.** `jsdom` não tem WebGL2. O que está
+testado é o que decide quando desenhar e com que cor.
 
 ## 6. Como se verifica
 

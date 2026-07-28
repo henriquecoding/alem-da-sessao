@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { getMessages } from "@alem-da-sessao/i18n";
 import { describe, expect, it } from "vitest";
@@ -14,8 +16,36 @@ import {
 
 const copy = getMessages("pt-PT").home;
 
+/**
+ * Os mesmos fallbacks que o servidor serve.
+ *
+ * O `jsdom` não tem WebGL2, portanto o canvas nunca fica pronto e o que se vê é
+ * exatamente o que vê quem não tem aceleração — que é o caso que interessa
+ * testar. A silhueta tem de estar no DOM sem depender de nada.
+ */
+const fallbacks = Object.fromEntries(
+  await Promise.all(
+    ["sheet", "half-fold", "box", "suspended-sheet"].map(async (id) => {
+      const asset = JSON.parse(
+        await readFile(
+          join(process.cwd(), "public", "origami", id, "model.ors.json"),
+          "utf8",
+        ),
+      ) as { fallback: { svg: string; viewBox: string } };
+      return [id, asset.fallback] as const;
+    }),
+  ),
+);
+
 function renderExperience() {
-  return render(<HomeExperience copy={copy} locale="pt-PT" segment="pt-pt" />);
+  return render(
+    <HomeExperience
+      copy={copy}
+      locale="pt-PT"
+      segment="pt-pt"
+      fallbacks={fallbacks}
+    />,
+  );
 }
 
 /** Leva a experiência do início até ao resultado, escolhendo em cada passo. */
@@ -227,5 +257,85 @@ describe("acessibilidade da cena", () => {
       name: copy.steps.notice.title,
     });
     expect(heading).toHaveFocus();
+  });
+});
+
+/**
+ * A homepage passou a usar geometria real onde ela existe.
+ *
+ * A substituição é gradual por decisão: um modelo entra no runtime quando tem
+ * um `source.fold` que dobra e passa os gates. Estes testes fixam qual é a
+ * fronteira hoje, para que ela não se mova por acidente — nem para a frente,
+ * nem para trás.
+ */
+describe("origami real na homepage", () => {
+  it.each(["sheet", "half-fold", "box", "suspended-sheet"])(
+    "%s desenha a silhueta compilada e monta o canvas",
+    async (model) => {
+      const { container } = renderExperience();
+      if (model === "box") {
+        walkToResult("Guardar só para mim");
+      } else if (model === "suspended-sheet") {
+        walkToResult("Deixar em suspenso");
+      } else if (model === "half-fold") {
+        fireEvent.click(screen.getByRole("button", { name: /Sim, ficou/ }));
+        fireEvent.click(screen.getByRole("button", { name: /Uma pergunta/ }));
+        fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+        fireEvent.click(
+          screen.getByRole("button", { name: /Continua confuso/ }),
+        );
+      }
+
+      const scene = container.querySelector(
+        `figure[data-origami-model="${model}"]`,
+      );
+      expect(scene, `cena de ${model}`).toBeInTheDocument();
+      expect(scene?.querySelector("svg.origami-fallback")).toBeInTheDocument();
+      expect(scene?.querySelector("canvas.origami-canvas")).toBeInTheDocument();
+    },
+  );
+
+  /**
+   * O fallback não é um segundo desenho: sai do frame final da mesma simulação.
+   * Se alguém o substituísse por um SVG à mão, os polígonos deixariam de estar
+   * sombreados pela normal de cada face e este teste apanhava-o.
+   */
+  it("serve uma silhueta derivada da simulação, e não um desenho paralelo", () => {
+    const { container } = renderExperience();
+    const svg = container.querySelector("svg.origami-fallback");
+
+    expect(svg?.querySelectorAll("polygon").length).toBeGreaterThan(0);
+    expect(svg?.innerHTML).toContain("color-mix(");
+    // As cores continuam a ser tokens: o tema funciona sem canvas e sem JS.
+    expect(svg?.innerHTML).toContain("var(--paper-");
+  });
+
+  it.each([
+    ["Levar para a próxima sessão", "boat"],
+    ["Explorar uma experiência", "crane"],
+  ])(
+    "«%s» continua na figura SVG enquanto %s não tiver padrão de vincos",
+    (label, model) => {
+      const { container } = renderExperience();
+      walkToResult(label);
+
+      const figure = container.querySelector(`[data-origami-model="${model}"]`);
+      expect(figure).toBeInTheDocument();
+      expect(figure?.tagName.toLowerCase()).toBe("svg");
+      expect(container.querySelector("canvas")).toBeNull();
+    },
+  );
+
+  /**
+   * Um canvas focável seria uma paragem de tabulação sem nada para ler. O
+   * conteúdo da cena é a descrição em texto, que já existe e já é testada.
+   */
+  it("mantém o canvas fora da tabulação e da árvore de acessibilidade", () => {
+    const { container } = renderExperience();
+    const canvas = container.querySelector("canvas.origami-canvas");
+
+    expect(canvas).toHaveAttribute("aria-hidden", "true");
+    expect(canvas).toHaveAttribute("tabindex", "-1");
+    expect(canvas).toHaveAttribute("data-ready", "false");
   });
 });

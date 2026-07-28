@@ -1,3 +1,4 @@
+import { loadFallbacks } from "@/components/origami/asset-loader";
 import { getMessages } from "@alem-da-sessao/i18n";
 import { HomeExperience } from "@/components/homepage/home-experience";
 import { OrigamiFigure } from "@/components/origami/origami-figure";
@@ -70,7 +71,16 @@ export const directions: readonly Direction[] = [
   },
 ];
 
-export function DirectionPanel({ direction }: { direction: Direction }) {
+export async function DirectionPanel({ direction }: { direction: Direction }) {
+  // Os mesmos que a homepage serve. Uma pré-visualização que usasse outra fonte
+  // deixaria de ser uma pré-visualização.
+  const fallbacks = await loadFallbacks([
+    "sheet",
+    "half-fold",
+    "box",
+    "suspended-sheet",
+  ]);
+
   const copy = getMessages("pt-PT").home;
   const surface = stageSurfaces[direction.id];
 
@@ -202,6 +212,7 @@ export function DirectionPanel({ direction }: { direction: Direction }) {
             locale="pt-PT"
             segment="pt-pt"
             stage={direction.id}
+            fallbacks={fallbacks}
           />
         </div>
         <div>
@@ -212,6 +223,7 @@ export function DirectionPanel({ direction }: { direction: Direction }) {
               locale="pt-PT"
               segment="pt-pt"
               stage={direction.id}
+              fallbacks={fallbacks}
             />
           </div>
         </div>

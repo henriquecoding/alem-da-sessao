@@ -23,13 +23,13 @@
     "worstTriangleQuality": 0.5196
   },
   "diagnostics": {
-    "maxEdgeStrain": 6.661338147750939e-16,
+    "maxEdgeStrain": 8.881784197001252e-16,
     "maxFacePlanarityError": 0,
     "selfIntersectionCount": 0,
     "degenerateTriangleCount": 0,
-    "quantizationError": 0.000007195574157847773,
-    "finalKineticEnergy": 1.8518214059257542e-14,
-    "finalAngleErrorDegrees": 0.0000010417308636555099
+    "quantizationError": 0.0000071955741577367505,
+    "finalKineticEnergy": 1.8518214200567528e-14,
+    "finalAngleErrorDegrees": 0.0000010417308795582834
   },
   "approval": {
     "silhouette": false,

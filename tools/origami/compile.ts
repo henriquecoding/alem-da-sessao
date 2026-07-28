@@ -7,7 +7,7 @@ import {
   bakeModel,
   buildMesh,
   compileModel,
-  stageFromConfiguration,
+  stagesFromSource,
   validateFoldSource,
   type BakeResult,
 } from "@alem-da-sessao/origami-core";
@@ -70,10 +70,7 @@ async function compileOne(id: string): Promise<CompileOutcome> {
 
   // 3. Simular: o padrão dobra mesmo, ou não dobra.
   const mesh = buildMesh(source);
-  const stages = entry.model.stages.map((stage) =>
-    stageFromConfiguration(mesh, stage.positions, stage.state),
-  );
-  const baked = bakeModel(mesh, stages, {
+  const baked = bakeModel(mesh, stagesFromSource(source, mesh), {
     anchor: source["ads:anchor"],
     lengthProjectionIterations: 30,
   });

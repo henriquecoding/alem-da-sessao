@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getMessages } from "@alem-da-sessao/i18n";
 import { HomeExperience } from "@/components/homepage/home-experience";
 import { HomeSections } from "@/components/homepage/home-sections";
+import { loadFallbacks } from "@/components/origami/asset-loader";
 import { OrigamiDefs } from "@/components/origami/origami-figure";
 import { resolveLocale } from "@/lib/locale";
 
@@ -34,6 +35,17 @@ export default async function HomePage({
   const { locale, segment } = await resolveLocale(params);
   const messages = getMessages(locale);
 
+  // As silhuetas dos modelos que já dobram a partir de uma folha. Vão no HTML
+  // para que o primeiro byte traga a forma certa, e não um espaço vazio à
+  // espera de rede. Um modelo que ainda não esteja compilado simplesmente não
+  // aparece neste mapa, e a cena usa a figura SVG anterior.
+  const fallbacks = await loadFallbacks([
+    "sheet",
+    "half-fold",
+    "box",
+    "suspended-sheet",
+  ]);
+
   return (
     <main>
       <OrigamiDefs />
@@ -44,6 +56,7 @@ export default async function HomePage({
             locale={locale}
             segment={segment}
             stage="atelier"
+            fallbacks={fallbacks}
           />
         </div>
       </section>

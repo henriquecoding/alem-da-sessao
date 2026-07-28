@@ -24,12 +24,12 @@
   },
   "diagnostics": {
     "maxEdgeStrain": 3.875122445151646e-12,
-    "maxFacePlanarityError": 0.000007684781799411851,
+    "maxFacePlanarityError": 0.000007684752905289917,
     "selfIntersectionCount": 0,
     "degenerateTriangleCount": 0,
-    "quantizationError": 0.000007602757993441234,
-    "finalKineticEnergy": 1.375538280648703e-10,
-    "finalAngleErrorDegrees": 0.0012992782716713179
+    "quantizationError": 0.000007602757993607767,
+    "finalKineticEnergy": 1.3755382817562657e-10,
+    "finalAngleErrorDegrees": 0.0012992782718716928
   },
   "approval": {
     "silhouette": false,

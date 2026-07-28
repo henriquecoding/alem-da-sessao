@@ -147,6 +147,35 @@ export function modelOf(state: ExperienceState): OrigamiModelId {
   }
 }
 
+/**
+ * Que clip da dobragem corresponde a cada estado.
+ *
+ * O runtime não sabe o que «formed» significa — sabe que tem de ir do frame 12
+ * ao 36 numa certa curva. É aqui que o significado entra, e é por isso que este
+ * mapa vive na máquina de estados e não no renderizador.
+ *
+ * A folha começa por ser notada, ganha vinco enquanto a pessoa decide, e só
+ * fecha quando a decisão está tomada. Um objeto que aparecesse já formado no
+ * primeiro ecrã contaria o fim antes do princípio.
+ */
+export function clipOf(
+  state: ExperienceState,
+): "flat-to-noticed" | "noticed-to-forming" | "forming-to-formed" {
+  switch (state.id) {
+    case "intro":
+      return "flat-to-noticed";
+    case "newcomer.notice":
+      return state.notice ? "noticed-to-forming" : "flat-to-noticed";
+    case "newcomer.form":
+    case "newcomer.decide":
+      return "noticed-to-forming";
+    case "newcomer.result":
+    case "returning":
+    case "explore":
+      return "forming-to-formed";
+  }
+}
+
 /** Só há uma ação principal disponível quando a escolha do passo foi feita. */
 export function canAdvance(state: ExperienceState): boolean {
   switch (state.id) {
