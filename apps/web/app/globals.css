@@ -189,6 +189,30 @@
 
   /* Grão de material (§6.6) — ver `.material::after`. */
   --grain-ink: light-dark(rgba(44, 38, 30, 0.05), rgba(232, 228, 220, 0.07));
+
+  /* ------------------------------------------------------------------------
+     Homepage — Atelier de Origami
+
+     A folha é a metáfora do produto: começa plana, recebe uma marca, ganha
+     forma através de dobras e só se abre como ponte por decisão explícita.
+     Estes tons pertencem ao teatro da homepage; as superfícies operativas
+     continuam a usar a paleta clínica acima.
+     ------------------------------------------------------------------------ */
+  --home-canvas: light-dark(#f3f0f8, #15121b);
+  --home-panel: light-dark(#fbf9fd, #201c27);
+  --home-paper: light-dark(#fffdf8, #e8e1ef);
+  --home-paper-shadow: light-dark(#ded5e5, #8e829b);
+  --home-paper-violet: light-dark(#dcd3fa, #76669f);
+  --home-paper-coral: light-dark(#f3cfc2, #995f50);
+  --home-paper-blue: light-dark(#d5e5f4, #5d7894);
+  --home-paper-mint: light-dark(#d6e9e4, #587b73);
+  --home-line: light-dark(#d7cfdf, #41394b);
+  --home-glass: light-dark(rgba(255, 255, 255, 0.72), rgba(32, 28, 39, 0.72));
+  --home-violet: light-dark(#7659d6, #b8a5f1);
+  --home-coral: light-dark(#b86147, #e5987c);
+  --home-blue: light-dark(#557fa5, #91b8d7);
+  --home-mint: light-dark(#3d7e76, #84c6b9);
+  --home-ink-soft: light-dark(#4f4859, #c7bfce);
 }
 
 /* ==========================================================================
@@ -1106,6 +1130,1122 @@ p {
   opacity: 0.28;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   Homepage — Atelier de Origami
+
+   Não é uma ilustração pousada ao lado da copy. A folha é uma máquina de
+   estados: plana no primeiro gesto, articulada no segundo, ponte no terceiro.
+   Toda a profundidade é CSS 3D; não há canvas, WebGL, vídeo ou ciclo de
+   renderização permanente. As mudanças animam apenas transform e opacidade.
+   ========================================================================== */
+
+.home-world {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--home-canvas);
+  background-image:
+    linear-gradient(
+      115deg,
+      transparent 0 48%,
+      color-mix(in srgb, var(--home-line) 18%, transparent) 48% 48.15%,
+      transparent 48.15%
+    ),
+    linear-gradient(
+      25deg,
+      transparent 0 66%,
+      color-mix(in srgb, var(--home-line) 15%, transparent) 66% 66.12%,
+      transparent 66.12%
+    );
+}
+
+.home-ambient {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--home-line) 70%, transparent);
+  opacity: 0.55;
+  transform: rotate(var(--r)) skewX(-7deg);
+}
+
+.home-ambient::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  clip-path: polygon(50% 0, 100% 100%, 0 76%);
+  background: var(--c);
+  opacity: 0.38;
+}
+
+.home-ambient-one {
+  --r: 18deg;
+  --c: var(--home-paper-violet);
+  top: 2rem;
+  left: -7rem;
+  width: 20rem;
+  height: 20rem;
+  clip-path: polygon(50% 0, 100% 100%, 0 70%);
+}
+
+.home-ambient-two {
+  --r: -17deg;
+  --c: var(--home-paper-coral);
+  top: 18rem;
+  right: -8rem;
+  width: 18rem;
+  height: 18rem;
+  clip-path: polygon(0 0, 100% 22%, 66% 100%);
+}
+
+.home-ambient-three {
+  --r: 42deg;
+  --c: var(--home-paper-blue);
+  bottom: 1rem;
+  left: 24%;
+  width: 10rem;
+  height: 10rem;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.home-mode-switch {
+  display: grid;
+  width: fit-content;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--home-line);
+  border-radius: 999px;
+  background: var(--home-glass);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(18px);
+}
+
+.home-mode-switch [role="tab"] {
+  color: var(--muted-foreground);
+}
+
+.home-mode-switch [role="tab"][aria-selected="true"] {
+  color: var(--foreground);
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-xs);
+}
+
+.home-step-current {
+  background: var(--primary);
+}
+
+.home-step-past {
+  background: var(--success);
+}
+
+.home-step-future {
+  background: var(--border-strong);
+}
+
+.home-theatre {
+  background: var(--home-panel);
+}
+
+.home-theatre-copy {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--home-paper-violet) 22%, transparent),
+      transparent 34%
+    ),
+    var(--home-panel);
+}
+
+.home-choice,
+.home-crossing-choice {
+  border-color: var(--home-line);
+  background: color-mix(in srgb, var(--home-panel) 82%, transparent);
+}
+
+.home-choice[aria-pressed="true"],
+.home-crossing-choice[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--home-violet) 72%, var(--home-line));
+  background: color-mix(
+    in srgb,
+    var(--home-paper-violet) 38%,
+    var(--home-panel)
+  );
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--home-violet) 9%, transparent);
+}
+
+.home-choice-dot {
+  border-color: var(--home-line);
+  color: var(--on-primary);
+  background: transparent;
+}
+
+.home-choice[aria-pressed="true"] .home-choice-dot {
+  border-color: var(--home-violet);
+  background: var(--home-violet);
+}
+
+.home-artifact-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    132deg,
+    color-mix(in srgb, var(--home-paper) 90%, transparent),
+    color-mix(in srgb, var(--home-paper-violet) 36%, var(--home-panel))
+  );
+  box-shadow: var(--shadow-sm);
+}
+
+.home-artifact-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4rem;
+  height: 4rem;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  background: linear-gradient(
+    135deg,
+    var(--home-paper-shadow),
+    var(--home-paper-violet)
+  );
+  opacity: 0.55;
+}
+
+.home-artifact-icon {
+  color: var(--home-violet);
+  background: var(--home-paper-violet);
+  clip-path: polygon(50% 0, 100% 28%, 88% 100%, 12% 100%, 0 28%);
+}
+
+.home-artifact-icon[data-moment="echo"] {
+  color: var(--home-coral);
+  background: var(--home-paper-coral);
+}
+
+.home-artifact-icon[data-moment="intention"] {
+  color: var(--home-mint);
+  background: var(--home-paper-mint);
+}
+
+.home-return-door {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--home-panel) 88%, transparent);
+}
+
+.home-return-door::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 3.75rem;
+  height: 3.75rem;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  opacity: 0.55;
+  transition: transform 360ms var(--ease-out-expo);
+  transform-origin: bottom right;
+}
+
+.home-return-door[data-tone="client"]::after {
+  background: var(--home-paper-coral);
+}
+
+.home-return-door[data-tone="professional"]::after {
+  background: var(--home-paper-violet);
+}
+
+.home-return-icon {
+  color: var(--home-violet);
+  background: var(--home-paper-violet);
+  clip-path: polygon(50% 0, 100% 32%, 86% 100%, 14% 100%, 0 32%);
+}
+
+.home-return-door[data-tone="client"] .home-return-icon {
+  color: var(--home-coral);
+  background: var(--home-paper-coral);
+}
+
+.home-diorama {
+  background:
+    linear-gradient(
+      142deg,
+      color-mix(in srgb, var(--home-paper-violet) 46%, transparent),
+      transparent 42%
+    ),
+    linear-gradient(
+      24deg,
+      color-mix(in srgb, var(--home-paper-blue) 38%, transparent),
+      transparent 48%
+    ),
+    var(--home-canvas);
+}
+
+.home-diorama::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--home-line) 42%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      color-mix(in srgb, var(--home-line) 42%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 3.5rem 3.5rem;
+  mask-image: linear-gradient(to bottom, transparent, black 24%, black);
+  opacity: 0.22;
+}
+
+.interval-perspective {
+  perspective: 1100px;
+  perspective-origin: 50% 42%;
+  contain: layout paint style;
+}
+
+.interval-sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.interval-orbit {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--home-line) 78%, transparent);
+  opacity: 0.5;
+}
+
+.interval-orbit-one {
+  top: 10%;
+  left: 9%;
+  width: 58%;
+  height: 52%;
+  clip-path: polygon(50% 0, 100% 44%, 74% 100%, 4% 72%);
+  transform: rotate(8deg);
+}
+
+.interval-orbit-two {
+  right: 4%;
+  bottom: 12%;
+  width: 42%;
+  height: 38%;
+  clip-path: polygon(18% 0, 100% 18%, 78% 100%, 0 66%);
+  transform: rotate(-16deg);
+}
+
+.interval-aurora {
+  position: absolute;
+  filter: blur(32px);
+  opacity: 0.32;
+}
+
+.interval-aurora-one {
+  top: 8%;
+  left: 24%;
+  width: 13rem;
+  height: 13rem;
+  background: var(--home-paper-violet);
+  clip-path: polygon(50% 0, 100% 100%, 0 75%);
+}
+
+.interval-aurora-two {
+  right: 10%;
+  bottom: 2%;
+  width: 11rem;
+  height: 11rem;
+  background: var(--home-paper-coral);
+  clip-path: polygon(0 0, 100% 25%, 62% 100%);
+}
+
+.interval-world {
+  position: absolute;
+  inset: 4% 1% 0;
+  transform-style: preserve-3d;
+}
+
+.interval-plane {
+  position: absolute;
+  inset: 12% 4% 7%;
+  transform-style: preserve-3d;
+  transform: rotateX(54deg) rotateZ(-7deg) translate3d(0, 2%, 0);
+  transition: transform 750ms var(--ease-forming);
+}
+
+.origami-sheet {
+  position: absolute;
+  top: 30%;
+  left: 7%;
+  display: flex;
+  width: 86%;
+  height: 42%;
+  transform-style: preserve-3d;
+  filter: drop-shadow(
+    0 24px 20px color-mix(in srgb, var(--shadow-ambient-xl) 75%, transparent)
+  );
+}
+
+.origami-fold {
+  position: relative;
+  width: calc(100% / 7);
+  height: 100%;
+  margin-left: -1px;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  transition:
+    transform 760ms var(--ease-forming),
+    opacity 360ms var(--ease-out-quint);
+}
+
+.origami-fold-face,
+.origami-fold-shine {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 8%, 100% 0, 91% 92%, 8% 100%);
+  backface-visibility: hidden;
+}
+
+.origami-fold-face {
+  border: 1px solid color-mix(in srgb, var(--home-line) 62%, transparent);
+  background: linear-gradient(
+    128deg,
+    color-mix(in srgb, var(--home-paper) 97%, transparent) 0 48%,
+    color-mix(in srgb, var(--home-paper-shadow) 55%, var(--home-paper)) 49% 51%,
+    color-mix(in srgb, var(--home-paper-violet) 36%, var(--home-paper)) 52%
+  );
+}
+
+.origami-fold:nth-child(2n) .origami-fold-face {
+  background: linear-gradient(
+    48deg,
+    color-mix(in srgb, var(--home-paper-blue) 30%, var(--home-paper)) 0 49%,
+    color-mix(in srgb, var(--home-paper-shadow) 50%, var(--home-paper)) 50% 51%,
+    var(--home-paper) 52%
+  );
+}
+
+.origami-fold:nth-child(3n) .origami-fold-face {
+  background: linear-gradient(
+    142deg,
+    color-mix(in srgb, var(--home-paper-coral) 24%, var(--home-paper)) 0 49%,
+    color-mix(in srgb, var(--home-paper-shadow) 48%, var(--home-paper)) 50% 51%,
+    var(--home-paper) 52%
+  );
+}
+
+.origami-fold-shine {
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    color-mix(in srgb, var(--home-paper) 80%, transparent) 48%,
+    transparent 66%
+  );
+  opacity: 0.52;
+}
+
+.origami-day-label {
+  position: absolute;
+  left: 50%;
+  bottom: -1.55rem;
+  width: max-content;
+  transform: translateX(-50%);
+  color: var(--home-ink-soft);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.48rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.68;
+}
+
+.origami-crease {
+  position: absolute;
+  z-index: 10;
+  height: 1px;
+  background: color-mix(in srgb, var(--home-line) 72%, transparent);
+  transform-origin: left center;
+  opacity: 0.55;
+}
+
+.origami-crease-one {
+  top: 28%;
+  left: 4%;
+  width: 92%;
+  transform: rotate(12deg);
+}
+
+.origami-crease-two {
+  top: 67%;
+  left: 8%;
+  width: 86%;
+  transform: rotate(-10deg);
+}
+
+.origami-crease-three {
+  top: 7%;
+  left: 50%;
+  width: 1px;
+  height: 88%;
+  transform: rotate(5deg);
+}
+
+/* Primeiro ato: a folha ainda está quase plana, mas nunca é um retângulo
+   perfeito — as sete dobras já existem como possibilidade. */
+.home-diorama[data-step="0"] .origami-fold:nth-child(1) {
+  transform: translateZ(1px) rotateY(-4deg);
+}
+
+.home-diorama[data-step="0"] .origami-fold:nth-child(2) {
+  transform: translateZ(4px) rotateY(7deg);
+}
+
+.home-diorama[data-step="0"] .origami-fold:nth-child(3) {
+  transform: translateZ(8px) rotateY(-9deg);
+}
+
+.home-diorama[data-step="0"] .origami-fold:nth-child(4) {
+  transform: translateZ(12px) rotateY(8deg);
+}
+
+.home-diorama[data-step="0"] .origami-fold:nth-child(5) {
+  transform: translateZ(8px) rotateY(-7deg);
+}
+
+.home-diorama[data-step="0"] .origami-fold:nth-child(6) {
+  transform: translateZ(4px) rotateY(6deg);
+}
+
+.home-diorama[data-step="0"] .origami-fold:nth-child(7) {
+  transform: translateZ(1px) rotateY(-3deg);
+}
+
+/* Segundo ato: a folha fecha à volta do objeto reconhecido. */
+.home-diorama[data-step="1"] .interval-plane {
+  transform: rotateX(50deg) rotateZ(-3deg) translate3d(0, 0, 1rem);
+}
+
+.home-diorama[data-step="1"] .origami-fold:nth-child(1) {
+  transform: translate3d(28%, 0, 16px) rotateY(22deg) rotateX(-5deg);
+}
+
+.home-diorama[data-step="1"] .origami-fold:nth-child(2) {
+  transform: translate3d(18%, -5%, 34px) rotateY(-18deg) rotateX(8deg);
+}
+
+.home-diorama[data-step="1"] .origami-fold:nth-child(3) {
+  transform: translate3d(8%, -11%, 60px) rotateY(28deg) rotateX(-12deg);
+}
+
+.home-diorama[data-step="1"] .origami-fold:nth-child(4) {
+  transform: translate3d(0, -18%, 86px) rotateX(18deg) scale(0.96);
+}
+
+.home-diorama[data-step="1"] .origami-fold:nth-child(5) {
+  transform: translate3d(-8%, -11%, 60px) rotateY(-28deg) rotateX(-12deg);
+}
+
+.home-diorama[data-step="1"] .origami-fold:nth-child(6) {
+  transform: translate3d(-18%, -5%, 34px) rotateY(18deg) rotateX(8deg);
+}
+
+.home-diorama[data-step="1"] .origami-fold:nth-child(7) {
+  transform: translate3d(-28%, 0, 16px) rotateY(-22deg) rotateX(-5deg);
+}
+
+/* Terceiro ato: as dobras abrem-se e tornam-se uma travessia. */
+.home-diorama[data-step="2"] .interval-plane {
+  transform: rotateX(60deg) rotateZ(0deg) translate3d(0, 2%, 0);
+}
+
+.home-diorama[data-step="2"] .origami-fold:nth-child(odd) {
+  transform: translateZ(8px) rotateY(-8deg);
+}
+
+.home-diorama[data-step="2"] .origami-fold:nth-child(even) {
+  transform: translateZ(16px) rotateY(9deg);
+}
+
+.interval-gate {
+  position: absolute;
+  top: 24%;
+  z-index: 18;
+  display: grid;
+  width: 5.8rem;
+  height: 8.3rem;
+  place-items: center;
+  transform-style: preserve-3d;
+  border: 1px solid color-mix(in srgb, var(--home-line) 72%, transparent);
+  color: var(--home-ink-soft);
+  background: linear-gradient(
+    128deg,
+    var(--home-paper) 0 46%,
+    var(--home-paper-shadow) 47% 50%,
+    var(--home-paper-violet) 51%
+  );
+  clip-path: polygon(50% 0, 100% 28%, 88% 100%, 12% 100%, 0 28%);
+  box-shadow: 0 12px 20px
+    color-mix(in srgb, var(--shadow-ambient-md) 78%, transparent);
+  transition:
+    transform 700ms var(--ease-forming),
+    opacity 300ms var(--ease-out-quint);
+}
+
+.interval-gate::after {
+  content: "";
+  position: absolute;
+  inset: 20% 27% 0;
+  background: var(--home-canvas);
+  clip-path: polygon(50% 0, 100% 24%, 82% 100%, 18% 100%, 0 24%);
+  box-shadow: inset 0 4px 10px
+    color-mix(in srgb, var(--shadow-ambient-md) 65%, transparent);
+}
+
+.interval-gate > span {
+  position: absolute;
+  z-index: 2;
+  bottom: -1.6rem;
+  width: 8rem;
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.5rem;
+  line-height: 1.2;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.interval-gate-left {
+  left: 0;
+  transform: translate3d(-12%, 9%, 28px) rotateX(-54deg) rotateZ(5deg);
+}
+
+.interval-gate-right {
+  right: 0;
+  background: linear-gradient(
+    52deg,
+    var(--home-paper-blue) 0 46%,
+    var(--home-paper-shadow) 47% 50%,
+    var(--home-paper) 51%
+  );
+  transform: translate3d(12%, -6%, 28px) rotateX(-54deg) rotateZ(-5deg);
+}
+
+.interval-marker {
+  --marker-x: 36%;
+  --marker-y: 42%;
+  --marker-colour: var(--home-violet);
+  position: absolute;
+  z-index: 24;
+  top: var(--marker-y);
+  left: var(--marker-x);
+  display: grid;
+  place-items: center;
+  transform: translate3d(-50%, -50%, 80px) rotateX(-54deg);
+  transform-style: preserve-3d;
+  opacity: 0;
+  transition:
+    top 680ms var(--ease-in-out-quart),
+    left 680ms var(--ease-in-out-quart),
+    transform 680ms var(--ease-in-out-quart),
+    opacity 260ms var(--ease-out-quint);
+}
+
+.home-diorama[data-moment="echo"] .interval-marker {
+  --marker-x: 31%;
+  --marker-y: 56%;
+  --marker-colour: var(--home-coral);
+  opacity: 1;
+}
+
+.home-diorama[data-moment="clarity"] .interval-marker {
+  --marker-x: 48%;
+  --marker-y: 35%;
+  --marker-colour: var(--home-violet);
+  opacity: 1;
+}
+
+.home-diorama[data-moment="intention"] .interval-marker {
+  --marker-x: 61%;
+  --marker-y: 50%;
+  --marker-colour: var(--home-mint);
+  opacity: 1;
+}
+
+.home-diorama[data-step="1"] .interval-marker {
+  top: 34%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 154px) rotateX(-50deg) scale(1.18);
+}
+
+.home-diorama[data-step="2"] .interval-marker {
+  top: 47%;
+  left: 42%;
+  transform: translate3d(-50%, -50%, 104px) rotateX(-60deg);
+}
+
+.home-diorama[data-step="2"][data-crossing="shared"] .interval-marker {
+  left: 82%;
+  transform: translate3d(-50%, -50%, 116px) rotateX(-60deg) rotateZ(8deg);
+}
+
+.origami-token {
+  position: relative;
+  display: block;
+  width: 4rem;
+  height: 4rem;
+  transform-style: preserve-3d;
+  filter: drop-shadow(
+    0 10px 12px color-mix(in srgb, var(--marker-colour) 22%, transparent)
+  );
+  transition: transform 680ms var(--ease-forming);
+}
+
+.home-diorama[data-step="1"] .origami-token {
+  transform: rotate(45deg) scale(1.1);
+}
+
+.home-diorama[data-step="2"][data-crossing="shared"] .origami-token {
+  transform: rotate(90deg) scale(0.9);
+}
+
+.origami-token-face {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--marker-colour) 70%, var(--home-paper));
+}
+
+.origami-token-face-a {
+  clip-path: polygon(50% 0, 100% 50%, 50% 54%);
+  transform: translateZ(8px) rotateX(-12deg);
+  filter: brightness(1.08);
+}
+
+.origami-token-face-b {
+  clip-path: polygon(0 50%, 50% 0, 50% 54%, 30% 100%);
+  transform: translateZ(5px) rotateY(-10deg);
+}
+
+.origami-token-face-c {
+  clip-path: polygon(50% 54%, 100% 50%, 72% 100%, 30% 100%);
+  transform: translateZ(2px) rotateY(9deg);
+  filter: brightness(0.83);
+}
+
+.origami-token-fold {
+  position: absolute;
+  top: 49%;
+  left: 13%;
+  width: 74%;
+  height: 1px;
+  background: color-mix(in srgb, var(--home-paper) 55%, transparent);
+  transform: rotate(7deg) translateZ(12px);
+}
+
+.interval-marker-label {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  left: 50%;
+  width: max-content;
+  transform: translateX(-50%);
+  border: 1px solid var(--home-line);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  color: var(--foreground);
+  background: var(--home-glass);
+  box-shadow: var(--shadow-xs);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.5rem;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+}
+
+.interval-form {
+  position: absolute;
+  z-index: 6;
+  width: 4.2rem;
+  height: 4.2rem;
+  border: 1px solid color-mix(in srgb, var(--home-line) 72%, transparent);
+  opacity: 0.62;
+  transition:
+    transform 700ms var(--ease-forming),
+    opacity 300ms var(--ease-out-quint);
+}
+
+.interval-form-one {
+  top: 4%;
+  left: 21%;
+  clip-path: polygon(50% 0, 100% 100%, 0 70%);
+  background: var(--home-paper-coral);
+  transform: translateZ(32px) rotateX(-54deg) rotate(12deg);
+}
+
+.interval-form-two {
+  right: 18%;
+  bottom: 4%;
+  clip-path: polygon(0 0, 100% 20%, 70% 100%);
+  background: var(--home-paper-blue);
+  transform: translateZ(18px) rotateX(-54deg) rotate(-15deg);
+}
+
+.interval-form-three {
+  top: 5%;
+  right: 34%;
+  width: 3.2rem;
+  height: 3.2rem;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  background: var(--home-paper-mint);
+  transform: translateZ(46px) rotateX(-54deg) rotate(22deg);
+}
+
+.home-diorama[data-step="1"] .interval-form {
+  opacity: 0.18;
+  transform: translate3d(0, 1rem, 0) scale(0.72);
+}
+
+.home-diorama[data-step="2"] .interval-form {
+  opacity: 0.35;
+}
+
+/* O modo de retorno dobra a folha inteira em duas portas, em vez de mostrar
+   um menu modal que interromperia a chegada. */
+.home-diorama[data-mode="returning"] .interval-marker,
+.home-diorama[data-mode="returning"] .origami-crease {
+  opacity: 0;
+}
+
+.home-diorama[data-mode="returning"] .origami-sheet {
+  top: 33%;
+}
+
+.home-diorama[data-mode="returning"] .origami-fold:nth-child(-n + 3) {
+  transform: translate3d(22%, -3%, 55px) rotateY(32deg) rotateX(-8deg);
+}
+
+.home-diorama[data-mode="returning"] .origami-fold:nth-child(4) {
+  opacity: 0.18;
+  transform: translateZ(-10px) scaleX(0.4);
+}
+
+.home-diorama[data-mode="returning"] .origami-fold:nth-child(n + 5) {
+  transform: translate3d(-22%, -3%, 55px) rotateY(-32deg) rotateX(-8deg);
+}
+
+.home-diorama[data-mode="returning"] .interval-gate-left {
+  transform: translate3d(62%, -4%, 82px) rotateX(-54deg) rotateZ(0) scale(1.12);
+}
+
+.home-diorama[data-mode="returning"] .interval-gate-right {
+  transform: translate3d(-62%, -4%, 82px) rotateX(-54deg) rotateZ(0) scale(1.12);
+}
+
+.home-role-card {
+  background: var(--home-panel);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 420ms var(--ease-out-expo),
+    box-shadow 420ms var(--ease-out-expo);
+}
+
+.home-role-card::before,
+.home-role-card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.home-role-card::before {
+  inset: 0;
+  background-image:
+    linear-gradient(
+      143deg,
+      transparent 0 49.8%,
+      color-mix(in srgb, var(--home-line) 48%, transparent) 50% 50.2%,
+      transparent 50.4%
+    ),
+    linear-gradient(
+      38deg,
+      transparent 0 69%,
+      color-mix(in srgb, var(--home-line) 40%, transparent) 69.2% 69.4%,
+      transparent 69.6%
+    );
+  opacity: 0.55;
+}
+
+.home-role-card::after {
+  top: -1px;
+  right: -1px;
+  width: 8rem;
+  height: 8rem;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  transform-origin: top right;
+  transition: transform 520ms var(--ease-forming);
+}
+
+.home-role-card[data-tone="client"]::after {
+  background: linear-gradient(
+    135deg,
+    var(--home-paper-shadow),
+    var(--home-paper-coral)
+  );
+}
+
+.home-role-card[data-tone="professional"]::after {
+  background: linear-gradient(
+    135deg,
+    var(--home-paper-shadow),
+    var(--home-paper-violet)
+  );
+}
+
+.home-role-icon {
+  color: var(--home-violet);
+  background: var(--home-paper-violet);
+  clip-path: polygon(50% 0, 100% 24%, 86% 100%, 14% 100%, 0 24%);
+}
+
+.home-role-card[data-tone="client"] .home-role-icon {
+  color: var(--home-coral);
+  background: var(--home-paper-coral);
+}
+
+.home-role-orbit {
+  position: absolute;
+  right: -5rem;
+  bottom: -7rem;
+  width: 20rem;
+  height: 20rem;
+  border: 1px solid var(--home-line);
+  clip-path: polygon(50% 0, 100% 46%, 74% 100%, 2% 72%);
+  transform: rotate(-18deg);
+  opacity: 0.55;
+  transition: transform 700ms var(--ease-forming);
+}
+
+.home-role-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  background: var(--home-paper-blue);
+  clip-path: polygon(50% 0, 100% 100%, 0 72%);
+  opacity: 0.42;
+}
+
+.home-role-card[data-tone="client"] .home-role-orbit::after {
+  background: var(--home-paper-coral);
+}
+
+.home-relationship-node {
+  z-index: 10;
+  background: var(--home-paper);
+  box-shadow: var(--shadow-md);
+  clip-path: polygon(50% 0, 100% 32%, 84% 100%, 16% 100%, 0 32%);
+}
+
+.home-closing {
+  position: relative;
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--home-paper-violet) 32%, transparent),
+      transparent 38%
+    ),
+    var(--home-panel);
+}
+
+.home-closing::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 11rem;
+  height: 11rem;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  background: linear-gradient(
+    135deg,
+    var(--home-paper-shadow),
+    var(--home-paper-blue)
+  );
+  opacity: 0.55;
+}
+
+.home-closing-orbit {
+  position: absolute;
+  top: -9rem;
+  left: -7rem;
+  width: 24rem;
+  height: 24rem;
+  border: 1px solid var(--home-line);
+  clip-path: polygon(50% 0, 100% 50%, 62% 100%, 0 72%);
+  transform: rotate(24deg);
+  opacity: 0.45;
+}
+
+@media (hover: hover) {
+  .home-choice:hover,
+  .home-crossing-choice:hover,
+  .home-return-door:hover {
+    transform: translate3d(0, -2px, 0);
+    border-color: color-mix(in srgb, var(--home-violet) 60%, var(--home-line));
+  }
+
+  .home-return-door:hover::after {
+    transform: rotateY(28deg);
+  }
+
+  .home-role-card:hover {
+    transform: translate3d(0, -5px, 0);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .home-role-card:hover::after {
+    transform: rotateY(22deg);
+  }
+
+  .home-role-card:hover .home-role-orbit {
+    transform: rotate(-6deg) scale(1.03);
+  }
+}
+
+@media (max-width: 1023px) {
+  .interval-plane {
+    inset: 12% 2% 8%;
+  }
+
+  .home-diorama[data-mode="returning"] .interval-gate-left {
+    transform: translate3d(44%, -4%, 82px) rotateX(-54deg) scale(1.05);
+  }
+
+  .home-diorama[data-mode="returning"] .interval-gate-right {
+    transform: translate3d(-44%, -4%, 82px) rotateX(-54deg) scale(1.05);
+  }
+}
+
+@media (max-width: 639px) {
+  .home-theatre {
+    min-height: auto;
+    border-radius: 1.5rem;
+  }
+
+  .home-diorama {
+    min-height: 25rem;
+  }
+
+  .interval-plane {
+    inset: 9% -5% 7%;
+    transform: rotateX(58deg) rotateZ(-4deg) scale(0.9);
+  }
+
+  .interval-gate {
+    width: 4.6rem;
+    height: 6.8rem;
+  }
+
+  .interval-gate > span {
+    bottom: -1.45rem;
+    width: 6.2rem;
+    font-size: 0.43rem;
+  }
+
+  .origami-day-label {
+    display: none;
+  }
+
+  .origami-token {
+    width: 3.4rem;
+    height: 3.4rem;
+  }
+
+  .interval-form-one {
+    left: 16%;
+  }
+
+  .interval-form-two {
+    right: 12%;
+  }
+
+  .home-diorama[data-mode="returning"] .interval-gate-left {
+    transform: translate3d(28%, 1%, 82px) rotateX(-58deg) scale(0.94);
+  }
+
+  .home-diorama[data-mode="returning"] .interval-gate-right {
+    transform: translate3d(-28%, 1%, 82px) rotateX(-58deg) scale(0.94);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-ambient-one {
+    animation: origami-drift-one 16s ease-in-out infinite;
+  }
+
+  .home-ambient-two {
+    animation: origami-drift-two 19s ease-in-out infinite;
+  }
+
+  .interval-form-one {
+    animation: origami-float-one 11s ease-in-out infinite;
+  }
+
+  .interval-form-two {
+    animation: origami-float-two 13s ease-in-out infinite;
+  }
+
+  .interval-form-three {
+    animation: origami-float-three 10s ease-in-out infinite;
+  }
+}
+
+@keyframes origami-drift-one {
+  0%,
+  100% {
+    transform: rotate(18deg) skewX(-7deg) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: rotate(21deg) skewX(-7deg) translate3d(0.4rem, -0.6rem, 0);
+  }
+}
+
+@keyframes origami-drift-two {
+  0%,
+  100% {
+    transform: rotate(-17deg) skewX(-7deg) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: rotate(-14deg) skewX(-7deg) translate3d(-0.5rem, 0.5rem, 0);
+  }
+}
+
+@keyframes origami-float-one {
+  0%,
+  100% {
+    transform: translateZ(32px) rotateX(-54deg) rotate(12deg);
+  }
+  50% {
+    transform: translate3d(0, -0.5rem, 44px) rotateX(-54deg) rotate(18deg);
+  }
+}
+
+@keyframes origami-float-two {
+  0%,
+  100% {
+    transform: translateZ(18px) rotateX(-54deg) rotate(-15deg);
+  }
+  50% {
+    transform: translate3d(0.3rem, -0.35rem, 28px) rotateX(-54deg)
+      rotate(-20deg);
+  }
+}
+
+@keyframes origami-float-three {
+  0%,
+  100% {
+    transform: translateZ(46px) rotateX(-54deg) rotate(22deg);
+  }
+  50% {
+    transform: translate3d(-0.25rem, -0.45rem, 58px) rotateX(-54deg)
+      rotate(16deg);
+  }
 }
 
 /* ==========================================================================
