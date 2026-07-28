@@ -1,0 +1,170 @@
+/* ==========================================================================
+   Decoração de palco por direção de arte, e a folha de prova.
+
+   Este ficheiro é importado apenas pelo laboratório e pela homepage, e as três
+   direções são mutuamente exclusivas: um palco declara `data-stage` e recebe
+   só a sua. Uma direção é o palco mais o papel — avaliar o objeto isolado não
+   diz nada sobre se ele se vê.
+   ========================================================================== */
+
+/* Ateliê de luz — papel sobre mesa. A luz entra pela esquerda e o plano da
+   mesa escurece para o lado oposto: é a única «sombra» de ambiente da cena, e
+   vem da mesma direção que as sombras dos objetos. */
+.origami-stage[data-stage="atelier"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    116deg,
+    var(--origami-stage-lift) 0%,
+    transparent 46%,
+    var(--origami-stage-fall) 100%
+  );
+}
+
+/* Campo suspenso — espaço abstrato. Sem plano de mesa: só uma zona tonal
+   circular que segura o objeto e garante o fosso tonal, e muita área negativa
+   à volta. */
+.origami-stage[data-stage="field"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    62% 52% at 50% 46%,
+    var(--origami-stage-lift),
+    transparent 72%
+  );
+}
+
+/* Caderno arquitetónico — planos editoriais. Pauta discreta e uma margem
+   vertical: material gráfico em vez de cenográfico. As linhas são estáticas e
+   nunca passam por baixo de texto. */
+.origami-stage[data-stage="notebook"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--foreground) 6%, transparent) 0 1px,
+      transparent 1px 2.25rem
+    ),
+    linear-gradient(
+      to right,
+      transparent calc(3.5rem - 1px),
+      color-mix(in srgb, var(--accent) 34%, transparent) calc(3.5rem - 1px)
+        3.5rem,
+      transparent 3.5rem
+    );
+}
+
+/* --------------------------------------------------------------------------
+   Folha de prova
+   -------------------------------------------------------------------------- */
+
+.origami-proof {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+/* O palco vive dentro da célula e nunca na própria célula: `.origami-proof`
+   pinta `background` (shorthand) e `.origami-stage` pinta `background-color`,
+   e no mesmo elemento a shorthand ganha por ordem — a célula «escura» ficava
+   com o fundo claro da folha de prova. */
+.origami-proof-stage {
+  display: grid;
+  place-items: center;
+  gap: 1rem;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.origami-proof-label {
+  font-family: ui-monospace, monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* A silhueta prova-se sobre branco puro e a preto puro — sem tokens, sem
+   tema, sem nada que possa estar a ajudar a leitura por acidente. */
+.origami-proof-silhouette {
+  display: grid;
+  place-items: center;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: #ffffff;
+}
+
+.origami-proof-scales {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+/* Um pré-visualizador de tema, com um limite conhecido.
+ *
+ * `color-scheme` num subárvore resolve `light-dark()` para os tokens
+ * declarados *dentro* dela — o palco e o papel, que é o que importa aqui. Os
+ * tokens da aplicação (`--background`, `--foreground`) são declarados em
+ * `:root` e resolvem lá, portanto o texto de um recorte não acompanha esta
+ * pré-visualização. Para ver a experiência inteira no outro tema usa-se o
+ * seletor no topo do laboratório, que troca `data-theme` no `<html>` como o
+ * produto faz. */
+.origami-lab-theme {
+  border-radius: 0.75rem;
+}
+
+.origami-lab-theme[data-theme-preview="light"] {
+  color-scheme: light;
+}
+
+.origami-lab-theme[data-theme-preview="dark"] {
+  color-scheme: dark;
+}
+
+/* Um recorte de telemóvel a sério e não uma coluna estreita: 390 px de
+   largura real, com a mesma folha de estilo. É a única forma de ver se o
+   objeto fica acima da dobra. */
+.origami-lab-viewport {
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 1rem;
+}
+
+.origami-lab-viewport[data-viewport="mobile"] {
+  width: 390px;
+  max-width: 100%;
+}
+
+.origami-lab-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+/* Um palco em miniatura dentro de um cartão. Sem isto herda `align-self:
+   stretch` da linha do cartão e transforma-se numa barra vertical com um
+   objeto minúsculo no topo — que foi exatamente o que a primeira captura do
+   contact sheet mostrou. */
+.origami-lab-chip {
+  display: grid;
+  place-items: center;
+  flex: none;
+  align-self: start;
+  width: 4.5rem;
+  height: 3.75rem;
+  overflow: hidden;
+}
+
+.origami-lab-chip .origami-figure {
+  width: 3.5rem;
+}

@@ -50,6 +50,10 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|icon.svg|robots.txt|sitemap.xml).*)",
+    /* `dev` está de fora porque o laboratório interno não tem duas variantes
+       editoriais — tem uma, escrita para quem está a decidir. Sem esta
+       exclusão, `/dev/origami-lab` era redirecionado para
+       `/pt-pt/dev/origami-lab`, que não existe. */
+    "/((?!api|dev|_next/static|_next/image|favicon.ico|icon.svg|robots.txt|sitemap.xml).*)",
   ],
 };

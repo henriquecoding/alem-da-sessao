@@ -1,188 +1,231 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { getMessages } from "@alem-da-sessao/i18n";
 import { describe, expect, it } from "vitest";
-import { IntervalStudio } from "@/components/home/interval-studio";
+import { HomeExperience } from "@/components/homepage/home-experience";
+import {
+  canAdvance,
+  decideIds,
+  initialExperienceState,
+  modelOf,
+  paperOf,
+  reduceExperience,
+  resultOf,
+} from "@/components/homepage/experience-machine";
 
-describe("homepage origami experience", () => {
-  it("requires an intentional choice before folding the interval", () => {
-    const { container } = render(
-      <IntervalStudio
-        copy={getMessages("pt-PT").home}
-        locale="pt-PT"
-        segment="pt-pt"
-      />,
+const copy = getMessages("pt-PT").home;
+
+function renderExperience() {
+  return render(<HomeExperience copy={copy} locale="pt-PT" segment="pt-pt" />);
+}
+
+/** Leva a experiência do início até ao resultado, escolhendo em cada passo. */
+function walkToResult(decideLabel: string) {
+  fireEvent.click(screen.getByRole("button", { name: /Sim, ficou/ }));
+  fireEvent.click(screen.getByRole("button", { name: /Uma sensação/ }));
+  fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+  fireEvent.click(screen.getByRole("button", { name: /Está claro/ }));
+  fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: new RegExp(decideLabel) }),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+}
+
+describe("máquina de estados da experiência", () => {
+  it("não avança sem uma escolha em cada passo", () => {
+    let state = reduceExperience(initialExperienceState, { type: "begin" });
+    expect(state.id).toBe("newcomer.notice");
+    expect(canAdvance(state)).toBe(false);
+
+    // Avançar sem escolher não é um erro silencioso: é um não-evento.
+    expect(reduceExperience(state, { type: "advance" })).toBe(state);
+
+    state = reduceExperience(state, { type: "notice", id: "feeling" });
+    expect(canAdvance(state)).toBe(true);
+    expect(reduceExperience(state, { type: "advance" }).id).toBe(
+      "newcomer.form",
     );
+  });
 
-    const continueButton = screen.getByRole("button", { name: "Continuar" });
-    expect(continueButton).toBeDisabled();
+  it("desfaz a escolha do passo que se abandona ao voltar atrás", () => {
+    let state = reduceExperience(initialExperienceState, { type: "begin" });
+    state = reduceExperience(state, { type: "notice", id: "idea" });
+    state = reduceExperience(state, { type: "advance" });
+    state = reduceExperience(state, { type: "form", id: "clear" });
+    state = reduceExperience(state, { type: "back" });
 
-    fireEvent.click(screen.getByRole("button", { name: /Algo ganhou forma/ }));
+    expect(state.id).toBe("newcomer.notice");
+    expect(state.form).toBeNull();
+    // A escolha do passo em que se fica mantém-se; só a abandonada desaparece.
+    expect(state.notice).toBe("idea");
+  });
 
-    expect(continueButton).toBeEnabled();
+  it("faz a decisão escolher o objeto, e nunca o que a pessoa notou", () => {
+    // O invariante que impede a forma de virar uma leitura sobre a pessoa.
+    for (const notice of ["idea", "feeling", "question", "unnamed"] as const) {
+      let state = reduceExperience(initialExperienceState, { type: "begin" });
+      state = reduceExperience(state, { type: "notice", id: notice });
+      state = reduceExperience(state, { type: "advance" });
+      state = reduceExperience(state, { type: "form", id: "tangled" });
+      state = reduceExperience(state, { type: "advance" });
+      state = reduceExperience(state, { type: "decide", id: "carry" });
+      state = reduceExperience(state, { type: "advance" });
+
+      expect(state.id).toBe("newcomer.result");
+      expect(modelOf(state)).toBe("boat");
+    }
+  });
+
+  it("dá uma forma diferente a cada intenção", () => {
+    const shapes = decideIds.map((id) => resultOf(id));
+    expect(new Set(shapes).size).toBe(decideIds.length);
+  });
+
+  it("só dá cor ao papel quando a folha ganha forma", () => {
+    let state = reduceExperience(initialExperienceState, { type: "begin" });
+    state = reduceExperience(state, { type: "notice", id: "decision" });
+    expect(paperOf(state)).toBe("lilac");
+
+    state = reduceExperience(state, { type: "advance" });
+    state = reduceExperience(state, { type: "form", id: "carry" });
+    state = reduceExperience(state, { type: "advance" });
+    state = reduceExperience(state, { type: "decide", id: "cross" });
+    expect(paperOf(state)).toBe("lilac");
+
+    state = reduceExperience(state, { type: "advance" });
+    expect(paperOf(state)).toBe("mist");
+  });
+
+  it("a mesma folha passa por todos os estados sem saltos", () => {
+    let state = reduceExperience(initialExperienceState, { type: "begin" });
+    expect(modelOf(initialExperienceState)).toBe("sheet");
+    expect(modelOf(state)).toBe("sheet");
+
+    state = reduceExperience(state, { type: "notice", id: "question" });
+    expect(modelOf(state)).toBe("suspended-sheet");
+
+    state = reduceExperience(state, { type: "advance" });
+    state = reduceExperience(state, { type: "form", id: "rest" });
+    expect(modelOf(state)).toBe("half-fold");
+  });
+});
+
+describe("homepage — o ritual", () => {
+  it("começa com uma ação e não com uma explicação", () => {
+    renderExperience();
     expect(
-      container.querySelector('[data-origami-model="fox"]'),
+      screen.getByRole("heading", { name: copy.intro.question }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "Uma perceção pode conservar a sua forma sem ser transformada imediatamente numa conclusão.",
-      ),
+      screen.getByRole("button", { name: /Sim, ficou/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("nunca pede um texto à pessoa", () => {
+    const { container } = renderExperience();
+    fireEvent.click(screen.getByRole("button", { name: /Sim, ficou/ }));
+
+    expect(container.querySelector("textarea")).toBeNull();
+    expect(container.querySelector("input")).toBeNull();
+  });
+
+  it("dobra a mesma folha a cada escolha", () => {
+    const { container } = renderExperience();
+    expect(
+      container.querySelector('[data-origami-model="sheet"]'),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Sim, ficou/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Uma pergunta/ }));
+    expect(
+      container.querySelector('[data-origami-model="suspended-sheet"]'),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+    fireEvent.click(screen.getByRole("button", { name: /Continua confuso/ }));
+    expect(
+      container.querySelector('[data-origami-model="half-fold"]'),
     ).toBeInTheDocument();
   });
 
   it.each([
-    ["Algo ficou", "crane", 8],
-    ["Algo ganhou forma", "fox", 10],
-    ["Algo quer seguir", "boat", 8],
-  ])(
-    "turns %s into a recognizable faceted %s model",
-    (option, model, minimumFaces) => {
-      const { container } = render(
-        <IntervalStudio
-          copy={getMessages("pt-PT").home}
-          locale="pt-PT"
-          segment="pt-pt"
-        />,
-      );
-
-      fireEvent.click(screen.getByRole("button", { name: new RegExp(option) }));
-
-      const figure = container.querySelector(`[data-origami-model="${model}"]`);
-      expect(figure).toBeInTheDocument();
-      expect(figure?.querySelectorAll("polygon").length).toBeGreaterThanOrEqual(
-        minimumFaces,
-      );
-    },
-  );
-
-  it("makes privacy and deliberate sharing separate visible states", () => {
-    render(
-      <IntervalStudio
-        copy={getMessages("pt-PT").home}
-        locale="pt-PT"
-        segment="pt-pt"
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: /Algo ficou/ }));
-    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+    ["Levar para a próxima sessão", "boat"],
+    ["Guardar só para mim", "box"],
+    ["Explorar uma experiência", "crane"],
+    ["Deixar em suspenso", "suspended-sheet"],
+  ])("transforma «%s» em %s", (label, model) => {
+    const { container } = renderExperience();
+    walkToResult(label);
 
     expect(
-      screen.getByRole("heading", {
-        name: "Uma folha pode guardar mais do que uma resposta.",
+      container.querySelector(`[data-origami-model="${model}"]`),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        copy.result.objects[model as keyof typeof copy.result.objects].body,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("diz em voz alta que nada é interpretado nem guardado", () => {
+    renderExperience();
+    expect(screen.getByText(copy.shell.privacy)).toBeInTheDocument();
+
+    walkToResult("Guardar só para mim");
+    expect(screen.getByText(copy.result.note)).toBeInTheDocument();
+  });
+
+  it("dá a quem já utiliza um percurso direto, sem repetir o ritual", () => {
+    renderExperience();
+    fireEvent.click(
+      screen.getByRole("button", { name: /Já utilizo o Além da Sessão/ }),
+    );
+
+    expect(
+      screen.getByRole("heading", { name: copy.returning.title }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", {
+        name: new RegExp(copy.returning.assigned.title),
       }),
+    ).toHaveAttribute("href", "/pt-pt/cuidado/hoje");
+    // Nenhum passo do ritual aparece neste percurso.
+    expect(screen.queryByText(copy.steps.notice.prompt)).toBeNull();
+  });
+
+  it("recomeça sem deixar rasto da escolha anterior", () => {
+    const { container } = renderExperience();
+    walkToResult("Explorar uma experiência");
+    expect(
+      container.querySelector('[data-origami-model="crane"]'),
     ).toBeInTheDocument();
-    expect(screen.getByText("Estruturas de Carga")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
-    expect(screen.getByText("Continua privado.")).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: "Fazer atravessar" }));
-    expect(screen.getByText("Atravessou.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Recomeçar/ }));
     expect(
-      screen.getByText(/Nesta demonstração, nada foi enviado/),
+      container.querySelector('[data-origami-model="sheet"]'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: copy.intro.question }),
     ).toBeInTheDocument();
   });
+});
 
-  it("gives returning clients and professionals direct localized doors", () => {
-    render(
-      <IntervalStudio
-        copy={getMessages("pt-BR").home}
-        locale="pt-BR"
-        segment="pt-br"
-      />,
-    );
+describe("acessibilidade da cena", () => {
+  it("mantém o origami fora da árvore de acessibilidade e descreve a cena em texto", () => {
+    const { container } = renderExperience();
+    const figure = container.querySelector("[data-origami-model]");
 
-    fireEvent.click(screen.getByRole("tab", { name: "Já utilizo" }));
-
-    expect(
-      screen.getByRole("link", { name: /Entrar no meu espaço/ }),
-    ).toHaveAttribute("href", "/pt-br/cuidado/hoje");
-    expect(
-      screen.getByRole("link", { name: /Entrar na área profissional/ }),
-    ).toHaveAttribute("href", "/pt-br/pro/hoje");
+    expect(figure).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByText(copy.scene.description)).toBeInTheDocument();
   });
 
-  it("implements the complete keyboard pattern for the visit mode tabs", () => {
-    render(
-      <IntervalStudio
-        copy={getMessages("pt-PT").home}
-        locale="pt-PT"
-        segment="pt-pt"
-      />,
-    );
+  it("leva o foco ao novo título a cada mudança de etapa", () => {
+    renderExperience();
+    fireEvent.click(screen.getByRole("button", { name: /Sim, ficou/ }));
 
-    const explore = screen.getByRole("tab", { name: "Conhecer o espaço" });
-    const returning = screen.getByRole("tab", { name: "Já utilizo" });
-
-    expect(explore).toHaveAttribute("tabindex", "0");
-    expect(returning).toHaveAttribute("tabindex", "-1");
-
-    explore.focus();
-    fireEvent.keyDown(explore, { key: "ArrowRight" });
-
-    expect(returning).toHaveFocus();
-    expect(returning).toHaveAttribute("aria-selected", "true");
-    expect(returning).toHaveAttribute("tabindex", "0");
-    expect(explore).toHaveAttribute("tabindex", "-1");
-
-    fireEvent.keyDown(returning, { key: "Home" });
-    expect(explore).toHaveFocus();
-    expect(explore).toHaveAttribute("aria-selected", "true");
-
-    fireEvent.keyDown(explore, { key: "End" });
-    expect(returning).toHaveFocus();
-    expect(returning).toHaveAttribute("aria-selected", "true");
-  });
-
-  it("moves focus to the new heading after every ritual transition", async () => {
-    render(
-      <IntervalStudio
-        copy={getMessages("pt-PT").home}
-        locale="pt-PT"
-        segment="pt-pt"
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: /Algo ficou/ }));
-    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
-
-    const formHeading = screen.getByRole("heading", {
-      name: "Uma folha pode guardar mais do que uma resposta.",
+    const heading = screen.getByRole("heading", {
+      name: copy.steps.notice.title,
     });
-    await waitFor(() => expect(formHeading).toHaveFocus());
-
-    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
-
-    const decisionHeading = screen.getByRole("heading", {
-      name: "Existir não é o mesmo que partilhar.",
-    });
-    await waitFor(() => expect(decisionHeading).toHaveFocus());
-  });
-
-  it("does not request intimate text in the public ritual", () => {
-    const { container } = render(
-      <IntervalStudio
-        copy={getMessages("pt-BR").home}
-        locale="pt-BR"
-        segment="pt-br"
-      />,
-    );
-
-    expect(container.querySelector("input")).toBeNull();
-    expect(container.querySelector("textarea")).toBeNull();
-  });
-
-  it("keeps the compact navigation through tablet widths", () => {
-    const header = readFileSync(
-      join(process.cwd(), "components/public-header.tsx"),
-      "utf8",
-    );
-
-    expect(header).toContain("lg:flex");
-    expect(header).toContain("lg:hidden");
-    expect(header).not.toContain("md:flex");
-    expect(header).not.toContain("md:hidden");
+    expect(heading).toHaveFocus();
   });
 });
