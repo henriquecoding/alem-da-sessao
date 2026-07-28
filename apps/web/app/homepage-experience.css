@@ -1,0 +1,479 @@
+/* ==========================================================================
+   A Folha Entre Sessões — o palco e o painel
+
+   O nome é interno. Não aparece em lado nenhum do produto: a marca continua a
+   ser Além da Sessão.
+
+   A composição tem uma regra e uma consequência. A regra: o objeto vem
+   primeiro, em qualquer largura. A consequência: no telemóvel isto não é a
+   versão desktop reduzida — a ordem no DOM já é palco→painel, portanto não há
+   `order` a inverter nada, e o objeto nunca fica abaixo da dobra.
+   ========================================================================== */
+
+/* A experiência responde à largura que lhe é dada, e não à da janela.
+ *
+ * Isto não é preferência de implementação. Com `@media`, o recorte de 390 px do
+ * laboratório continuava a usar o layout de duas colunas e a escala
+ * tipográfica de desktop, porque a janela do laboratório tem 1400 px. O recorte
+ * mentia — mostrava um telemóvel que nunca existiria — e era exatamente esse o
+ * defeito que o relatório aponta na direção anterior («a versão mobile é a
+ * desktop reduzida»). Com `@container`, o recorte é o telemóvel, e a
+ * experiência pode ser encaixada em qualquer largura sem mentir sobre ela. */
+.home-experience-shell {
+  container-type: inline-size;
+  container-name: experience;
+  max-width: 100%;
+}
+
+.home-experience {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 1.75rem;
+  box-shadow: var(--shadow-lg);
+}
+
+@container experience (min-width: 60rem) {
+  .home-experience {
+    grid-template-columns: minmax(0, 1.1fr) minmax(23rem, 0.9fr);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   O palco
+   -------------------------------------------------------------------------- */
+
+.home-experience-stage {
+  position: relative;
+  display: grid;
+  /* A faixa é `minmax(0, 1fr)` e o item tem `min-width: 0`, e as duas coisas
+     protegem o mesmo ponto: o mínimo automático de um item de grelha é o seu
+     conteúdo, e o conteúdo aqui é um SVG — que, sem atributos `width` e
+     `height`, traz uma largura intrínseca própria em vez de se adaptar. Não é
+     precaução genérica: é a única coisa entre esta composição e uma faixa
+     dimensionada pelo objeto em vez de pelo ecrã. */
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-items: center;
+  min-width: 0;
+  min-height: 20rem;
+  margin: 0;
+  padding: 2rem 1.5rem 2.75rem;
+}
+
+@container experience (min-width: 44rem) {
+  .home-experience-stage {
+    min-height: 26rem;
+    padding: 3rem;
+  }
+}
+
+/* O «fosso tonal»: uma auréola muito ténue por baixo do objeto, com a cor do
+   palco empurrada um passo. Não é um brilho — é o que impede o papel de se
+   fundir com o fundo quando ambos são claros. */
+.home-experience-stage::before {
+  content: "";
+  position: absolute;
+  inset: 12% 8%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--paper-lit, transparent) 34%, transparent),
+    transparent 78%
+  );
+}
+
+.home-experience-figure {
+  position: relative;
+  width: min(100%, 26rem);
+  max-width: 100%;
+}
+
+@container experience (min-width: 60rem) {
+  .home-experience-figure {
+    width: min(100%, 30rem);
+  }
+}
+
+.home-experience-caption {
+  position: absolute;
+  top: 1rem;
+  left: 1.25rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   O painel
+   -------------------------------------------------------------------------- */
+
+.home-experience-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  /* Centrado, e não colado ao topo com o resto empurrado para baixo por
+     `margin-top: auto`. No estado inicial o painel tem três linhas e o palco
+     tem 26rem: alinhar ao topo abria um vazio de meio ecrã entre os botões e a
+     nota de privacidade. */
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+@container experience (min-width: 44rem) {
+  .home-experience-panel {
+    padding: 2.25rem;
+  }
+}
+
+@container experience (min-width: 60rem) {
+  .home-experience-panel {
+    border-top: 0;
+    border-left: 1px solid var(--border);
+  }
+}
+
+.home-experience-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.home-experience-ticks {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.home-experience-ticks li {
+  height: 0.375rem;
+  width: 0.75rem;
+  border-radius: 999px;
+  background: var(--border-strong);
+  transition:
+    width 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home-experience-ticks li[data-state="current"] {
+  width: 1.75rem;
+  background: var(--primary);
+}
+
+.home-experience-ticks li[data-state="past"] {
+  background: var(--primary);
+}
+
+.home-experience-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.home-experience-eyebrow {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-foreground);
+}
+
+.home-experience-title {
+  max-width: 22ch;
+  /* `cqi` e não `vw`: a escala segue a largura do palco, portanto a mesma
+     experiência encaixada num cartão estreito não herda um título de 2.6rem. */
+  font-size: clamp(1.6rem, 1.15rem + 2.6cqi, 2.5rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+  outline: none;
+}
+
+.home-experience-title:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+  border-radius: 0.25rem;
+}
+
+.home-experience-lede {
+  max-width: 55ch;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+
+.home-experience-note {
+  max-width: 55ch;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--accent);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   Escolhas
+
+   Sem `textarea`, em nenhum passo. Uma homepage não é sítio para alguém
+   escrever o que lhe aconteceu, e a alternativa não é um formulário mais
+   curto — é não haver formulário nenhum.
+   -------------------------------------------------------------------------- */
+
+.home-experience-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.home-experience-legend {
+  padding: 0 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.home-experience-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 1rem;
+  background: var(--background);
+  text-align: left;
+  transition:
+    border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home-experience-choice:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.home-experience-choice:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.home-experience-choice[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--accent-soft);
+}
+
+.home-experience-choice-dot {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin-top: 0.125rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--primary-foreground);
+}
+
+.home-experience-choice[aria-pressed="true"] .home-experience-choice-dot {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.home-experience-choice-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.home-experience-choice-hint {
+  display: block;
+  margin-top: 0.125rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   Ações
+   -------------------------------------------------------------------------- */
+
+.home-experience-intro-actions,
+.home-experience-actions,
+.home-experience-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-experience-intro-actions {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+@container experience (min-width: 26rem) {
+  .home-experience-intro-actions {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.home-experience-footer {
+  padding-top: 0.25rem;
+}
+
+.home-experience-quiet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 0.875rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home-experience-quiet:hover {
+  color: var(--foreground);
+}
+
+.home-experience-quiet:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.home-experience-privacy {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   Percurso de quem já utiliza
+
+   Não repete o ritual. Duas portas, e em cada uma o objeto que a nomeia — a
+   caixa para o que fica guardado, a folha por dobrar para o que ainda não foi
+   decidido. São os mesmos objetos do ritual, e não miniaturas decorativas.
+   -------------------------------------------------------------------------- */
+
+.home-experience-doors {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.home-experience-door {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 0.875rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 1rem;
+  background: var(--background);
+  transition:
+    border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home-experience-door:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.home-experience-door:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.home-experience-door-figure {
+  flex: none;
+  width: 3.5rem;
+}
+
+.home-experience-door-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.home-experience-door-label {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.5625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.home-experience-door-title {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.home-experience-door-body {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+.home-experience-door-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* --------------------------------------------------------------------------
+   Movimento do palco
+
+   Uma inclinação de poucos graus quando aparece um vinco, e nada mais. Não há
+   parallax, não há rotação da cena inteira, não há nenhuma animação que corra
+   sozinha — todo o movimento tem uma escolha por trás.
+   -------------------------------------------------------------------------- */
+
+.home-experience[data-state="newcomer.notice"] .home-experience-figure {
+  transform: rotate(-1.5deg);
+}
+
+.home-experience[data-state="newcomer.form"] .home-experience-figure,
+.home-experience[data-state="newcomer.decide"] .home-experience-figure {
+  transform: rotate(1deg);
+}
+
+.home-experience-figure {
+  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-experience-figure,
+  .home-experience[data-state] .home-experience-figure {
+    transform: none;
+    transition: none;
+  }
+
+  .home-experience-choice,
+  .home-experience-door {
+    transition: none;
+  }
+
+  .home-experience-choice:hover,
+  .home-experience-door:hover {
+    transform: none;
+  }
+}

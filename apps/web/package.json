@@ -18,6 +18,7 @@
     "check:budgets": "node --import tsx scripts/check-budgets.ts",
     "check:accessibility": "node --import tsx scripts/check-accessibility.ts",
     "check:contrast": "node --import tsx scripts/check-contrast.ts",
+    "check:origami": "node --import tsx scripts/check-origami.ts",
     "check:built-bundles": "node --import tsx scripts/check-built-bundles.ts",
     "check:release-readiness": "node --import tsx scripts/check-release-readiness.ts"
   },

@@ -1,0 +1,282 @@
+/* ==========================================================================
+   Sistema de origami — papel, luz, movimento
+
+   Os valores das famílias de papel são os mesmos de
+   `components/origami/tokens/paper.ts`, e `tests/origami-contrast.test.ts`
+   falha se as duas listas divergirem. A duplicação é deliberada: o TypeScript
+   é o que o relatório de contraste lê, o CSS é o que o navegador pinta, e um
+   token que só existisse num deles seria um valor por verificar.
+   ========================================================================== */
+
+/* Um objeto tem de funcionar fora de um palco.
+ *
+ * Sem estes valores por omissão, `fill: var(--origami-shadow-ink)` num figura
+ * solta resolvia para inválido e o navegador caía no `fill` inicial — preto
+ * puro. A folha de prova apanhou isso à primeira: uma elipse preta e dura por
+ * baixo de um papel lilás, na célula que existe justamente para mostrar o
+ * material sem ajudas. */
+:root {
+  --origami-shadow-ink: light-dark(rgba(40, 36, 49, 0.18), rgba(0, 0, 0, 0.5));
+  --origami-fiber-ink: light-dark(rgba(40, 36, 49, 0.035), rgba(0, 0, 0, 0.05));
+  --origami-stage-lift: light-dark(
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0.05)
+  );
+  --origami-stage-fall: light-dark(rgba(40, 36, 49, 0.09), rgba(0, 0, 0, 0.38));
+}
+
+.origami-stage {
+  --origami-stage-surface: light-dark(#f0e9e0, #191510);
+  --origami-shadow-ink: light-dark(rgba(74, 34, 16, 0.2), rgba(0, 0, 0, 0.5));
+  --origami-fiber-ink: light-dark(rgba(74, 34, 16, 0.035), rgba(0, 0, 0, 0.05));
+
+  /* A luz de ambiente do palco. Existe como token e não como `#ffffff` literal
+     porque um branco fixo no tema escuro produz aquele véu leitoso que faz o
+     fundo parecer um ecrã sujo em vez de um espaço. */
+  --origami-stage-lift: light-dark(
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.05)
+  );
+  --origami-stage-fall: light-dark(rgba(74, 34, 16, 0.1), rgba(0, 0, 0, 0.4));
+
+  position: relative;
+  background-color: var(--origami-stage-surface);
+}
+
+/* Uma direção de arte é o palco mais o papel, nunca só o papel. */
+.origami-stage[data-stage="atelier"] {
+  --origami-stage-surface: light-dark(#f0e9e0, #191510);
+}
+
+.origami-stage[data-stage="field"] {
+  --origami-stage-surface: light-dark(#ece9f2, #14131b);
+  --origami-shadow-ink: light-dark(rgba(34, 25, 66, 0.16), rgba(0, 0, 0, 0.52));
+  --origami-fiber-ink: light-dark(rgba(34, 25, 66, 0.03), rgba(0, 0, 0, 0.045));
+  --origami-stage-lift: light-dark(
+    rgba(255, 255, 255, 0.66),
+    rgba(255, 255, 255, 0.06)
+  );
+  --origami-stage-fall: light-dark(rgba(34, 25, 66, 0.08), rgba(0, 0, 0, 0.4));
+}
+
+.origami-stage[data-stage="notebook"] {
+  --origami-stage-surface: light-dark(#f1efe9, #17171a);
+  --origami-shadow-ink: light-dark(rgba(20, 22, 20, 0.18), rgba(0, 0, 0, 0.5));
+  --origami-fiber-ink: light-dark(
+    rgba(20, 22, 20, 0.035),
+    rgba(0, 0, 0, 0.045)
+  );
+  --origami-stage-lift: light-dark(
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0.045)
+  );
+  --origami-stage-fall: light-dark(rgba(20, 22, 20, 0.09), rgba(0, 0, 0, 0.38));
+}
+
+/* --------------------------------------------------------------------------
+   Famílias de papel
+   -------------------------------------------------------------------------- */
+
+[data-paper="apricot"] {
+  --paper-lit: light-dark(#fae0cb, #f2d5be);
+  --paper-base: light-dark(#e3a97f, #dcaf8d);
+  --paper-shade: light-dark(#c07f56, #b58260);
+  --paper-inner: light-dark(#94573a, #8a5a3c);
+  --paper-edge: light-dark(#4a2210, #2b160a);
+}
+
+[data-paper="mist"] {
+  --paper-lit: light-dark(#dfeaf6, #dae8f4);
+  --paper-base: light-dark(#a4c3e0, #b0cae2);
+  --paper-shade: light-dark(#7699bb, #809fbd);
+  --paper-inner: light-dark(#4e6f92, #557797);
+  --paper-edge: light-dark(#142c40, #0e1f2d);
+}
+
+[data-paper="jade"] {
+  --paper-lit: light-dark(#d8ece3, #d4ebe1);
+  --paper-base: light-dark(#9bc7b2, #a8d0be);
+  --paper-shade: light-dark(#6d9d88, #7aa793);
+  --paper-inner: light-dark(#467760, #4f7d68);
+  --paper-edge: light-dark(#0f2f22, #0b2118);
+}
+
+[data-paper="lilac"] {
+  --paper-lit: light-dark(#e5dff5, #e0d9f2);
+  --paper-base: light-dark(#b6a8de, #bfb2e2);
+  --paper-shade: light-dark(#8878b6, #9384bd);
+  --paper-inner: light-dark(#5e4f8b, #665893);
+  --paper-edge: light-dark(#221942, #191134);
+}
+
+/* --------------------------------------------------------------------------
+   O objeto
+   -------------------------------------------------------------------------- */
+
+.origami-figure {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.origami-face {
+  stroke: none;
+}
+
+.origami-face[data-tone="lit"] {
+  fill: var(--paper-lit);
+}
+
+.origami-face[data-tone="base"] {
+  fill: var(--paper-base);
+}
+
+.origami-face[data-tone="shade"] {
+  fill: var(--paper-shade);
+}
+
+.origami-face[data-tone="inner"] {
+  fill: var(--paper-inner);
+}
+
+/* O contorno exterior é único. Não existe `stroke` por polígono: era daí que
+   vinham as costuras escuras entre faces vizinhas. */
+.origami-outline {
+  stroke: var(--paper-edge);
+  stroke-width: 1.25;
+}
+
+.origami-crease {
+  stroke-width: 1;
+}
+
+/* Uma montanha apanha luz na aresta; um vale fica em sombra. É a mesma tinta,
+   misturada com o tom da face que a rodeia — por isso um vinco nunca destoa
+   do papel em que vive. */
+.origami-crease[data-kind="mountain"] {
+  stroke: color-mix(in srgb, var(--paper-edge) 42%, var(--paper-lit));
+}
+
+.origami-crease[data-kind="valley"] {
+  stroke: color-mix(in srgb, var(--paper-edge) 30%, var(--paper-base));
+}
+
+/* Uma camada real por cima de outra. Aqui, e só aqui, a linha é a tinta cheia:
+   é uma aresta de papel, não uma dobra. */
+.origami-crease[data-kind="edge"] {
+  stroke: color-mix(in srgb, var(--paper-edge) 72%, var(--paper-shade));
+  stroke-width: 1.35;
+}
+
+.origami-fiber-line {
+  stroke: var(--origami-fiber-ink, rgba(0, 0, 0, 0.07));
+}
+
+/* Duas elipses e nenhum desfoque. A ambiente é larga e quase transparente; a
+   de contacto é pequena e ainda assim discreta — uma sombra de contacto opaca
+   lê-se como um buraco no palco em vez de um objeto pousado nele. */
+.origami-shadow-ambient {
+  fill: var(--origami-shadow-ink);
+  opacity: 0.32;
+  transform: translateY(1px) scale(1.02);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.origami-shadow-contact {
+  fill: var(--origami-shadow-ink);
+  opacity: 0.5;
+  transform: scale(0.5, 0.42);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.origami-figure[data-mode="silhouette"] .origami-silhouette {
+  fill: light-dark(#000000, #ffffff);
+}
+
+.origami-figure[data-mode="wireframe"] .origami-outline {
+  stroke: var(--foreground);
+  stroke-width: 1.5;
+}
+
+.origami-figure[data-mode="wireframe"] .origami-crease {
+  stroke: var(--muted-foreground);
+  stroke-dasharray: 3 3;
+}
+
+/* --------------------------------------------------------------------------
+   Movimento
+
+   Toda a animação vive em `transform` e `opacity`. Nenhuma é permanente:
+   cada uma é disparada por uma escolha e acaba. A gramática está em
+   `components/origami/motion/states.ts`.
+   -------------------------------------------------------------------------- */
+
+.origami-figure {
+  --fold-in: cubic-bezier(0.22, 1, 0.36, 1);
+  --fold-settle: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes origami-fold-face {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scaleY(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes origami-settle {
+  from {
+    opacity: 0;
+    transform: translateY(10px) rotate(-1.4deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes origami-dissolve {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.origami-figure[data-enter="true"] {
+  animation: origami-settle 720ms var(--fold-in) both;
+}
+
+.origami-figure[data-enter="true"] .origami-face {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: origami-fold-face 560ms var(--fold-in) both;
+  animation-delay: calc(var(--face-index, 0) * 45ms);
+}
+
+.origami-figure[data-enter="true"] .origami-crease,
+.origami-figure[data-enter="true"] .origami-outline {
+  animation: origami-dissolve 420ms var(--fold-settle) both;
+  animation-delay: 220ms;
+}
+
+/* A redução de movimento é uma direção própria e não um interruptor.
+   As mesmas mudanças de estado acontecem, na mesma ordem, por dissolução
+   curta — ninguém fica à espera de uma animação que não existe, e ninguém
+   perde a informação de que a folha mudou. */
+@media (prefers-reduced-motion: reduce) {
+  .origami-figure[data-enter="true"],
+  .origami-figure[data-enter="true"] .origami-face,
+  .origami-figure[data-enter="true"] .origami-crease,
+  .origami-figure[data-enter="true"] .origami-outline {
+    animation: origami-dissolve 160ms linear both;
+    animation-delay: 0ms;
+  }
+}
