@@ -87,7 +87,7 @@ Resultado actual: 6 modelos, 0 problemas, delta de área 0.00 em todos.
 | `half-fold`       |     3 |      2 |          0.00 |
 | `boat`            |     4 |      3 |          0.00 |
 | `box`             |    12 |      8 |          0.00 |
-| `crane`           |     9 |      8 |          0.00 |
+| `crane`           |    11 |      9 |          0.00 |
 | `suspended-sheet` |     3 |      2 |          0.00 |
 
 ---
@@ -134,7 +134,7 @@ palco, e a 96 / 160 / 320 px nos dois temas.
 | objeto            | silhueta a 2 s | 96 px | veredito                                   |
 | ----------------- | -------------- | ----- | ------------------------------------------ |
 | `boat`            | passa          | passa | aceite à primeira revisão                  |
-| `crane`           | passa          | passa | aceite à **quinta** versão                 |
+| `crane`           | passa          | fraco | aceite à **sexta** versão, ver §4.1        |
 | `box`             | passa          | passa | aceite à terceira versão                   |
 | `suspended-sheet` | passa          | passa | aceite à segunda versão                    |
 | `sheet`           | n/a            | passa | matéria, não resultado                     |
@@ -145,23 +145,37 @@ correcto: _«o único que está bem feito é o barco, o pássaro não parece pá
 a caixa é só uma caixa, e o resto não é nada.»_ As três secções seguintes são o
 que essa recusa produziu.
 
-### 4.1. O grou custou cinco versões, e todas falharam por simetria
+### 4.1. O grou custou seis versões, e cinco delas eram o pássaro errado
 
-1. Asas, pescoço e cauda a irradiar de um centro com ângulos parecidos — uma
-   estrela de seis pontas.
-2. As mesmas pontas, mais gordas — uma estrela mais gorda.
-3. Pose de perfil, asas numa barra horizontal a meia altura — um dardo.
-4. Asas erguidas em V, pescoço à esquerda, cauda à direita — um X. Duas pontas
-   para cada lado cancelam-se e o olho volta a ler uma estrela.
+As primeiras cinco falharam por simetria — estrela, estrela gorda, dardo, X — e
+cada correcção resolvia o sintoma sem tocar na causa. A sexta veio de uma
+revisão humana que trouxe a referência que faltava: fotografias de **grous a
+sério**, da família Gruidae.
 
-O que resolve não é detalhe nem espessura: é **quebrar a simetria**. Uma asa só,
-grande, erguida para trás, contra um pescoço fino e comprido para a frente. Um
-lado do objeto é massa, o outro é linha, e nenhuma estrela tem isso.
+O erro era de referência, não de desenho. Eu andava a desenhar o _tsuru_ — a
+figura de origami — em vez de desenhar a ave. São coisas diferentes, e só uma
+delas se chama grou.
 
-O segundo elemento indispensável é a cabeça. Um pescoço que termina numa cunha
-com bico virado para a frente é a única coisa que um dardo de papel não pode
-ter — e é por isso que o bico tem vértices próprios em vez de ser um detalhe
-desenhado por cima.
+Um grou é uma ave de pernas altas, e o que o distingue de qualquer outro
+pássaro está todo abaixo do corpo e acima do pescoço:
+
+- **As pernas valem quase um terço da altura.** Nenhuma das cinco versões
+  anteriores tinha pernas. Um pássaro sem pernas compridas não é um grou.
+- **O pescoço é erguido e fino**, não projetado para a frente. É a razão de o
+  pescoço ter agora 15 unidades de largura contra um corpo de 120 de
+  comprimento: é a desproporção que faz a leitura.
+- **A cabeça é pequena e tem poupa.** No grou-coroado a coroa é um leque de
+  espigões, e é o pormenor mais reconhecível da ave inteira em silhueta. Está
+  construída com um entalhe entre duas pontas, porque um leque sem entalhe
+  funde-se com a cabeça e vira um bloco.
+- **A cauda cai.** As terciárias formam um penacho que desce por trás do corpo.
+  Na primeira tentativa desta versão o penacho descia até à altura das pernas e
+  competia com elas; subiu, e as pernas voltaram a ler-se.
+
+**Custo registado:** é o modelo da família que mais perde nos tamanhos
+pequenos. As canelas têm 12 unidades num `viewBox` de 300 — menos de 4 px a
+96 px. O contorno é `non-scaling-stroke`, portanto a perna não desaparece, mas
+a 96 px o grou lê-se como «ave de pernas altas» e não como «grou».
 
 ### 4.2. A caixa deixou de ser «só uma caixa»
 

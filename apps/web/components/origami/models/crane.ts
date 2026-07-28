@@ -3,140 +3,215 @@ import { defineOrigamiModel } from "../types";
 /**
  * Grou — «atravessar para uma experiência».
  *
- * Quinta versão. As quatro anteriores falharam, e todas pela mesma causa vista
- * de ângulos diferentes: **simetria**.
+ * Sexta versão, e a primeira que é um grou. As cinco anteriores eram tsurus
+ * estilizados — a figura de papel dobrado — e não se percebia o que eram. O
+ * erro era de referência, não de desenho: eu andava a desenhar o origami em
+ * vez de desenhar a ave.
  *
- * 1. Asas, pescoço e cauda a irradiar de um centro com ângulos parecidos —
- *    uma estrela de seis pontas.
- * 2. As mesmas pontas, mais gordas — uma estrela mais gorda.
- * 3. Pose de perfil com as asas numa barra horizontal — um dardo.
- * 4. Asas erguidas em V, pescoço à esquerda, cauda à direita — um X. Duas
- *    pontas para cada lado cancelam-se e o olho volta a ler uma estrela.
+ * Um grou é uma ave de pernas altas. Nas fotografias da família Gruidae, o que
+ * o distingue de qualquer outro pássaro está todo abaixo do corpo e acima do
+ * pescoço:
  *
- * O que resolve é quebrar a simetria: **uma asa só**, grande, erguida para
- * trás, contra um pescoço fino e comprido para a frente. Um lado do objeto é
- * massa, o outro é linha, e nenhuma estrela tem isso.
+ * - **As pernas valem quase um terço da altura.** Um pássaro sem pernas
+ *   compridas não é um grou; é um pássaro genérico. Nenhuma das cinco versões
+ *   anteriores tinha pernas.
+ * - **O pescoço é erguido e comprido**, não projetado para a frente como um
+ *   dardo.
+ * - **A cabeça é pequena e tem poupa.** No grou-coroado a coroa é um leque de
+ *   espigões, e é o pormenor mais reconhecível de toda a ave em silhueta.
+ * - **A cauda cai.** As penas terciárias formam um penacho que desce por trás
+ *   do corpo — não é uma ponta afiada, é um pano.
  *
- * O segundo elemento indispensável é a cabeça. Um pescoço que termina numa
- * cunha com bico virado para a frente é a única coisa que um dardo de papel
- * não pode ter — e é por isso que o bico tem vértices próprios em vez de ser
- * um detalhe desenhado por cima. Um bico que só se vê com cor não é um bico.
+ * O corpo é o mais pequeno dos elementos, e é essa proporção invertida — corpo
+ * pequeno, pernas e pescoço longos — que faz a leitura. Corpo grande com pernas
+ * curtas dá um pato.
  *
- * Nove faces. A asa, o pescoço, a cauda e o corpo partem-se ao longo dos
- * vincos que os formam: é a diferença entre um sólido facetado e papel que foi
- * dobrado.
+ * Onze faces, e continua a ser papel: cada face é plana, partilha vértices com
+ * as vizinhas e parte-se ao longo dos vincos que a formariam.
+ *
+ * O compromisso conhecido: as canelas têm cerca de 12 unidades de largura num
+ * `viewBox` de 300, o que a 96 px dá menos de 4 px. O contorno é
+ * `non-scaling-stroke`, por isso a perna não desaparece — mas este é o modelo
+ * da família que mais perde nos tamanhos pequenos, e está registado como tal.
  */
 export const craneModel = defineOrigamiModel({
   id: "crane",
-  viewBox: [0, 0, 300, 220],
+  viewBox: [0, 0, 300, 300],
   vertices: {
-    headTop: [42, 16],
-    beakTip: [4, 42],
-    headChin: [64, 56],
-    neckUpperBase: [150, 112],
-    neckLowerBase: [118, 134],
-    wingTip: [280, 18],
-    wingTrailingTip: [240, 108],
-    wingRoot: [182, 142],
-    tailTipUpper: [294, 158],
-    tailTipLower: [278, 182],
-    bodyBack: [172, 164],
-    keelTip: [128, 198],
+    spikeA: [140, 2],
+    crestNotch: [152, 24],
+    spikeB: [174, 20],
+    headTop: [122, 36],
+    headBack: [136, 52],
+    headChin: [118, 66],
+    beakTip: [78, 62],
+    neckMidBack: [132, 104],
+    neckMidFront: [118, 108],
+    neckBaseBack: [140, 148],
+    neckBaseFront: [124, 152],
+    bodyTopBack: [178, 160],
+    bodyFront: [76, 174],
+    bustleTop: [196, 176],
+    bustleTip: [228, 214],
+    bustleLower: [186, 202],
+    bodyBottomBack: [160, 204],
+    legBFront: [148, 203],
+    legABack: [120, 201],
+    bodyBottomFront: [108, 200],
+    footBackB: [152, 270],
+    footTipB: [126, 284],
+    shankFrontB: [142, 266],
+    footBackA: [106, 278],
+    footTipA: [76, 292],
+    shankFrontA: [96, 274],
   },
   silhouette: [
-    "headTop",
-    "neckUpperBase",
-    "wingTip",
-    "wingTrailingTip",
-    "wingRoot",
-    "tailTipUpper",
-    "tailTipLower",
-    "bodyBack",
-    "keelTip",
-    "neckLowerBase",
+    "spikeA",
+    "crestNotch",
+    "spikeB",
+    "headBack",
+    "neckMidBack",
+    "neckBaseBack",
+    "bodyTopBack",
+    "bustleTop",
+    "bustleTip",
+    "bustleLower",
+    "bodyBottomBack",
+    "footBackB",
+    "footTipB",
+    "shankFrontB",
+    "legBFront",
+    "legABack",
+    "footBackA",
+    "footTipA",
+    "shankFrontA",
+    "bodyBottomFront",
+    "bodyFront",
+    "neckBaseFront",
+    "neckMidFront",
     "headChin",
     "beakTip",
+    "headTop",
   ],
   faces: [
     {
-      id: "body-back",
+      id: "bustle",
       tone: "inner",
-      vertices: ["wingRoot", "bodyBack", "keelTip"],
+      vertices: ["bustleTop", "bustleTip", "bustleLower", "bodyBottomBack"],
     },
     {
-      id: "body-mid",
+      id: "flank",
       tone: "shade",
-      vertices: ["neckUpperBase", "wingRoot", "keelTip"],
+      vertices: ["bodyTopBack", "bustleTop", "bodyBottomBack", "legBFront"],
     },
     {
-      id: "body-front",
+      id: "leg-back",
+      tone: "shade",
+      vertices: [
+        "legBFront",
+        "bodyBottomBack",
+        "footBackB",
+        "footTipB",
+        "shankFrontB",
+      ],
+    },
+    {
+      id: "leg-front",
       tone: "base",
-      vertices: ["neckUpperBase", "keelTip", "neckLowerBase"],
+      vertices: [
+        "bodyBottomFront",
+        "legABack",
+        "footBackA",
+        "footTipA",
+        "shankFrontA",
+      ],
     },
     {
-      id: "tail-lower",
-      tone: "inner",
-      vertices: ["wingRoot", "tailTipLower", "bodyBack"],
-    },
-    {
-      id: "tail-upper",
+      id: "wing-mid",
       tone: "shade",
-      vertices: ["wingRoot", "tailTipUpper", "tailTipLower"],
+      vertices: ["neckBaseBack", "bodyTopBack", "legBFront", "legABack"],
     },
     {
-      id: "wing-lower",
-      tone: "shade",
-      vertices: ["neckUpperBase", "wingTrailingTip", "wingRoot"],
-    },
-    {
-      id: "wing-upper",
+      id: "wing-front",
       tone: "base",
-      vertices: ["neckUpperBase", "wingTip", "wingTrailingTip"],
+      vertices: [
+        "neckBaseFront",
+        "neckBaseBack",
+        "legABack",
+        "bodyBottomFront",
+      ],
+    },
+    {
+      id: "breast",
+      tone: "lit",
+      vertices: ["bodyFront", "neckBaseFront", "bodyBottomFront"],
+    },
+    {
+      id: "neck-lower",
+      tone: "base",
+      vertices: [
+        "neckMidBack",
+        "neckBaseBack",
+        "neckBaseFront",
+        "neckMidFront",
+      ],
     },
     {
       id: "neck-upper",
       tone: "lit",
-      vertices: ["headTop", "neckUpperBase", "neckLowerBase"],
+      vertices: ["headBack", "neckMidBack", "neckMidFront", "headChin"],
     },
     {
       id: "head",
       tone: "base",
-      vertices: ["neckLowerBase", "headChin", "beakTip", "headTop"],
+      vertices: ["headTop", "headBack", "headChin", "beakTip"],
+    },
+    {
+      id: "crest",
+      tone: "lit",
+      vertices: ["headTop", "spikeA", "crestNotch", "spikeB", "headBack"],
     },
   ],
   creases: [
-    {
-      id: "wing-fold",
-      kind: "mountain",
-      vertices: ["neckUpperBase", "wingTrailingTip"],
-    },
-    {
-      id: "wing-root",
-      kind: "valley",
-      vertices: ["neckUpperBase", "wingRoot"],
-    },
-    { id: "spine", kind: "mountain", vertices: ["neckUpperBase", "keelTip"] },
-    { id: "keel", kind: "valley", vertices: ["wingRoot", "keelTip"] },
-    {
-      id: "neck-root",
-      kind: "valley",
-      vertices: ["neckUpperBase", "neckLowerBase"],
-    },
+    { id: "head-root", kind: "valley", vertices: ["headTop", "headBack"] },
+    { id: "neck-collar", kind: "valley", vertices: ["headChin", "headBack"] },
     {
       id: "neck-fold",
       kind: "mountain",
-      vertices: ["headTop", "neckLowerBase"],
+      vertices: ["neckMidFront", "neckMidBack"],
     },
-    { id: "tail-root", kind: "valley", vertices: ["wingRoot", "bodyBack"] },
     {
-      id: "tail-fold",
+      id: "shoulder",
+      kind: "valley",
+      vertices: ["neckBaseFront", "neckBaseBack"],
+    },
+    {
+      id: "wing-fold",
       kind: "mountain",
-      vertices: ["wingRoot", "tailTipLower"],
+      vertices: ["neckBaseBack", "legABack"],
+    },
+    { id: "wing-back", kind: "valley", vertices: ["bodyTopBack", "legBFront"] },
+    {
+      id: "bustle-root",
+      kind: "valley",
+      vertices: ["bustleTop", "bodyBottomBack"],
+    },
+    {
+      id: "leg-front-root",
+      kind: "edge",
+      vertices: ["bodyBottomFront", "legABack"],
+    },
+    {
+      id: "leg-back-root",
+      kind: "edge",
+      vertices: ["legBFront", "bodyBottomBack"],
     },
   ],
-  shadowPath: "M64 202a80 10 0 1 0 160 0a80 10 0 1 0-160 0",
+  shadowPath: "M76 292a74 8 0 1 0 148 0a74 8 0 1 0-148 0",
   accessibleLabel: {
-    "pt-PT": "Um grou de papel com uma asa erguida e o pescoço à frente.",
-    "pt-BR": "Um tsuru de papel com uma asa erguida e o pescoço à frente.",
+    "pt-PT":
+      "Um grou de papel de pé, com pernas altas, pescoço erguido e poupa.",
+    "pt-BR":
+      "Um grou de papel em pé, com pernas altas, pescoço erguido e topete.",
   },
 });
