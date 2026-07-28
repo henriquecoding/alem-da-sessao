@@ -39,6 +39,8 @@ const RUNTIME_SOURCES = [
   "components/origami/runtime/shaders.ts",
   "components/origami/use-origami-timeline.ts",
   "components/origami/origami-canvas.tsx",
+  "components/origami/origami-scene.tsx",
+  "components/origami/types.ts",
 ];
 
 const FORBIDDEN_IN_RUNTIME = [

@@ -1,0 +1,41 @@
+{
+  "modelId": "envelope",
+  "title": "Envelope",
+  "description": "Base blintz: os quatro cantos dobram para o quadrado inscrito. Uma folha fechada para ser entregue.",
+  "author": "Além da Sessão",
+  "sourceFormat": "FOLD 1.2",
+  "sourceSha256": "8ab632feb24a094f3958e091cb08a3997da59d63999f2044bef3c050c1a863ef",
+  "license": {
+    "id": "PROJETO",
+    "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
+  },
+  "paper": {
+    "uncut": true,
+    "square": true
+  },
+  "topology": {
+    "vertices": 8,
+    "edges": 12,
+    "faces": 5,
+    "triangles": 6,
+    "mountains": 0,
+    "valleys": 4,
+    "worstTriangleQuality": 0.866
+  },
+  "diagnostics": {
+    "maxEdgeStrain": 1.7208456881689926e-14,
+    "maxFacePlanarityError": 2.7151207861734413e-7,
+    "selfIntersectionCount": 0,
+    "degenerateTriangleCount": 0,
+    "quantizationError": 0.000007513404270964585,
+    "finalKineticEnergy": 3.0426827953807097e-12,
+    "finalAngleErrorDegrees": 0.000034754123211296275
+  },
+  "approval": {
+    "silhouette": false,
+    "motion": false,
+    "light": false,
+    "dark": false,
+    "mobile": false
+  }
+}

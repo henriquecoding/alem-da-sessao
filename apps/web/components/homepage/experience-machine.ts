@@ -92,15 +92,24 @@ export const decideIds: readonly DecideId[] = [
 /**
  * A decisão escolhe o objeto. Quatro intenções, quatro formas, e nenhuma delas
  * é uma leitura sobre quem escolheu.
+ *
+ * O envelope e o portal substituíram o barco e o grou. Os dois tradicionais
+ * fazem-se por sequência, com dobras que reordenam camadas, e o motor de
+ * dobragem não tem modelo de camadas — `docs/ORIGAMI_RUNTIME.md` §5.
+ *
+ * A troca aproximou a forma da decisão. «Levar adiante» é, na plataforma, uma
+ * nota que chega à próxima sessão porque alguém a partilhou: isso é uma carta
+ * fechada, não um barco. «Atravessar» é passar para o outro lado: isso é uma
+ * passagem, não uma ave.
  */
 export function resultOf(decide: DecideId): OrigamiResultId {
   switch (decide) {
     case "carry":
-      return "boat";
+      return "envelope";
     case "keep":
       return "box";
     case "cross":
-      return "crane";
+      return "gate";
     case "rest":
       return "suspended-sheet";
   }
@@ -116,11 +125,11 @@ export function resultOf(decide: DecideId): OrigamiResultId {
 export function paperOf(state: ExperienceState): PaperFamilyId {
   if (state.id !== "newcomer.result" || !state.decide) return "lilac";
   switch (resultOf(state.decide)) {
-    case "boat":
+    case "envelope":
       return "apricot";
     case "box":
       return "jade";
-    case "crane":
+    case "gate":
       return "mist";
     case "suspended-sheet":
       return "lilac";
@@ -141,7 +150,7 @@ export function modelOf(state: ExperienceState): OrigamiModelId {
     case "returning":
       return "box";
     case "explore":
-      return "crane";
+      return "gate";
     case "intro":
       return "sheet";
   }

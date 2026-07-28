@@ -34,7 +34,7 @@ export const homePT = {
   scene: {
     label: "A folha",
     description:
-      "Uma folha de papel pousada no centro do palco. A cada escolha ganha um vinco novo, e a última escolha dobra-a num objeto: um barco, uma caixa, um grou ou uma folha que fica por dobrar.",
+      "Uma folha de papel pousada no centro do palco. A cada escolha ganha um vinco novo, e a última escolha dobra-a num objeto: um envelope, uma caixa, um portal ou uma folha que fica por dobrar.",
   },
   intro: {
     question: "Entre uma sessão e a próxima, alguma coisa ficou consigo?",
@@ -148,16 +148,16 @@ export const homePT = {
     primary: "Ver as experiências",
     secondary: "Ver a plataforma completa",
     objects: {
-      boat: {
-        name: "Barco",
+      envelope: {
+        name: "Envelope",
         body: "Levar algo adiante. Na plataforma, isto é uma nota de intervalo que chega à próxima sessão porque decidiu partilhá-la.",
       },
       box: {
         name: "Caixa",
         body: "Guardar consigo. Na plataforma, isto fica no seu espaço pessoal e o profissional não vê que existe.",
       },
-      crane: {
-        name: "Grou",
+      gate: {
+        name: "Portal",
         body: "Atravessar para uma experiência. Na plataforma, isto abre uma ferramenta estruturada que pode fazer sozinho.",
       },
       "suspended-sheet": {
@@ -228,7 +228,7 @@ export const homeBR: HomeCopy = {
   scene: {
     label: "A folha",
     description:
-      "Uma folha de papel apoiada no centro do palco. A cada escolha ganha uma dobra nova, e a última escolha a transforma em um objeto: um barco, uma caixa, um tsuru ou uma folha que fica sem dobrar.",
+      "Uma folha de papel apoiada no centro do palco. A cada escolha ganha uma dobra nova, e a última escolha a transforma em um objeto: um envelope, uma caixa, um portal ou uma folha que fica sem dobrar.",
   },
   intro: {
     question: "Entre uma sessão e a próxima, alguma coisa ficou com você?",
@@ -342,16 +342,16 @@ export const homeBR: HomeCopy = {
     primary: "Ver as experiências",
     secondary: "Ver a plataforma completa",
     objects: {
-      boat: {
-        name: "Barco",
+      envelope: {
+        name: "Envelope",
         body: "Levar algo adiante. Na plataforma, isso é uma nota de intervalo que chega à próxima sessão porque você decidiu compartilhar.",
       },
       box: {
         name: "Caixa",
         body: "Guardar com você. Na plataforma, isso fica no seu espaço pessoal e o profissional não vê que existe.",
       },
-      crane: {
-        name: "Tsuru",
+      gate: {
+        name: "Portal",
         body: "Atravessar para uma experiência. Na plataforma, isso abre uma ferramenta estruturada que você pode fazer sozinho.",
       },
       "suspended-sheet": {

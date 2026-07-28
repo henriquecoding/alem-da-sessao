@@ -1,0 +1,41 @@
+{
+  "modelId": "gate",
+  "title": "Portal",
+  "description": "Dobra em portão: dois painéis erguem-se e inclinam-se um para o outro, deixando uma passagem.",
+  "author": "Além da Sessão",
+  "sourceFormat": "FOLD 1.2",
+  "sourceSha256": "24f8c8359227d8a8bd68421cd8b055d99e83fbb328e53a5e6066cd87faefc6b9",
+  "license": {
+    "id": "PROJETO",
+    "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
+  },
+  "paper": {
+    "uncut": true,
+    "square": true
+  },
+  "topology": {
+    "vertices": 8,
+    "edges": 10,
+    "faces": 3,
+    "triangles": 6,
+    "mountains": 0,
+    "valleys": 2,
+    "worstTriangleQuality": 0.4075
+  },
+  "diagnostics": {
+    "maxEdgeStrain": 1.6635581800983346e-12,
+    "maxFacePlanarityError": 0.000002941007572288093,
+    "selfIntersectionCount": 0,
+    "degenerateTriangleCount": 0,
+    "quantizationError": 0.000007629627368999081,
+    "finalKineticEnergy": 8.01554796673728e-11,
+    "finalAngleErrorDegrees": 0.000457643215914209
+  },
+  "approval": {
+    "silhouette": false,
+    "motion": false,
+    "light": false,
+    "dark": false,
+    "mobile": false
+  }
+}

@@ -1,69 +1,45 @@
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
-import {
-  origamiModelList,
-  origamiResultIds,
-} from "@/components/origami/models";
-import { contrastReport, topologyReport } from "@/components/origami/report";
+import { contrastReport } from "@/components/origami/report";
 import {
   paperFamilyList,
   stageSurfaces,
 } from "@/components/origami/tokens/paper";
+import { origamiModelIds, origamiResultIds } from "@/components/origami/types";
 
 /**
- * O que a folha de prova não consegue verificar sozinha.
+ * O que sobra desta camada depois de a geometria mudar de sítio.
  *
- * O teste de reconhecimento é humano e continua a sê-lo — nenhuma assertion
- * decide se um objeto parece um grou. O que se automatiza é o que torna um
- * objeto *impossível de construir mal*: a topologia da folha e o contraste
- * contra o palco em que vai viver.
+ * Este ficheiro testava topologia sobre polígonos desenhados: cada aresta em
+ * duas faces, a soma das áreas a igualar a silhueta. Era o gate certo para o
+ * que aquilo era — um desenho plano — e é o gate errado para papel dobrado, que
+ * tem camadas e cuja soma de áreas é sempre maior do que a silhueta.
+ *
+ * A topologia passou a ser verificada sobre a folha, em `origami-pipeline` e
+ * `origami-assets`, contra um `source.fold`. O que fica aqui é a cor: o papel
+ * contra o palco, medido contra a cor adjacente real.
  */
 
-describe("topologia dos modelos", () => {
-  it.each(origamiModelList.map((model) => [model.id] as const))(
-    "%s é uma folha e não polígonos encostados",
-    (id) => {
-      const row = topologyReport().find((entry) => entry.model === id);
-      expect(row?.problems).toEqual([]);
-    },
-  );
-
-  it("fecha a silhueta exactamente com a área das faces", () => {
-    for (const row of topologyReport()) {
-      expect(Math.abs(row.faceArea - row.silhouetteArea)).toBeLessThan(0.5);
-    }
-  });
-
-  it("declara todos os vértices que usa", () => {
-    for (const model of origamiModelList) {
-      const declared = new Set(Object.keys(model.vertices));
-      const used = [
-        ...model.silhouette,
-        ...model.faces.flatMap((face) => face.vertices),
-        ...model.creases.flatMap((crease) => crease.vertices),
-      ];
-      for (const key of used) expect(declared.has(key)).toBe(true);
-    }
-  });
-
-  it("não deixa vértices por usar — um vértice órfão é geometria esquecida", () => {
-    for (const model of origamiModelList) {
-      const used = new Set([
-        ...model.silhouette,
-        ...model.faces.flatMap((face) => face.vertices),
-      ]);
-      for (const key of Object.keys(model.vertices)) {
-        expect(used.has(key)).toBe(true);
-      }
-    }
-  });
-
-  it("dá a cada resultado um rótulo acessível nas duas variantes", () => {
+describe("família de modelos", () => {
+  it("tem quatro resultados e dois estados", () => {
+    expect(origamiResultIds).toHaveLength(4);
+    expect(origamiModelIds).toHaveLength(6);
     for (const id of origamiResultIds) {
-      const model = origamiModelList.find((entry) => entry.id === id);
-      expect(model?.accessibleLabel["pt-PT"]).toBeTruthy();
-      expect(model?.accessibleLabel["pt-BR"]).toBeTruthy();
+      expect(origamiModelIds).toContain(id);
     }
+  });
+
+  /**
+   * O barco e o grou saíram porque se fazem por sequência, com dobras que
+   * reordenam camadas — e o motor não tem modelo de camadas. Este teste existe
+   * para que ninguém os volte a pôr sem que a fronteira do solver mude
+   * primeiro. Ver `docs/ORIGAMI_RUNTIME.md` §5.
+   */
+  it("não volta a prometer formas que o motor não dobra", () => {
+    expect(origamiModelIds).not.toContain("boat");
+    expect(origamiModelIds).not.toContain("crane");
+    expect(origamiResultIds).toContain("envelope");
+    expect(origamiResultIds).toContain("gate");
   });
 });
 
@@ -82,8 +58,9 @@ describe("contraste do papel contra o palco", () => {
 
 /**
  * Os valores vivem em dois sítios por necessidade: o TypeScript é o que o
- * relatório lê, o CSS é o que o navegador pinta. Um token que só existisse num
- * deles seria um valor por verificar — este teste é o que impede a divergência.
+ * relatório lê, o CSS é o que o navegador pinta — e é também o que o shader lê,
+ * porque o runtime obtém as cores do papel a partir dos tokens computados no
+ * elemento. Um token que só existisse num deles seria um valor por verificar.
  */
 describe("tokens em TypeScript e em CSS", () => {
   it("declara os mesmos valores de papel nos dois sítios", async () => {

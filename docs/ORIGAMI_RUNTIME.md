@@ -1,8 +1,8 @@
 # Origami Runtime System — relatório
 
 **Data:** 28 de julho de 2026
-**Estado:** laboratório construído, quatro modelos a passar os gates, homepage
-inalterada. Não houve deploy.
+**Estado:** seis modelos a passar os gates, homepage a usá-los, sistema SVG
+apagado. Não houve deploy.
 
 ---
 
@@ -55,6 +55,7 @@ packages/origami-core/          autoria — nunca chega ao browser
 
 tools/origami/                  CLI de autoria
   compile.ts                    pnpm origami:compile [--model <id>]
+  inspect.ts                    pnpm origami:inspect [--model <id>] [--angles]
   models/                       a descrição de cada modelo
 
 apps/web/public/origami/<id>/
@@ -66,19 +67,23 @@ apps/web/components/origami/
   runtime/{asset,colour,program,renderer,shaders}.ts
   use-origami-timeline.ts
   origami-canvas.tsx            ilha de cliente
-  origami-stage.tsx             servidor: fallback + canvas
+  origami-scene.tsx             fallback SVG + canvas, exatamente sobrepostos
+  origami-stage.tsx             o palco onde a cena assenta
   asset-loader.ts               leitura server-only, memoizada
+  types.ts                      reexportação de tipos; nenhuma geometria
   lab/runtime-panel.tsx         padrão de vincos · objeto · medições
 ```
 
 ---
 
-## 3. Os quatro modelos que passam
+## 3. Os seis modelos que passam
 
 | Modelo            | Triâng. | Vincos | Etapas | Deformação | Interseções | Erro angular | Asset gzip |
 | ----------------- | ------: | -----: | -----: | ---------: | ----------: | -----------: | ---------: |
 | `sheet`           |       6 |      2 |      1 |    0,0000% |           0 |        0,00° |     1,6 kB |
 | `half-fold`       |       4 |      1 |      1 |    0,0000% |           0 |        0,00° |     1,5 kB |
+| `envelope`        |       6 |      4 |      1 |    0,0000% |           0 |        0,00° |     2,3 kB |
+| `gate`            |       6 |      2 |      1 |    0,0000% |           0 |        0,00° |     2,0 kB |
 | `box`             |      18 |     16 |      3 |    0,0010% |           0 |        1,72° |     7,5 kB |
 | `suspended-sheet` |      10 |      4 |      1 |    0,0000% |           0 |        0,00° |     2,3 kB |
 
@@ -88,6 +93,12 @@ A caixa é o que prova o sistema: base quadrada, quatro paredes, quatro abas de
 canto deitadas contra a parede seguinte. Tem camadas sobrepostas — exatamente o
 que o gate anterior tornava impossível — e sai de uma folha quadrada íntegra
 cujo padrão de vincos se pode ler no laboratório, ao lado do objeto.
+
+`envelope` e `gate` entraram no lugar de `boat` e `crane`, e a §5 explica
+porquê. Os dois são bases clássicas — _blintz_ e dobra de portas — o que quer
+dizer que existem enquanto dobra antes de existirem aqui: quatro cantos ao
+centro num caso, dois batentes ao eixo no outro. Nenhum dos dois precisa de
+reordenar camadas, que é a fronteira deste motor.
 
 ---
 
@@ -129,7 +140,15 @@ essa medição e nada falhou.** Foi o painel do laboratório que o mostrou.
 
 ## 5. O que não está feito
 
-**`boat` e `crane` não passam o gate de reconhecimento.**
+**`boat` e `crane` saíram do produto. `envelope` e `gate` ocuparam o lugar.**
+
+Esta é a decisão pedida na §7 da versão anterior deste relatório, tomada: a
+família editorial passou a ser a dos modelos que dobram de facto. A cópia PT-PT
+e PT-BR diz agora «Envelope» e «Portal», e `origami-system.test.ts` fixa a
+ausência dos dois antigos para que ninguém os reponha sem primeiro mexer na
+fronteira do solver descrita abaixo.
+
+O que se segue é o registo do que os reprovou.
 
 O barco foi autorado e dobra: quilha em três troços, quatro diagonais, dois
 vértices de grau quatro. Fecha com 0,0014% de deformação, 3,47° do alvo e zero
@@ -175,17 +194,33 @@ Essa é a fronteira real do motor, e é estrutural e não de afinação. Atraves
 exige ordenação de faces (`faceOrders`, que o formato FOLD já prevê e que este
 compilador ainda ignora) e deteção de contacto no solver.
 
-**Consequência para o produto:** enquanto isto for verdade, a homepage não pode
-deixar de ter as figuras SVG. «Barco» e «Grou» são o que a cópia promete em
-PT-PT e PT-BR, e não há forma de os servir sem eles. Os outros quatro modelos
-já usam geometria real.
+**Consequência para o produto, e a escolha que se seguiu.** Havia duas saídas:
+manter figuras desenhadas à mão para os dois nomes que o motor não serve, ou
+mudar os nomes. Manter as figuras significava que dois dos seis objetos da
+homepage seriam desenhos a fingir de dobras — a §20 da especificação chama a
+isso rejeição imediata, e teria mantido vivo um segundo sistema de renderização
+inteiro só para os sustentar. Mudaram-se os nomes.
+
+A troca aproximou a forma da decisão em vez de a afastar. «Levar adiante» é,
+nesta plataforma, uma nota que chega à sessão seguinte porque alguém a
+partilhou: isso é uma carta fechada, não um barco. «Atravessar» é passar para o
+outro lado: isso é uma passagem, não uma ave.
+
+**O sistema SVG desenhado à mão foi apagado.** `origami-figure.tsx`, os sete
+ficheiros de `components/origami/models/`, as folhas de prova do laboratório e
+as regras CSS das figuras já não existem. Não foram substituídos por
+equivalentes: o tom de cada face deixou de ser um valor escolhido à mão e passou
+a sair da normal da face no fragment shader. O SVG que ainda chega no HTML é
+outra coisa — é o frame final da mesma simulação, gerado pelo compilador, e
+serve quem não tem WebGL2.
 
 **Não há capturas automatizadas.** O contact sheet e os testes visuais com
 Playwright não foram feitos. O painel do laboratório mostra padrão de vincos,
 objeto e medições lado a lado, e o `origami:inspect` imprime a silhueta no
-terminal — foi assim que o barco foi reprovado.
+terminal — foi assim que o barco foi reprovado e assim que o envelope e o
+portal foram aceites.
 
-**O teste de reconhecimento humano não foi feito** para os quatro que passam. É
+**O teste de reconhecimento humano não foi feito** para os seis que passam. É
 humano por definição, e os campos `approval` em `provenance.json` estão todos a
 `false`.
 
@@ -204,22 +239,20 @@ pnpm check                        # tudo, incluindo o acima
 pnpm dev                          # /dev/origami-lab, secção 0
 ```
 
-`pnpm check` e `pnpm build` passam. O bundle de `/[locale]` mantém-se em 14 kB
-gzip: o runtime não entra na homepage porque a homepage ainda não o usa.
+`pnpm check` e `pnpm build` passam.
 
 ---
 
-## 7. Decisão pedida
+## 7. O que fica por decidir
 
-Ver `/dev/origami-lab`, secção **0 · Geometria real**, e responder a duas
-perguntas:
+A decisão de família editorial foi tomada — §5. O que resta é humano e não se
+resolve com um gate:
 
-1. **A caixa é reconhecível?** Em silhueta, a 96 px, sem legenda. Se não for, o
-   problema é de proporção — meia-base e altura são dois números em
-   `tools/origami/models/box.ts` — e não do sistema.
-2. **`boat` e `crane` valem o investimento**, ou a família editorial deve passar
-   a ser dos modelos que dobram de facto? A especificação diz para não manter
-   uma peça inferior só para preservar simetria editorial; a decisão sobre o que
-   a homepage nomeia é de produto, não de engenharia.
-
-Nada na homepage muda antes dessas respostas.
+1. **Os seis são reconhecíveis?** Em silhueta, a 96 px, sem legenda. Ver
+   `/dev/origami-lab`, secção **1 · Do padrão de vincos ao objeto**, que põe o
+   padrão de vincos, o objeto e as medições lado a lado. Se algum não for, o
+   problema é de proporção — são números no ficheiro do modelo em
+   `tools/origami/models/` — e não do sistema.
+2. **Os `approval` continuam a `false`** em todos os `provenance.json`, e é
+   assim que devem ficar até alguém olhar. O campo existe para registar um juízo
+   humano; pô-lo a `true` por um script seria transformá-lo em ruído.

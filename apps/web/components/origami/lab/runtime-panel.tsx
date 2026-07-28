@@ -20,12 +20,21 @@ import { OrigamiStage } from "../origami-stage";
  * direita o objeto que sai deles.
  */
 
-const MODELS = ["sheet", "half-fold", "box", "suspended-sheet"] as const;
+const MODELS = [
+  "sheet",
+  "half-fold",
+  "envelope",
+  "box",
+  "gate",
+  "suspended-sheet",
+] as const;
 
 const PAPER: Record<string, string> = {
   sheet: "apricot",
   "half-fold": "apricot",
+  envelope: "apricot",
   box: "jade",
+  gate: "mist",
   "suspended-sheet": "lilac",
 };
 

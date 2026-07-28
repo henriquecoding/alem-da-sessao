@@ -1,4 +1,4 @@
-import { contrastReport, topologyReport } from "../components/origami/report";
+import { contrastReport } from "../components/origami/report";
 
 /**
  * `check:origami` — a porta que o CI fecha.
@@ -7,30 +7,18 @@ import { contrastReport, topologyReport } from "../components/origami/report";
  * laboratório mostra as mesmas tabelas. Aqui só se imprime e se decide o
  * código de saída: duas famílias de defeito, ambas invisíveis para o lint.
  *
- * **Topologia.** Um origami é uma folha. Se duas faces vizinhas não citarem o
- * mesmo vértice existe uma fenda, e uma fenda é a diferença entre papel
- * dobrado e polígonos encostados.
+ * A topologia mudou de gate: era verificada aqui, sobre polígonos desenhados, e
+ * passou para `check:origami-runtime`, que a verifica sobre a folha. Um desenho
+ * podia ser topologicamente correto sem vir de folha nenhuma.
  *
- * **Contraste real, contra a cor adjacente real.** Não a média de um
+ * Fica o **contraste real, contra a cor adjacente real.** Não a média de um
  * gradiente, não o par que alguém se lembrou de escrever à mão: cada família
  * de papel contra cada palco, nos dois temas.
  */
 function main() {
   let failed = false;
 
-  console.log("check:origami — topologia dos modelos");
-  for (const row of topologyReport()) {
-    const status = row.problems.length ? "FALHA" : "ok";
-    console.log(
-      `  ${row.model.padEnd(16)} ${String(row.faces).padStart(2)} faces  área ${row.faceArea.toFixed(0)}  ${status}`,
-    );
-    for (const problem of row.problems) {
-      console.error(`    ✗ ${problem}`);
-      failed = true;
-    }
-  }
-
-  console.log("\ncheck:origami — contraste papel/palco (WCAG 1.4.11)");
+  console.log("check:origami — contraste papel/palco (WCAG 1.4.11)");
   console.log(
     "  palco     família  tema   edge/palco  edge/papel  lit/shade  base/palco  fronteira",
   );

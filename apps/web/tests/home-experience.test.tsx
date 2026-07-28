@@ -25,15 +25,17 @@ const copy = getMessages("pt-PT").home;
  */
 const fallbacks = Object.fromEntries(
   await Promise.all(
-    ["sheet", "half-fold", "box", "suspended-sheet"].map(async (id) => {
-      const asset = JSON.parse(
-        await readFile(
-          join(process.cwd(), "public", "origami", id, "model.ors.json"),
-          "utf8",
-        ),
-      ) as { fallback: { svg: string; viewBox: string } };
-      return [id, asset.fallback] as const;
-    }),
+    ["sheet", "half-fold", "envelope", "box", "gate", "suspended-sheet"].map(
+      async (id) => {
+        const asset = JSON.parse(
+          await readFile(
+            join(process.cwd(), "public", "origami", id, "model.ors.json"),
+            "utf8",
+          ),
+        ) as { fallback: { svg: string; viewBox: string } };
+        return [id, asset.fallback] as const;
+      },
+    ),
   ),
 );
 
@@ -102,7 +104,7 @@ describe("máquina de estados da experiência", () => {
       state = reduceExperience(state, { type: "advance" });
 
       expect(state.id).toBe("newcomer.result");
-      expect(modelOf(state)).toBe("boat");
+      expect(modelOf(state)).toBe("envelope");
     }
   });
 
@@ -179,9 +181,9 @@ describe("homepage — o ritual", () => {
   });
 
   it.each([
-    ["Levar para a próxima sessão", "boat"],
+    ["Levar para a próxima sessão", "envelope"],
     ["Guardar só para mim", "box"],
-    ["Explorar uma experiência", "crane"],
+    ["Explorar uma experiência", "gate"],
     ["Deixar em suspenso", "suspended-sheet"],
   ])("transforma «%s» em %s", (label, model) => {
     const { container } = renderExperience();
@@ -227,7 +229,7 @@ describe("homepage — o ritual", () => {
     const { container } = renderExperience();
     walkToResult("Explorar uma experiência");
     expect(
-      container.querySelector('[data-origami-model="crane"]'),
+      container.querySelector('[data-origami-model="gate"]'),
     ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: /Recomeçar/ }));
@@ -269,12 +271,16 @@ describe("acessibilidade da cena", () => {
  * nem para trás.
  */
 describe("origami real na homepage", () => {
-  it.each(["sheet", "half-fold", "box", "suspended-sheet"])(
+  it.each(["sheet", "half-fold", "envelope", "box", "gate", "suspended-sheet"])(
     "%s desenha a silhueta compilada e monta o canvas",
     async (model) => {
       const { container } = renderExperience();
-      if (model === "box") {
+      if (model === "envelope") {
+        walkToResult("Levar para a próxima sessão");
+      } else if (model === "box") {
         walkToResult("Guardar só para mim");
+      } else if (model === "gate") {
+        walkToResult("Explorar uma experiência");
       } else if (model === "suspended-sheet") {
         walkToResult("Deixar em suspenso");
       } else if (model === "half-fold") {
@@ -309,22 +315,6 @@ describe("origami real na homepage", () => {
     // As cores continuam a ser tokens: o tema funciona sem canvas e sem JS.
     expect(svg?.innerHTML).toContain("var(--paper-");
   });
-
-  it.each([
-    ["Levar para a próxima sessão", "boat"],
-    ["Explorar uma experiência", "crane"],
-  ])(
-    "«%s» continua na figura SVG enquanto %s não tiver padrão de vincos",
-    (label, model) => {
-      const { container } = renderExperience();
-      walkToResult(label);
-
-      const figure = container.querySelector(`[data-origami-model="${model}"]`);
-      expect(figure).toBeInTheDocument();
-      expect(figure?.tagName.toLowerCase()).toBe("svg");
-      expect(container.querySelector("canvas")).toBeNull();
-    },
-  );
 
   /**
    * Um canvas focável seria uma paragem de tabulação sem nada para ler. O

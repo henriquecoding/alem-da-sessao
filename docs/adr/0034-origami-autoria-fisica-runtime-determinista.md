@@ -1,7 +1,7 @@
 # ADR-034 — Origami: a física fica na autoria, o browser recebe frames aprovados
 
-**Estado:** aceite para o laboratório. A homepage continua no sistema anterior
-até haver aprovação humana.
+**Estado:** aceite e em uso. A homepage carrega os assets compilados; o sistema
+SVG desenhado à mão foi apagado.
 
 ## O defeito que sobrevive à correção anterior
 
@@ -104,11 +104,29 @@ experiência inteira. Se um dia forem precisas sombras a sério ou vários
 materiais, a resposta certa é `three` por `dynamic import` só no hero, e não
 fazer crescer o renderizador próprio até ser um motor.
 
-## O que isto não decide
+## A consequência que se seguiu: a família editorial mudou
 
-Não decide que a homepage muda. Os quatro modelos compilados vivem no
-laboratório, ao lado do sistema SVG que continua em produção, para que a
-comparação possa ser feita a olho antes de qualquer substituição. `boat` e
-`crane` ainda não têm padrão de vincos que feche, e por isso não estão no
-registo — um modelo entra quando passa os gates, não quando alguém começou a
-desenhá-lo.
+Esta ADR foi escrita a dizer que não decidia se a homepage mudava, e que `boat`
+e `crane` não estavam no registo por ainda não terem padrão de vincos que
+fechasse. Metade disso revelou-se otimismo.
+
+O barco fecha — 0,0014% de deformação, 3,47° do alvo, zero interseções — e
+mesmo assim não passa, porque em silhueta lê-se como uma tina. O grou nem
+chega lá: depois da base preliminar (que este solver colapsa bem, e está fixado
+em teste) o modelo precisa de _squash_ e _petal folds_, que **reordenam
+camadas**. Um solver que dobra uma malha triangulada fixa por dobradiças não
+tem modelo de camadas nem de contacto. Isso não é afinação — é a fronteira do
+motor, e atravessá-la exige `faceOrders` e deteção de contacto.
+
+Portanto a escolha real nunca foi «quando é que ficam prontos». Era: manter dois
+desenhos a fingir de dobras, ou mudar o que a homepage nomeia. Manter os
+desenhos obrigava a sustentar um segundo sistema de renderização inteiro para
+dois dos seis objetos, e a §20 da especificação chama a isso rejeição imediata.
+
+`envelope` (base _blintz_) e `gate` (dobra de portas) entraram no lugar. Ambos
+fecham a 0,0000% de deformação e nenhum precisa de reordenar camadas.
+`origami-system.test.ts` fixa a ausência de `boat` e `crane` para que a
+reposição de qualquer um deles tenha de começar por mover essa fronteira. O
+`boat.ts` fica em `tools/origami/models/`, fora do registo, porque o que se
+aprendeu a autorá-lo — sobre vértices de grau quatro e o seu único grau de
+liberdade — é mais útil escrito do que apagado.

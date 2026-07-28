@@ -4,6 +4,8 @@ import type {
   OrigamiModelId,
 } from "@alem-da-sessao/origami-core";
 import { boxModel } from "./box";
+import { envelopeModel } from "./envelope";
+import { gateModel } from "./gate";
 import { halfFoldModel } from "./half-fold";
 import { sheetModel } from "./sheet";
 import { suspendedSheetModel } from "./suspended-sheet";
@@ -13,11 +15,12 @@ import { suspendedSheetModel } from "./suspended-sheet";
  *
  * Um modelo entra aqui quando **passa todos os gates**, e não quando alguém
  * começou a desenhá-lo. É essa a razão de esta lista ser mais curta do que a
- * família que a experiência da homepage usa hoje: `boat` e `crane` ainda não
- * têm um padrão de vincos que feche, e um registo que os incluísse a fingir
- * seria a mesma promessa vazia que este sistema existe para acabar.
+ * família que a experiência da homepage usa hoje: O barco e o grou tradicionais não
+ * entraram: fazem-se por sequência, com dobras que reordenam camadas, e este
+ * solver não tem modelo de camadas. Foram substituídos pelo envelope e pelo
+ * portal, que dobram de uma vez e dizem a mesma coisa com mais precisão.
  *
- * O que falta a cada um está em `docs/ORIGAMI_RUNTIME.md`, com o motivo.
+ * O motivo completo está em `docs/ORIGAMI_RUNTIME.md` §5.
  */
 
 export type OrigamiModelEntry = {
@@ -83,6 +86,18 @@ export const origamiModelEntries: readonly OrigamiModelEntry[] = [
     ),
   },
   {
+    id: "envelope",
+    model: envelopeModel,
+    metadata: metadata(
+      "envelope",
+      "Envelope",
+      "Base blintz: os quatro cantos dobram para o quadrado inscrito. Uma folha fechada para ser entregue.",
+      "apricot",
+      "mist",
+      { rotateX: -90 },
+    ),
+  },
+  {
     id: "box",
     model: boxModel,
     metadata: metadata(
@@ -91,6 +106,18 @@ export const origamiModelEntries: readonly OrigamiModelEntry[] = [
       "Caixa de canto com gusset: base quadrada, quatro paredes e quatro abas deitadas.",
       "jade",
       "mist",
+      { rotateX: -90 },
+    ),
+  },
+  {
+    id: "gate",
+    model: gateModel,
+    metadata: metadata(
+      "gate",
+      "Portal",
+      "Dobra em portão: dois painéis erguem-se e inclinam-se um para o outro, deixando uma passagem.",
+      "mist",
+      "jade",
       { rotateX: -90 },
     ),
   },

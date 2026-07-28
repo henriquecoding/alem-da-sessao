@@ -3,36 +3,28 @@
 import type { CSSProperties } from "react";
 import type { OrigamiFallback } from "./asset-loader";
 import { OrigamiCanvas } from "./origami-canvas";
-import { OrigamiFigure } from "./origami-figure";
 import type { OrigamiClipId } from "./runtime/asset";
 import type { PaperFamilyId } from "./tokens/paper";
 import type { OrigamiModelId } from "./types";
 
 /**
- * A cena da homepage: geometria real onde ela existe, desenho onde ainda não.
+ * A cena. Um objeto, dobrado a partir de uma folha quadrada.
  *
- * Este componente é a fronteira entre os dois sistemas, e existe porque a
- * substituição é gradual por decisão e não por acidente. Um modelo passa a usar
- * o runtime quando tem um `source.fold` que dobra e passa os gates — não quando
- * alguém decide que está na altura.
+ * Já não há duas vias. A versão anterior deste ficheiro escolhia entre a
+ * geometria real e uma figura SVG desenhada à mão, porque dois dos seis modelos
+ * ainda não dobravam. Os seis dobram, as figuras foram apagadas, e o que resta
+ * é uma coisa só.
  *
- * Hoje isso são quatro dos seis: `sheet`, `half-fold`, `box` e
- * `suspended-sheet`. `boat` e `crane` continuam nas figuras SVG autoradas à mão
- * até terem padrão de vincos próprio, e o motivo está em
- * `docs/ORIGAMI_RUNTIME.md` §5.
+ * ## As duas camadas, e porque é que ambas ficam
  *
- * ## Porque é que a mistura não parte a leitura
+ * O SVG que chega no HTML **não é uma ilustração alternativa**: é o frame final
+ * da mesma simulação, projetado pela mesma câmara ortográfica, sombreado pela
+ * mesma luz e ordenado por profundidade. Quem nunca chega a ter WebGL vê a
+ * mesma forma — perde o percurso da dobragem, não perde o objeto.
  *
- * Os dois sistemas partilham tudo o que define a linguagem visual: as mesmas
- * famílias de papel (`--paper-lit`, `--paper-shade`, `--paper-inner`), o mesmo
- * palco, a mesma direção de luz. O que muda entre eles é a **profundidade** —
- * um resolve oclusão com `depth buffer` e normais, o outro com ordem de pintura
- * e tons declarados.
- *
- * É uma diferença que se nota se se procurar, e que não produz duas linguagens.
- * A alternativa — segurar o sistema todo até seis modelos estarem prontos —
- * mantinha em produção o defeito que este trabalho existe para corrigir, por
- * causa de dois modelos que ainda não existem.
+ * E não desaparece quando o canvas monta: fica por baixo, invisível. É a
+ * diferença entre uma perda de contexto WebGL ser um pisca-pisca e ser um
+ * retângulo vazio.
  */
 export function OrigamiScene({
   model,
@@ -42,30 +34,34 @@ export function OrigamiScene({
   label,
   className,
   style,
-  enter = false,
 }: {
   model: OrigamiModelId;
   paper: PaperFamilyId;
   clip: OrigamiClipId;
-  /** Silhuetas vindas do servidor, por modelo compilado. */
+  /** Silhuetas vindas do servidor, por modelo. */
   fallbacks: Record<string, OrigamiFallback>;
+  /**
+   * Presente: a cena transmite significado e é anunciada. Ausente: é decorativa
+   * e sai da árvore de acessibilidade. Não há terceira via — um objeto sem nome
+   * e sem `aria-hidden` é ruído para quem usa leitor de ecrã.
+   */
   label?: string;
   className?: string;
   style?: CSSProperties;
-  /** Só vale para as figuras SVG; a cena real anima pelo clip. */
-  enter?: boolean;
 }) {
   const fallback = fallbacks[model];
 
   if (!fallback) {
+    // Um modelo por compilar reserva o espaço e não desenha nada. Não deve
+    // acontecer — `check:origami-runtime` exige os seis — mas partir a página
+    // por causa de um ficheiro em falta seria pior do que um espaço vazio.
     return (
-      <OrigamiFigure
-        model={model}
-        paper={paper}
-        label={label}
-        className={className}
+      <div
+        className={["origami-stage-shell", className].filter(Boolean).join(" ")}
         style={style}
-        enter={enter}
+        data-origami-model={model}
+        data-origami-state="missing"
+        data-paper={paper}
       />
     );
   }
@@ -75,18 +71,15 @@ export function OrigamiScene({
       className={["origami-stage-shell", className].filter(Boolean).join(" ")}
       style={style}
       data-origami-model={model}
+      data-origami-state="ready"
       data-paper={paper}
       {...(label ? {} : { "aria-hidden": "true" })}
     >
       {label ? <figcaption className="sr-only">{label}</figcaption> : null}
 
       {/*
-        Chega no HTML e fica por baixo do canvas para sempre — não é removido
-        quando o WebGL monta, só fica invisível. É a diferença entre uma perda
-        de contexto ser um pisca-pisca e ser um retângulo vazio.
-
-        O conteúdo é gerado pelo compilador a partir do `source.fold` versionado
-        neste repositório e lido do disco no servidor; não há aqui entrada de
+        Gerado pelo compilador a partir do `source.fold` versionado neste
+        repositório e lido do disco no servidor. Não há aqui entrada de
         utilizador nenhuma.
       */}
       <svg

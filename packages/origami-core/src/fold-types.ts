@@ -71,10 +71,17 @@ export type OrigamiSemanticState =
  * objeto representa no produto, e é a decisão que a interface nomeia.
  */
 export type OrigamiModelId =
-  "sheet" | "half-fold" | "boat" | "box" | "crane" | "suspended-sheet";
+  "sheet" | "half-fold" | "envelope" | "box" | "gate" | "suspended-sheet";
 
-/** Os quatro que representam uma decisão. `sheet` e `half-fold` são estados. */
-export type OrigamiResultId = "boat" | "box" | "crane" | "suspended-sheet";
+/**
+ * Os quatro que representam uma decisão. `sheet` e `half-fold` são estados.
+ *
+ * `envelope` e `gate` estiveram para ser `boat` e `crane`. Os dois tradicionais
+ * fazem-se por sequência, com dobras que reordenam camadas, e este motor dobra
+ * uma malha fixa por dobradiças — não tem modelo de camadas. A troca está
+ * justificada em `docs/ORIGAMI_RUNTIME.md` §5.
+ */
+export type OrigamiResultId = "envelope" | "box" | "gate" | "suspended-sheet";
 
 export type PaperFamilyId = "apricot" | "mist" | "jade" | "lilac";
 

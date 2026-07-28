@@ -121,7 +121,6 @@ export function HomeExperience({
             clip={clip}
             fallbacks={fallbacks}
             className="home-experience-figure"
-            enter
           />
           <figcaption className="home-experience-caption">
             {copy.scene.label}
