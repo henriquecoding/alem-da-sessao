@@ -1,0 +1,41 @@
+{
+  "modelId": "half-fold",
+  "title": "Primeira dobra",
+  "description": "Um vinco só, a 62°. O estado entre a folha e o objeto.",
+  "author": "Além da Sessão",
+  "sourceFormat": "FOLD 1.2",
+  "sourceSha256": "f866d02cd97750e1e878753f12dfd081f83825a03cc2f09c2c1f5eb3bb87be49",
+  "license": {
+    "id": "PROJETO",
+    "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
+  },
+  "paper": {
+    "uncut": true,
+    "square": true
+  },
+  "topology": {
+    "vertices": 6,
+    "edges": 7,
+    "faces": 2,
+    "triangles": 4,
+    "mountains": 0,
+    "valleys": 1,
+    "worstTriangleQuality": 0.6928
+  },
+  "diagnostics": {
+    "maxEdgeStrain": 4.440892098500626e-16,
+    "maxFacePlanarityError": 5.503352079576141e-7,
+    "selfIntersectionCount": 0,
+    "degenerateTriangleCount": 0,
+    "quantizationError": 0.0000075960889248660735,
+    "finalKineticEnergy": 2.5080997511470213e-11,
+    "finalAngleErrorDegrees": 0.00022173777145957784
+  },
+  "approval": {
+    "silhouette": false,
+    "motion": false,
+    "light": false,
+    "dark": false,
+    "mobile": false
+  }
+}

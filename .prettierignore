@@ -1,0 +1,13 @@
+node_modules/
+.next/
+pnpm-lock.yaml
+
+# Assets compilados do origami.
+#
+# `model.ors.json` sai do `origami:compile` minificado de propósito: é o
+# ficheiro que o browser descarrega, e o orçamento é 28 kB comprimido. Formatá-lo
+# com indentação triplicaria o tamanho para nenhum leitor humano — ninguém lê
+# uma tabela de trinta mil inteiros quantizados.
+#
+# A fonte legível é o `source.fold` ao lado, esse sim indentado e diffável.
+apps/web/public/origami/**/model.ors.json

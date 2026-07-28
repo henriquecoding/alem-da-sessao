@@ -280,3 +280,86 @@
     animation-delay: 0ms;
   }
 }
+
+/* ==========================================================================
+   Origami Runtime System — a cena de geometria real
+
+   Duas camadas exatamente sobrepostas: o SVG que chega no HTML e o canvas que
+   o substitui quando há WebGL2. Ambos desenham o mesmo objeto, saído do mesmo
+   frame da mesma simulação, com a mesma câmara. A troca entre eles não muda a
+   forma — muda a profundidade.
+
+   O SVG não desaparece quando o canvas monta: fica por baixo, com
+   `visibility: hidden`. É a diferença entre uma perda de contexto WebGL ser um
+   pisca-pisca e ser um retângulo vazio.
+   ========================================================================== */
+
+.origami-stage-shell {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  width: 100%;
+  margin: 0;
+  /* A cena nunca muda de tamanho depois de montar: o `aspect-ratio` reserva o
+     espaço no primeiro byte e o canvas entra dentro dele. CLS zero não é uma
+     meta a perseguir — é uma consequência de não deixar o layout depender de
+     um recurso que chega depois. */
+  contain: layout paint;
+}
+
+.origami-fallback,
+.origami-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.origami-fallback-outline {
+  stroke: var(--paper-edge);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+}
+
+.origami-canvas {
+  opacity: 0;
+  transition: opacity 220ms linear;
+}
+
+.origami-canvas[data-ready="true"] {
+  opacity: 1;
+}
+
+.origami-stage-shell:has(.origami-canvas[data-ready="true"]) .origami-fallback {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .origami-canvas {
+    transition-duration: 120ms;
+  }
+}
+
+/* Em contraste forçado o canvas não tem como participar: as suas cores vêm de
+   uniformes e não de tokens que o sistema possa substituir. Esconde-se, e o
+   fallback fica — com o contorno a desenhar a forma em `CanvasText`, que é a
+   leitura que interessa preservar. */
+@media (forced-colors: active) {
+  .origami-canvas {
+    display: none;
+  }
+
+  .origami-stage-shell:has(.origami-canvas) .origami-fallback {
+    visibility: visible;
+  }
+
+  .origami-fallback-faces {
+    fill: Canvas;
+  }
+
+  .origami-fallback-outline {
+    stroke: CanvasText;
+    stroke-width: 2;
+  }
+}

@@ -168,3 +168,41 @@
 .origami-lab-chip .origami-figure {
   width: 3.5rem;
 }
+
+/* O padrão de vincos, com a convenção dos diagramas de origami: monte a
+   tracejado, vale a cheio, fronteira em traço grosso. As diagonais de
+   triangulação não aparecem no objeto final, mas aparecem aqui — quem está a
+   autorar precisa de ver a malha que o solver vai resolver. */
+.origami-crease-pattern {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.origami-crease-pattern line {
+  stroke-linecap: round;
+}
+
+.origami-crease-pattern line[data-assignment="B"] {
+  stroke: var(--foreground);
+  stroke-width: 2;
+}
+
+.origami-crease-pattern line[data-assignment="V"] {
+  stroke: light-dark(#3b6fb5, #7ba7e0);
+  stroke-width: 1.5;
+}
+
+.origami-crease-pattern line[data-assignment="M"] {
+  stroke: light-dark(#b5533b, #e08a7b);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 3;
+}
+
+.origami-crease-pattern line[data-assignment="F"],
+.origami-crease-pattern line[data-assignment="J"] {
+  stroke: var(--muted-foreground);
+  stroke-width: 0.75;
+  stroke-dasharray: 1 3;
+  opacity: 0.6;
+}

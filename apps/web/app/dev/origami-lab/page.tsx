@@ -4,6 +4,7 @@ import {
   directions,
 } from "@/components/origami/lab/direction-panel";
 import { LabThemeToggle } from "@/components/origami/lab/lab-theme-toggle";
+import { RuntimePanel } from "@/components/origami/lab/runtime-panel";
 import { ProofSheet } from "@/components/origami/lab/proof-sheet";
 import { origamiModelList } from "@/components/origami/models";
 import {
@@ -77,6 +78,31 @@ export default async function OrigamiLabPage({
         </p>
         <LabThemeToggle initialTheme={theme === "dark" ? "dark" : "light"} />
       </header>
+
+      {show("runtime") ? (
+        <section className="grid gap-4">
+          <h2 className="text-2xl font-semibold tracking-[-0.04em]">
+            0 · Geometria real — do padrão de vincos ao objeto
+          </h2>
+          <p className="max-w-[72ch] text-sm leading-6 text-[var(--muted-foreground)]">
+            Tudo o resto nesta página compara direções de arte. Este bloco
+            responde à pergunta anterior a todas elas:{" "}
+            <strong className="text-[var(--foreground)]">
+              isto dobra mesmo?
+            </strong>{" "}
+            Cada objeto aqui nasce de um <code>source.fold</code> — uma folha
+            quadrada com montes e vales — que passa por um solver bar-and-hinge
+            antes de existir como imagem. À esquerda o padrão de vincos, ao
+            centro o resultado, à direita os números que o deixaram passar.
+          </p>
+          <p className="max-w-[72ch] text-sm leading-6 text-[var(--muted-foreground)]">
+            As figuras SVG das secções seguintes ainda são o sistema anterior, e
+            é deliberado: a homepage não muda antes de uma aprovação humana. Os
+            dois convivem até essa decisão.
+          </p>
+          <RuntimePanel />
+        </section>
+      ) : null}
 
       {show("audit") ? (
         <section className="grid gap-4">

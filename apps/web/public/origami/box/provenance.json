@@ -1,0 +1,41 @@
+{
+  "modelId": "box",
+  "title": "Caixa",
+  "description": "Caixa de canto com gusset: base quadrada, quatro paredes e quatro abas deitadas.",
+  "author": "Além da Sessão",
+  "sourceFormat": "FOLD 1.2",
+  "sourceSha256": "21aa8445698973562e96bddf0c4fa0e05b3ca76fa6c37dd1d930a199b75d7dde",
+  "license": {
+    "id": "PROJETO",
+    "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
+  },
+  "paper": {
+    "uncut": true,
+    "square": true
+  },
+  "topology": {
+    "vertices": 16,
+    "edges": 28,
+    "faces": 13,
+    "triangles": 18,
+    "mountains": 4,
+    "valleys": 12,
+    "worstTriangleQuality": 0.5196
+  },
+  "diagnostics": {
+    "maxEdgeStrain": 0.000009979754297839705,
+    "maxFacePlanarityError": 0.006285969055750561,
+    "selfIntersectionCount": 0,
+    "degenerateTriangleCount": 0,
+    "quantizationError": 0.000007631168683297496,
+    "finalKineticEnergy": 5.5177714262613555e-11,
+    "finalAngleErrorDegrees": 1.7159197487263023
+  },
+  "approval": {
+    "silhouette": false,
+    "motion": false,
+    "light": false,
+    "dark": false,
+    "mobile": false
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "modelId": "suspended-sheet",
+  "title": "Folha suspensa",
+  "description": "Quatro vincos paralelos no mesmo sentido: papel enrolado, sem decisão tomada.",
+  "author": "Além da Sessão",
+  "sourceFormat": "FOLD 1.2",
+  "sourceSha256": "13489b6678183ed0637f0a0238e168643ee7349d4952cb035e2f8cf77c3aade0",
+  "license": {
+    "id": "PROJETO",
+    "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
+  },
+  "paper": {
+    "uncut": true,
+    "square": true
+  },
+  "topology": {
+    "vertices": 12,
+    "edges": 16,
+    "faces": 5,
+    "triangles": 10,
+    "mountains": 0,
+    "valleys": 4,
+    "worstTriangleQuality": 0.3331
+  },
+  "diagnostics": {
+    "maxEdgeStrain": 3.875122445151646e-12,
+    "maxFacePlanarityError": 0.000007684781799411851,
+    "selfIntersectionCount": 0,
+    "degenerateTriangleCount": 0,
+    "quantizationError": 0.000007602757993441234,
+    "finalKineticEnergy": 1.375538280648703e-10,
+    "finalAngleErrorDegrees": 0.0012992782716713179
+  },
+  "approval": {
+    "silhouette": false,
+    "motion": false,
+    "light": false,
+    "dark": false,
+    "mobile": false
+  }
+}

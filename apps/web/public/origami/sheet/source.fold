@@ -1,0 +1,182 @@
+{
+  "file_spec": 1.2,
+  "file_creator": "tools/origami/compile.ts",
+  "file_author": "Além da Sessão",
+  "file_title": "Folha",
+  "file_description": "A matéria antes de qualquer decisão: quadrado íntegro com duas ondulações de sete graus.",
+  "file_classes": [
+    "singleModel",
+    "animation"
+  ],
+  "ads:modelId": "sheet",
+  "ads:paper": {
+    "aspect": 1,
+    "uncut": true,
+    "frontFamily": "apricot",
+    "backFamily": "mist"
+  },
+  "ads:license": {
+    "id": "PROJETO",
+    "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
+  },
+  "ads:presentation": {
+    "rotateX": -90
+  },
+  "vertices_coords": [
+    [
+      -0.5,
+      -0.5,
+      0
+    ],
+    [
+      0.5,
+      -0.5,
+      0
+    ],
+    [
+      0.5,
+      -0.16666666666666666,
+      0
+    ],
+    [
+      -0.5,
+      -0.16666666666666666,
+      0
+    ],
+    [
+      0.5,
+      0.16666666666666666,
+      0
+    ],
+    [
+      -0.5,
+      0.16666666666666666,
+      0
+    ],
+    [
+      0.5,
+      0.5,
+      0
+    ],
+    [
+      -0.5,
+      0.5,
+      0
+    ]
+  ],
+  "edges_vertices": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      4
+    ],
+    [
+      4,
+      6
+    ],
+    [
+      6,
+      7
+    ],
+    [
+      7,
+      5
+    ],
+    [
+      5,
+      3
+    ],
+    [
+      3,
+      0
+    ],
+    [
+      3,
+      2
+    ],
+    [
+      5,
+      4
+    ]
+  ],
+  "edges_assignment": [
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "M",
+    "V"
+  ],
+  "edges_foldAngle": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    -7,
+    7
+  ],
+  "faces_vertices": [
+    [
+      0,
+      1,
+      2,
+      3
+    ],
+    [
+      3,
+      2,
+      4,
+      5
+    ],
+    [
+      5,
+      4,
+      6,
+      7
+    ]
+  ],
+  "ads:anchor": {
+    "origin": 3,
+    "toward": 2,
+    "plane": 5
+  },
+  "file_frames": [
+    {
+      "frame_title": "pousada",
+      "frame_classes": [
+        "foldedForm"
+      ],
+      "frame_parent": 0,
+      "frame_inherit": true,
+      "edges_foldAngle": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        -7,
+        7
+      ],
+      "ads:state": "flat",
+      "ads:progress": 1
+    }
+  ]
+}

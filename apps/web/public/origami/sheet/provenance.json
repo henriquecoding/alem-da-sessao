@@ -1,0 +1,41 @@
+{
+  "modelId": "sheet",
+  "title": "Folha",
+  "description": "A matéria antes de qualquer decisão: quadrado íntegro com duas ondulações de sete graus.",
+  "author": "Além da Sessão",
+  "sourceFormat": "FOLD 1.2",
+  "sourceSha256": "4de5c23e6e4352155aeb66044106c4cc59b07c84426d9c527b3ffc4e60cf0eda",
+  "license": {
+    "id": "PROJETO",
+    "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
+  },
+  "paper": {
+    "uncut": true,
+    "square": true
+  },
+  "topology": {
+    "vertices": 8,
+    "edges": 10,
+    "faces": 3,
+    "triangles": 6,
+    "mountains": 1,
+    "valleys": 1,
+    "worstTriangleQuality": 0.5196
+  },
+  "diagnostics": {
+    "maxEdgeStrain": 6.661338147750939e-16,
+    "maxFacePlanarityError": 0,
+    "selfIntersectionCount": 0,
+    "degenerateTriangleCount": 0,
+    "quantizationError": 0.000007195574157847773,
+    "finalKineticEnergy": 1.8518214059257542e-14,
+    "finalAngleErrorDegrees": 0.0000010417308636555099
+  },
+  "approval": {
+    "silhouette": false,
+    "motion": false,
+    "light": false,
+    "dark": false,
+    "mobile": false
+  }
+}
