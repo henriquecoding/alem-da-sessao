@@ -24,9 +24,12 @@
     "check:accessibility": "pnpm --filter @alem-da-sessao/web check:accessibility",
     "check:contrast": "pnpm --filter @alem-da-sessao/web check:contrast",
     "check:origami": "pnpm --filter @alem-da-sessao/web check:origami",
+    "check:origami-runtime": "pnpm --filter @alem-da-sessao/web check:origami-runtime",
+    "origami:compile": "pnpm --filter @alem-da-sessao/origami-tools compile",
+    "origami:inspect": "pnpm --filter @alem-da-sessao/origami-tools inspect",
     "check:built-bundles": "pnpm --filter @alem-da-sessao/web check:built-bundles",
     "check:release-readiness": "pnpm --filter @alem-da-sessao/web check:release-readiness",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:run && pnpm check:i18n && pnpm check:privacy && pnpm check:tools && pnpm check:claims && pnpm check:direction && pnpm check:budgets && pnpm check:accessibility && pnpm check:contrast && pnpm check:origami && pnpm check:release-readiness",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:run && pnpm check:i18n && pnpm check:privacy && pnpm check:tools && pnpm check:claims && pnpm check:direction && pnpm check:budgets && pnpm check:accessibility && pnpm check:contrast && pnpm check:origami && pnpm check:origami-runtime && pnpm check:release-readiness",
     "verify:release": "pnpm check && pnpm build && pnpm check:built-bundles",
     "format:check": "prettier --check .",
     "format": "prettier --write ."

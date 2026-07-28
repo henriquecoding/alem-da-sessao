@@ -19,6 +19,7 @@
     "check:accessibility": "node --import tsx scripts/check-accessibility.ts",
     "check:contrast": "node --import tsx scripts/check-contrast.ts",
     "check:origami": "node --import tsx scripts/check-origami.ts",
+    "check:origami-runtime": "node --import tsx scripts/check-origami-runtime.ts",
     "check:built-bundles": "node --import tsx scripts/check-built-bundles.ts",
     "check:release-readiness": "node --import tsx scripts/check-release-readiness.ts"
   },
@@ -43,6 +44,7 @@
     "zod": "^4.1.9"
   },
   "devDependencies": {
+    "@alem-da-sessao/origami-core": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",

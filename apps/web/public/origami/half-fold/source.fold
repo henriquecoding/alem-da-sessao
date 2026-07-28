@@ -1,0 +1,145 @@
+{
+  "file_spec": 1.2,
+  "file_creator": "tools/origami/compile.ts",
+  "file_author": "Além da Sessão",
+  "file_title": "Primeira dobra",
+  "file_description": "Um vinco só, a 62°. O estado entre a folha e o objeto.",
+  "file_classes": [
+    "singleModel",
+    "animation"
+  ],
+  "ads:modelId": "half-fold",
+  "ads:paper": {
+    "aspect": 1,
+    "uncut": true,
+    "frontFamily": "apricot",
+    "backFamily": "mist"
+  },
+  "ads:license": {
+    "id": "PROJETO",
+    "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
+  },
+  "ads:presentation": {
+    "rotateX": -90
+  },
+  "vertices_coords": [
+    [
+      -0.5,
+      -0.5,
+      0
+    ],
+    [
+      0,
+      -0.5,
+      0
+    ],
+    [
+      0.5,
+      -0.5,
+      0
+    ],
+    [
+      0.5,
+      0.5,
+      0
+    ],
+    [
+      0,
+      0.5,
+      0
+    ],
+    [
+      -0.5,
+      0.5,
+      0
+    ]
+  ],
+  "edges_vertices": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      0
+    ],
+    [
+      1,
+      4
+    ]
+  ],
+  "edges_assignment": [
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "V"
+  ],
+  "edges_foldAngle": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    62
+  ],
+  "faces_vertices": [
+    [
+      0,
+      1,
+      4,
+      5
+    ],
+    [
+      1,
+      2,
+      3,
+      4
+    ]
+  ],
+  "ads:anchor": {
+    "origin": 0,
+    "toward": 1,
+    "plane": 5
+  },
+  "file_frames": [
+    {
+      "frame_title": "vincada",
+      "frame_classes": [
+        "foldedForm"
+      ],
+      "frame_parent": 0,
+      "frame_inherit": true,
+      "edges_foldAngle": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        62
+      ],
+      "ads:state": "noticed",
+      "ads:progress": 1
+    }
+  ]
+}

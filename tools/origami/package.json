@@ -1,0 +1,17 @@
+{
+  "name": "@alem-da-sessao/origami-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "compile": "node --import tsx compile.ts",
+    "inspect": "node --import tsx inspect.ts"
+  },
+  "dependencies": {
+    "@alem-da-sessao/origami-core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.5",
+    "typescript": "^5"
+  }
+}
