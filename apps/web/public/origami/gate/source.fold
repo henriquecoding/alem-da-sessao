@@ -1,0 +1,204 @@
+{
+  "file_spec": 1.2,
+  "file_creator": "tools/origami/compile.ts",
+  "file_author": "Além da Sessão",
+  "file_title": "Portal",
+  "file_description": "Dobra em portão: dois painéis erguem-se e inclinam-se um para o outro, deixando uma passagem.",
+  "file_classes": [
+    "singleModel",
+    "animation"
+  ],
+  "ads:modelId": "gate",
+  "ads:paper": {
+    "aspect": 1,
+    "uncut": true,
+    "frontFamily": "mist",
+    "backFamily": "jade"
+  },
+  "ads:license": {
+    "id": "PROJETO",
+    "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
+  },
+  "ads:presentation": {
+    "rotateX": -90
+  },
+  "vertices_coords": [
+    [
+      -0.5,
+      -0.5,
+      0
+    ],
+    [
+      -0.25,
+      -0.5,
+      0
+    ],
+    [
+      0.25,
+      -0.5,
+      0
+    ],
+    [
+      0.5,
+      -0.5,
+      0
+    ],
+    [
+      0.5,
+      0.5,
+      0
+    ],
+    [
+      0.25,
+      0.5,
+      0
+    ],
+    [
+      -0.25,
+      0.5,
+      0
+    ],
+    [
+      -0.5,
+      0.5,
+      0
+    ]
+  ],
+  "edges_vertices": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      6
+    ],
+    [
+      6,
+      7
+    ],
+    [
+      7,
+      0
+    ],
+    [
+      1,
+      6
+    ],
+    [
+      2,
+      5
+    ]
+  ],
+  "edges_assignment": [
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "V",
+    "V"
+  ],
+  "edges_foldAngle": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    128,
+    128
+  ],
+  "faces_vertices": [
+    [
+      0,
+      1,
+      6,
+      7
+    ],
+    [
+      1,
+      2,
+      5,
+      6
+    ],
+    [
+      2,
+      3,
+      4,
+      5
+    ]
+  ],
+  "ads:anchor": {
+    "origin": 1,
+    "toward": 2,
+    "plane": 5
+  },
+  "file_frames": [
+    {
+      "frame_title": "painéis a erguer",
+      "frame_classes": [
+        "foldedForm"
+      ],
+      "frame_parent": 0,
+      "frame_inherit": true,
+      "edges_foldAngle": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        70.4,
+        70.4
+      ],
+      "ads:state": "forming",
+      "ads:progress": 0.5
+    },
+    {
+      "frame_title": "portal aberto",
+      "frame_classes": [
+        "foldedForm"
+      ],
+      "frame_parent": 0,
+      "frame_inherit": true,
+      "edges_foldAngle": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        128,
+        128
+      ],
+      "ads:state": "formed",
+      "ads:progress": 1
+    }
+  ]
+}

@@ -1,9 +1,20 @@
 # A Folha Entre Sessões — relatório do laboratório
 
-**Estado:** laboratório concluído, direção escolhida e integrada.
+> **Superado por `ORIGAMI_RUNTIME.md` e ADR-034.** Este documento descreve o
+> sistema de figuras SVG desenhadas à mão, que foi apagado. As figuras já não
+> existem, `origami-figure.tsx` e `components/origami/models/` já não existem, e
+> `boat`/`crane` já não são nomes do produto. O que a homepage mostra hoje sai de
+> um `source.fold` dobrado por um solver bar-and-hinge.
+>
+> Fica por duas razões: a escolha de direção de arte (**Ateliê de luz**) e os
+> tokens de papel continuam a valer, e o §1 é o registo de porque é que o sistema
+> anterior foi recusado. Ler o resto como história, não como estado.
+
+**Estado:** laboratório concluído, direção escolhida e integrada. Geometria
+substituída — ver `ORIGAMI_RUNTIME.md`.
 **Direção em produção:** Ateliê de luz (`stage="atelier"` em `app/[locale]/(public)/page.tsx`).
 **Rota interna:** `/dev/origami-lab` (só em desenvolvimento, fora do sitemap, sem ligação pública).
-**Porta do CI:** `pnpm check:origami`.
+**Porta do CI:** `pnpm check:origami` (contraste) e `pnpm check:origami-runtime` (geometria).
 
 `A Folha Entre Sessões` é um nome interno de trabalho. Não é uma marca, não
 aparece no produto e não substitui Além da Sessão.

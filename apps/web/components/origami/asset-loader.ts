@@ -38,6 +38,48 @@ export const loadCompiledAsset = cache(
   },
 );
 
+export type OrigamiFallback = {
+  readonly svg: string;
+  readonly viewBox: string;
+};
+
+/**
+ * Só os fallbacks, para atravessarem a fronteira servidor→cliente.
+ *
+ * A homepage é uma engine de cliente que muda de modelo conforme a escolha, e
+ * precisa de ter a silhueta certa **antes** de o asset chegar pela rede. Mandar
+ * o asset inteiro nas props resolveria isso e punha 24 kB de inteiros
+ * quantizados na carga do RSC — para uma imagem que a GPU vai desenhar de
+ * qualquer maneira.
+ *
+ * O que atravessa é só o SVG: cerca de 1,5 kB comprimido para os quatro
+ * modelos juntos. O resto continua a ser pedido pelo canvas, sob demanda, e só
+ * quando a cena está perto do ecrã.
+ */
+export const loadFallbacks = cache(
+  async (
+    modelIds: readonly string[],
+  ): Promise<Record<string, OrigamiFallback>> => {
+    const entries = await Promise.all(
+      modelIds.map(async (id) => {
+        const asset = await loadCompiledAsset(id);
+        return asset
+          ? ([
+              id,
+              { svg: asset.fallback.svg, viewBox: asset.fallback.viewBox },
+            ] as const)
+          : null;
+      }),
+    );
+
+    return Object.fromEntries(
+      entries.filter(
+        (entry): entry is NonNullable<typeof entry> => entry !== null,
+      ),
+    );
+  },
+);
+
 export type ProvenanceRecord = {
   readonly modelId: string;
   readonly title: string;

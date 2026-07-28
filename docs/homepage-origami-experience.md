@@ -1,5 +1,13 @@
 # Homepage — Atelier de Origami
 
+> **Histórico.** Descreve a primeira iteração, com pássaro, raposa e barco
+> desenhados em SVG. A família de objetos mudou duas vezes desde então e as
+> figuras desenhadas à mão foram apagadas. Para o estado atual ver
+> `ORIGAMI_RUNTIME.md` e ADR-034; para a direção de arte, `ORIGAMI_LAB.md`.
+>
+> Fica pela §3, que é a única parte que não envelheceu: porque é que a metáfora
+> é origami, e as duas leituras que ela evita.
+
 Pesquisa, direção de arte e especificação implementada em 28 de julho de 2026.
 
 ## 1. O problema encontrado

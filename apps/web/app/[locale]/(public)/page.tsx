@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { getMessages } from "@alem-da-sessao/i18n";
 import { HomeExperience } from "@/components/homepage/home-experience";
 import { HomeSections } from "@/components/homepage/home-sections";
-import { OrigamiDefs } from "@/components/origami/origami-figure";
+import { loadFallbacks } from "@/components/origami/asset-loader";
+import { origamiModelIds } from "@/components/origami/types";
 import { resolveLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
@@ -19,6 +20,11 @@ export const metadata: Metadata = {
  * última dobra-a num objeto que nomeia a decisão — levar, guardar, atravessar,
  * suspender. Nada do que se escolhe sai do estado do componente.
  *
+ * Os objetos são geometria a sério: cada um vem de um `source.fold`, passa por
+ * um solver bar-and-hinge na autoria, e chega ao browser como frames já
+ * verificados. A silhueta vai no HTML; o WebGL é a melhoria que acrescenta
+ * profundidade e que desaparece sem consequências onde não houver.
+ *
  * A página é um Server Component. Só a engine do ritual é cliente, e o texto
  * que interessa a um motor de busca vive em `HomeSections`, fora da animação.
  *
@@ -34,9 +40,13 @@ export default async function HomePage({
   const { locale, segment } = await resolveLocale(params);
   const messages = getMessages(locale);
 
+  // As silhuetas dos seis modelos. Vão no HTML para que o primeiro byte traga a
+  // forma certa, e não um espaço vazio à espera de rede. Cada uma sai do frame
+  // final da mesma simulação que o canvas vai desenhar.
+  const fallbacks = await loadFallbacks(origamiModelIds);
+
   return (
     <main>
-      <OrigamiDefs />
       <section className="px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8 lg:pb-24">
         <div className="mx-auto w-full max-w-[76rem]">
           <HomeExperience
@@ -44,6 +54,7 @@ export default async function HomePage({
             locale={locale}
             segment={segment}
             stage="atelier"
+            fallbacks={fallbacks}
           />
         </div>
       </section>

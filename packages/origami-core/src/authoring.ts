@@ -113,11 +113,30 @@ export function deriveFoldAngles(
     });
 }
 
-/** Uma configuração intermédia pela qual a dobragem passa. */
+/**
+ * Uma configuração intermédia pela qual a dobragem passa.
+ *
+ * Há duas maneiras de a descrever, e a escolha depende do modelo.
+ *
+ * **Por posições.** O autor diz onde cada vértice fica. É o caminho certo
+ * quando a forma dobrada se calcula — a caixa é o exemplo: paredes a subir 90°,
+ * abas a assentar, tudo trigonometria de liceu que se verifica a olho. A
+ * ferramenta deriva os ângulos e verifica a isometria.
+ *
+ * **Por ângulos.** O autor diz quanto cada vinco dobra, e a forma é o que sair
+ * daí. É o caminho certo quando o resultado é difícil de escrever e fácil de
+ * reconhecer — um casco de barco, uma asa. Aqui não há isometria para
+ * verificar à cabeça, porque não se afirmou nenhuma posição: o solver encontra
+ * a configuração isométrica que aqueles ângulos permitem, e é ela o resultado.
+ *
+ * É também a forma nativa do FOLD, que guarda ângulos e não posições.
+ */
 export type AuthoredStage = {
   readonly title: string;
   readonly state: OrigamiSemanticState;
-  readonly positions: readonly Vec3[];
+  readonly positions?: readonly Vec3[];
+  /** Graus por índice de aresta. `M` negativo, `V` positivo. */
+  readonly angles?: Readonly<Record<number, number>>;
 };
 
 export type AuthoredModel = {
@@ -197,14 +216,40 @@ export function authorFoldSource(
   const mesh = buildMesh(skeleton);
 
   const anglesPerStage = model.stages.map((stage) => {
-    assertIsometric(mesh, stage.positions, 1e-6, `a etapa «${stage.title}»`);
-
     const assignments = [...skeleton.edges_assignment!] as Assignment[];
     const angles = [...skeleton.edges_foldAngle!];
 
-    for (const derived of deriveFoldAngles(mesh, stage.positions)) {
-      assignments[derived.edgeIndex] = derived.assignment;
-      angles[derived.edgeIndex] = derived.degrees;
+    if (stage.positions) {
+      assertIsometric(mesh, stage.positions, 1e-6, `a etapa «${stage.title}»`);
+      for (const derived of deriveFoldAngles(mesh, stage.positions)) {
+        assignments[derived.edgeIndex] = derived.assignment;
+        angles[derived.edgeIndex] = derived.degrees;
+      }
+      return { assignments, angles };
+    }
+
+    if (!stage.angles) {
+      throw new Error(
+        `origami: a etapa «${stage.title}» não declara posições nem ângulos.`,
+      );
+    }
+
+    for (const [key, degrees] of Object.entries(stage.angles)) {
+      const edgeIndex = Number(key);
+      if (boundary.has(edgeIndex)) {
+        throw new Error(
+          `origami: a etapa «${stage.title}» tenta dobrar a aresta ${edgeIndex}, que é fronteira.`,
+        );
+      }
+      if (!model.edges[edgeIndex]) {
+        throw new Error(
+          `origami: a etapa «${stage.title}» refere a aresta ${edgeIndex}, que não existe.`,
+        );
+      }
+      const limited = Math.max(-178, Math.min(178, degrees));
+      assignments[edgeIndex] =
+        Math.abs(limited) < 1e-6 ? "F" : limited > 0 ? "V" : "M";
+      angles[edgeIndex] = Number(limited.toFixed(4));
     }
 
     return { assignments, angles };

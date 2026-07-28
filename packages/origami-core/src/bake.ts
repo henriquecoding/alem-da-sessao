@@ -8,7 +8,7 @@ import {
   subtract,
   wrapAngle,
 } from "./geometry";
-import type { OrigamiSemanticState, Vec3 } from "./fold-types";
+import type { FoldSource, OrigamiSemanticState, Vec3 } from "./fold-types";
 import { diagnoseFrame, maxEdgeStrain, type FrameDiagnostics } from "./metrics";
 import {
   createSolverState,
@@ -186,6 +186,53 @@ export function stageFromConfiguration(
   });
 
   return { targets, state };
+}
+
+/**
+ * As etapas lidas do próprio `source.fold`.
+ *
+ * É a leitura certa por uma razão prática: torna o `.fold` a única fonte. Um
+ * modelo recompilado a partir do ficheiro sozinho — sem o script que o gerou —
+ * produz exatamente os mesmos frames, venha ele de posições autoradas ou de
+ * ângulos escritos à mão. O ficheiro guarda ângulos, que é o que o formato
+ * FOLD guarda.
+ *
+ * As arestas de triangulação não aparecem no source e o seu alvo é sempre zero:
+ * uma face do autor não tem vinco lá dentro.
+ */
+export function stagesFromSource(
+  source: FoldSource,
+  mesh: OrigamiMesh,
+): FoldStage[] {
+  const sourceEdgeCount = source.edges_vertices?.length ?? 0;
+  const frames = source.file_frames ?? [];
+
+  if (!frames.length) {
+    throw new Error(
+      `origami: ${source["ads:modelId"]} não declara etapas em file_frames.`,
+    );
+  }
+
+  return frames.map((frame, index) => {
+    const declared = frame.edges_foldAngle ?? source.edges_foldAngle ?? [];
+    const targets = new Float64Array(mesh.creases.length);
+
+    mesh.creases.forEach((crease, creaseIndex) => {
+      if (crease.edgeIndex >= sourceEdgeCount) return;
+      const degrees = declared[crease.edgeIndex];
+      targets[creaseIndex] =
+        degrees === null || degrees === undefined
+          ? 0
+          : (degrees * Math.PI) / 180;
+    });
+
+    return {
+      targets,
+      state:
+        frame["ads:state"] ??
+        (index === frames.length - 1 ? "formed" : "forming"),
+    };
+  });
 }
 
 export type BakedFrame = {

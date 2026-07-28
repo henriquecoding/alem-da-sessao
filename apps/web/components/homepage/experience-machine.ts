@@ -92,15 +92,24 @@ export const decideIds: readonly DecideId[] = [
 /**
  * A decisão escolhe o objeto. Quatro intenções, quatro formas, e nenhuma delas
  * é uma leitura sobre quem escolheu.
+ *
+ * O envelope e o portal substituíram o barco e o grou. Os dois tradicionais
+ * fazem-se por sequência, com dobras que reordenam camadas, e o motor de
+ * dobragem não tem modelo de camadas — `docs/ORIGAMI_RUNTIME.md` §5.
+ *
+ * A troca aproximou a forma da decisão. «Levar adiante» é, na plataforma, uma
+ * nota que chega à próxima sessão porque alguém a partilhou: isso é uma carta
+ * fechada, não um barco. «Atravessar» é passar para o outro lado: isso é uma
+ * passagem, não uma ave.
  */
 export function resultOf(decide: DecideId): OrigamiResultId {
   switch (decide) {
     case "carry":
-      return "boat";
+      return "envelope";
     case "keep":
       return "box";
     case "cross":
-      return "crane";
+      return "gate";
     case "rest":
       return "suspended-sheet";
   }
@@ -116,11 +125,11 @@ export function resultOf(decide: DecideId): OrigamiResultId {
 export function paperOf(state: ExperienceState): PaperFamilyId {
   if (state.id !== "newcomer.result" || !state.decide) return "lilac";
   switch (resultOf(state.decide)) {
-    case "boat":
+    case "envelope":
       return "apricot";
     case "box":
       return "jade";
-    case "crane":
+    case "gate":
       return "mist";
     case "suspended-sheet":
       return "lilac";
@@ -141,9 +150,38 @@ export function modelOf(state: ExperienceState): OrigamiModelId {
     case "returning":
       return "box";
     case "explore":
-      return "crane";
+      return "gate";
     case "intro":
       return "sheet";
+  }
+}
+
+/**
+ * Que clip da dobragem corresponde a cada estado.
+ *
+ * O runtime não sabe o que «formed» significa — sabe que tem de ir do frame 12
+ * ao 36 numa certa curva. É aqui que o significado entra, e é por isso que este
+ * mapa vive na máquina de estados e não no renderizador.
+ *
+ * A folha começa por ser notada, ganha vinco enquanto a pessoa decide, e só
+ * fecha quando a decisão está tomada. Um objeto que aparecesse já formado no
+ * primeiro ecrã contaria o fim antes do princípio.
+ */
+export function clipOf(
+  state: ExperienceState,
+): "flat-to-noticed" | "noticed-to-forming" | "forming-to-formed" {
+  switch (state.id) {
+    case "intro":
+      return "flat-to-noticed";
+    case "newcomer.notice":
+      return state.notice ? "noticed-to-forming" : "flat-to-noticed";
+    case "newcomer.form":
+    case "newcomer.decide":
+      return "noticed-to-forming";
+    case "newcomer.result":
+    case "returning":
+    case "explore":
+      return "forming-to-formed";
   }
 }
 

@@ -51,6 +51,15 @@ implementação de referência é usado.
 ## Modelos
 
 Os padrões de vincos em `apps/web/public/origami/*/source.fold` foram autorados
-para este projeto. A caixa segue o princípio construtivo da caixa masu, que é
-domínio público e conhecido há séculos; a geometria concreta — meia-base, altura
-e a trajetória do canto — está derivada em `tools/origami/models/box.ts`.
+para este projeto. Três deles seguem princípios construtivos que são domínio
+público e conhecidos há séculos — nenhum é uma transcrição de diagrama de
+autor:
+
+| Modelo     | Dobra tradicional                     | O que foi derivado aqui                           |
+| ---------- | ------------------------------------- | ------------------------------------------------- |
+| `box`      | caixa masu                            | meia-base, altura e a trajetória do canto         |
+| `envelope` | base blintz (quatro cantos ao centro) | profundidade das abas e o ângulo de fecho de 148° |
+| `gate`     | dobra de portas                       | posição da dobradiça e a inclinação de 128°       |
+
+A geometria concreta de cada um está derivada no ficheiro correspondente em
+`tools/origami/models/`.

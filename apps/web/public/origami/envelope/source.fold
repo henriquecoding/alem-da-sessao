@@ -1,0 +1,228 @@
+{
+  "file_spec": 1.2,
+  "file_creator": "tools/origami/compile.ts",
+  "file_author": "Além da Sessão",
+  "file_title": "Envelope",
+  "file_description": "Base blintz: os quatro cantos dobram para o quadrado inscrito. Uma folha fechada para ser entregue.",
+  "file_classes": [
+    "singleModel",
+    "animation"
+  ],
+  "ads:modelId": "envelope",
+  "ads:paper": {
+    "aspect": 1,
+    "uncut": true,
+    "frontFamily": "apricot",
+    "backFamily": "mist"
+  },
+  "ads:license": {
+    "id": "PROJETO",
+    "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
+  },
+  "ads:presentation": {
+    "rotateX": -90
+  },
+  "vertices_coords": [
+    [
+      -0.5,
+      -0.5,
+      0
+    ],
+    [
+      0.5,
+      -0.5,
+      0
+    ],
+    [
+      0.5,
+      0.5,
+      0
+    ],
+    [
+      -0.5,
+      0.5,
+      0
+    ],
+    [
+      0,
+      -0.5,
+      0
+    ],
+    [
+      0.5,
+      0,
+      0
+    ],
+    [
+      0,
+      0.5,
+      0
+    ],
+    [
+      -0.5,
+      0,
+      0
+    ]
+  ],
+  "edges_vertices": [
+    [
+      0,
+      4
+    ],
+    [
+      4,
+      1
+    ],
+    [
+      1,
+      5
+    ],
+    [
+      5,
+      2
+    ],
+    [
+      2,
+      6
+    ],
+    [
+      6,
+      3
+    ],
+    [
+      3,
+      7
+    ],
+    [
+      7,
+      0
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      6
+    ],
+    [
+      6,
+      7
+    ],
+    [
+      7,
+      4
+    ]
+  ],
+  "edges_assignment": [
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "B",
+    "V",
+    "V",
+    "V",
+    "V"
+  ],
+  "edges_foldAngle": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    148,
+    148,
+    148,
+    148
+  ],
+  "faces_vertices": [
+    [
+      4,
+      5,
+      6,
+      7
+    ],
+    [
+      0,
+      4,
+      7
+    ],
+    [
+      4,
+      1,
+      5
+    ],
+    [
+      5,
+      2,
+      6
+    ],
+    [
+      6,
+      3,
+      7
+    ]
+  ],
+  "ads:anchor": {
+    "origin": 4,
+    "toward": 5,
+    "plane": 6
+  },
+  "file_frames": [
+    {
+      "frame_title": "abas a levantar",
+      "frame_classes": [
+        "foldedForm"
+      ],
+      "frame_parent": 0,
+      "frame_inherit": true,
+      "edges_foldAngle": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        74,
+        74,
+        74,
+        74
+      ],
+      "ads:state": "forming",
+      "ads:progress": 0.5
+    },
+    {
+      "frame_title": "carta fechada",
+      "frame_classes": [
+        "foldedForm"
+      ],
+      "frame_parent": 0,
+      "frame_inherit": true,
+      "edges_foldAngle": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        148,
+        148,
+        148,
+        148
+      ],
+      "ads:state": "formed",
+      "ads:progress": 1
+    }
+  ]
+}

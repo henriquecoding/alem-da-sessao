@@ -1,10 +1,10 @@
 {
-  "modelId": "suspended-sheet",
-  "title": "Folha suspensa",
-  "description": "Quatro vincos paralelos no mesmo sentido: papel enrolado, sem decisão tomada.",
+  "modelId": "envelope",
+  "title": "Envelope",
+  "description": "Base blintz: os quatro cantos dobram para o quadrado inscrito. Uma folha fechada para ser entregue.",
   "author": "Além da Sessão",
   "sourceFormat": "FOLD 1.2",
-  "sourceSha256": "13489b6678183ed0637f0a0238e168643ee7349d4952cb035e2f8cf77c3aade0",
+  "sourceSha256": "8ab632feb24a094f3958e091cb08a3997da59d63999f2044bef3c050c1a863ef",
   "license": {
     "id": "PROJETO",
     "attribution": "Padrão de vincos autorado para o Além da Sessão. Estrutura do solver inspirada em amandaghassaei/OrigamiSimulator (MIT); ver NOTICE.md."
@@ -14,22 +14,22 @@
     "square": true
   },
   "topology": {
-    "vertices": 12,
-    "edges": 16,
+    "vertices": 8,
+    "edges": 12,
     "faces": 5,
-    "triangles": 10,
+    "triangles": 6,
     "mountains": 0,
     "valleys": 4,
-    "worstTriangleQuality": 0.3331
+    "worstTriangleQuality": 0.866
   },
   "diagnostics": {
-    "maxEdgeStrain": 3.875122445151646e-12,
-    "maxFacePlanarityError": 0.000007684752905289917,
+    "maxEdgeStrain": 1.7208456881689926e-14,
+    "maxFacePlanarityError": 2.7151207861734413e-7,
     "selfIntersectionCount": 0,
     "degenerateTriangleCount": 0,
-    "quantizationError": 0.000007602757993607767,
-    "finalKineticEnergy": 1.3755382817562657e-10,
-    "finalAngleErrorDegrees": 0.0012992782718716928
+    "quantizationError": 0.000007513404270964585,
+    "finalKineticEnergy": 3.0426827953807097e-12,
+    "finalAngleErrorDegrees": 0.000034754123211296275
   },
   "approval": {
     "silhouette": false,

@@ -4,13 +4,15 @@ import { useEffect, useReducer, useRef, type RefObject } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, RotateCcw } from "lucide-react";
 import type { HomeCopy, Locale, LocaleSegment } from "@alem-da-sessao/i18n";
-import { OrigamiFigure } from "@/components/origami/origami-figure";
+import type { OrigamiFallback } from "@/components/origami/asset-loader";
+import { OrigamiScene } from "@/components/origami/origami-scene";
 import type { StageId } from "@/components/origami/tokens/paper";
 import { Button } from "@/components/ui/button";
 import { localPath } from "@/lib/locale";
 import { cn } from "@/lib/utils";
 import {
   canAdvance,
+  clipOf,
   initialExperienceState,
   modelOf,
   paperOf,
@@ -24,12 +26,15 @@ import {
 /**
  * O ritual. Um único Client Component, e o resto da página fica no servidor.
  *
- * A engine interativa é isto e mais nada: 40 linhas de estado em
- * `experience-machine.ts`, quatro SVGs estáticos e CSS. Não há WebGL, não há
- * biblioteca de animação, não há imagem de herói. A razão não é purismo — é
- * que a homepage tem de renderizar no servidor e responder ao primeiro toque,
- * e uma cena 3D carregada para rodar um objeto no espaço paga essas duas
- * coisas para não devolver nenhuma.
+ * A engine interativa são 40 linhas de estado em `experience-machine.ts` e mais
+ * nada. Continua a não haver biblioteca de animação nem imagem de herói.
+ *
+ * Há WebGL, e sob condições que vale a pena dizer: a silhueta do objeto chega
+ * no HTML, em SVG, gerada pelo mesmo frame da mesma simulação que a cena vai
+ * desenhar. O canvas é uma melhoria que só é pedida quando a cena se aproxima
+ * do ecrã, que desaparece sem consequências se o dispositivo não puder com ela,
+ * e que não corre um único frame quando nada está a mudar. Nenhuma física
+ * acontece aqui — o que o browser recebe são frames já verificados.
  *
  * O foco é a parte que se percebe pouco e se nota muito: a cada mudança de
  * etapa o foco vai para o novo título. Sem isso, quem navega por teclado ou
@@ -41,11 +46,14 @@ export function HomeExperience({
   locale,
   segment,
   stage = "atelier",
+  fallbacks,
 }: {
   copy: HomeCopy;
   locale: Locale;
   segment: LocaleSegment;
   stage?: StageId;
+  /** Silhuetas dos modelos compilados, renderizadas no servidor. */
+  fallbacks: Record<string, OrigamiFallback>;
 }) {
   const [state, dispatch] = useReducer(
     reduceExperience,
@@ -62,6 +70,7 @@ export function HomeExperience({
 
   const model = modelOf(state);
   const paper = paperOf(state);
+  const clip = clipOf(state);
   const step =
     state.id === "newcomer.notice"
       ? 1
@@ -106,12 +115,12 @@ export function HomeExperience({
         aria-labelledby="home-experience-heading"
       >
         <figure className="home-experience-stage">
-          <OrigamiFigure
-            key={`${model}-${paper}`}
+          <OrigamiScene
             model={model}
             paper={paper}
+            clip={clip}
+            fallbacks={fallbacks}
             className="home-experience-figure"
-            enter
           />
           <figcaption className="home-experience-caption">
             {copy.scene.label}
@@ -292,12 +301,14 @@ export function HomeExperience({
                   href={localPath(segment, "/cuidado/hoje")}
                   model="box"
                   paper="jade"
+                  fallbacks={fallbacks}
                 />
                 <ReturningDoor
                   copy={copy.returning.personal}
                   href={localPath(segment, "/cuidado/experiencias")}
                   model="suspended-sheet"
                   paper="lilac"
+                  fallbacks={fallbacks}
                 />
               </div>
             </div>
@@ -397,11 +408,13 @@ function ReturningDoor({
   href,
   model,
   paper,
+  fallbacks,
 }: {
   copy: HomeCopy["returning"]["assigned"];
   href: string;
   model: "box" | "suspended-sheet";
   paper: "jade" | "lilac";
+  fallbacks: Record<string, OrigamiFallback>;
 }) {
   return (
     <Link href={href} className="home-experience-door">
@@ -409,11 +422,12 @@ function ReturningDoor({
           guardadas, a folha por dobrar é o que ainda não foi decidido. Não são
           miniaturas decorativas — são os mesmos dois objetos que o ritual
           produz, e é isso que torna as duas portas legíveis sem legenda. */}
-      <OrigamiFigure
+      <OrigamiScene
         model={model}
         paper={paper}
+        clip="forming-to-formed"
+        fallbacks={fallbacks}
         className="home-experience-door-figure"
-        showTexture={false}
       />
       <span className={cn("home-experience-door-text")}>
         <span className="home-experience-door-label">{copy.label}</span>
