@@ -256,3 +256,53 @@ resolve com um gate:
 2. **Os `approval` continuam a `false`** em todos os `provenance.json`, e é
    assim que devem ficar até alguém olhar. O campo existe para registar um juízo
    humano; pô-lo a `true` por um script seria transformá-lo em ruído.
+
+---
+
+## 8. O que os papers confirmam, e onde é que eles põem a fronteira
+
+Lidos depois de o sistema estar construído, o que é a ordem errada mas dá uma
+verificação honesta: dizem eles o mesmo que este motor faz?
+
+**Schenk & Guest, «Origami Folding: A Structural Engineering Approach» (5OSME),
+§3.2.** Modelam a folha como um pórtico de barras articuladas: cada vértice é
+uma rótula, cada vinco uma barra, e as faces são trianguladas. E avisam do
+defeito que a triangulação introduz: _«the triangulated facets can easily bend,
+which is reflected by an equivalent number of trivial internal mechanisms»_. A
+diagonal que se acrescenta para triangular um quadrilátero é uma dobradiça livre
+— a face deixa de ser rígida. A correção deles é acrescentar uma restrição de
+ângulo diedro sobre essa diagonal.
+
+Este motor faz isso: `topology.ts` regista cada diagonal como aresta `F` com
+alvo 0°, e `solver.ts` dá-lhe `facetStiffness: 18` contra `creaseStiffness: 6`
+dos vincos verdadeiros. A medição que o confirma já estava a ser feita e a
+passar despercebida: **planaridade 0,00° nos seis modelos**. As faces não
+dobram.
+
+Uma diferença deliberada: o paper formula a restrição sobre `sin(θ)`, e o
+Jacobiano fica com um fator `1/cos(θ)` que explode a ±90°. Metade dos vincos
+destes modelos vive perto de 90°. Aqui o ângulo vem de `atan2` com gradientes
+exatos, que não tem essa singularidade — ver `dihedralAngleAndGradients` em
+`geometry.ts`, verificado por diferenças finitas.
+
+**Tachi, «Freeform Variations of Origami» (2010), §4.** O sistema é
+sub-restringido: `nc < 3·nvert`, portanto há um espaço de soluções e não uma
+configuração. Ele move-se dentro dele projetando no núcleo do Jacobiano,
+`dx = (I − J⁺J)dx₀`.
+
+É a formulação exata do que aqui se aprendeu por tentativa a autorar o barco, e
+que está escrito na §5 em linguagem de oficina: os quatro ângulos de um vértice
+de grau quatro **não são independentes** — há um grau de liberdade, e pedir-lhes
+valores arbitrários é pedir uma configuração que não existe. O `origami:inspect
+--angles` existe para dizer quais é que a folha aceita; é uma sonda ao mesmo
+espaço de soluções, feita por amostragem em vez de por pseudo-inversa.
+
+**O que isto quer dizer sobre o grou.** Nenhum dos dois papers atravessa a
+fronteira da §5. Ambos modelam folha sem espessura e sem contacto: Tachi
+enumera as condições de validade e diz explicitamente que uma delas é _«that a
+valid overlapping ordering exists»_ — a ordenação de camadas — e trata-a como
+condição a verificar, não como coisa que o solver resolve. Um _squash fold_ é
+uma mudança dessa ordenação. Continua a ser trabalho de motor: `faceOrders` e
+deteção de contacto, como já dizia a §5.
+
+Os papers validam a fundação e confirmam onde ela acaba. Não dão o grou.
