@@ -153,9 +153,27 @@ O que falta é proporção, não estrutura: a quilha precisa de dobrar mais fund
 do que estas diagonais permitem, o que provavelmente exige um segundo par de
 vincos a meio do costado para o bordo subir sem levar o fundo atrás.
 
-O grou não foi tentado. É um modelo sequencial com camadas que deslizam umas
-sobre as outras, e precisa da base de pássaro — vinte e tal faces e uma
-sequência de etapas — além de tratamento de contacto que este solver não tem.
+**O grou não foi autorado, e as referências mostraram porquê.**
+
+O `origami-canoe` e o `origami-hummingbird` do `origamiok.com` começam os dois
+no mesmo sítio: dois diagonais, dois eixos medianos, e um colapso em que os
+quatro cantos se juntam num ponto — a **base preliminar**. É a peça comum a
+quase todo o origami tradicional, e valia a pena saber se este motor a
+conseguia antes de tentar qualquer modelo em cima dela.
+
+**Consegue.** Está fixado em `tests/origami-pipeline.test.ts`: a base colapsa
+com 0,013% de deformação, 2° do alvo e zero interseções.
+
+O que se segue é que não passa. Depois da base, os dois modelos usam _squash
+folds_ e _petal folds_ — operações que **reordenam camadas**, fazendo o papel
+deslizar sobre si próprio. Este solver dobra uma malha triangulada fixa por
+dobradiças: sabe levar um ângulo diedro de A a B, e não tem modelo de camadas
+nem de contacto. Um squash fold não é um conjunto de ângulos-alvo; é uma
+mudança de que camada está por cima de qual.
+
+Essa é a fronteira real do motor, e é estrutural e não de afinação. Atravessá-la
+exige ordenação de faces (`faceOrders`, que o formato FOLD já prevê e que este
+compilador ainda ignora) e deteção de contacto no solver.
 
 **Consequência para o produto:** enquanto isto for verdade, a homepage não pode
 deixar de ter as figuras SVG. «Barco» e «Grou» são o que a cópia promete em

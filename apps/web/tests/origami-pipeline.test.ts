@@ -7,6 +7,7 @@ import {
   maxEdgeStrain,
   OrigamiValidationError,
   stageFromConfiguration,
+  stagesFromSource,
   validateFoldSource,
   type FoldSource,
   type FoldSourceMetadata,
@@ -411,5 +412,135 @@ describe("bake", () => {
     );
     expect(starved.ok).toBe(false);
     if (!starved.ok) expect(starved.reason).toBe("NOT_REACHED");
+  });
+});
+
+/**
+ * A base preliminar — a peça que os modelos tradicionais têm em comum.
+ *
+ * O canoe e o hummingbird da `origamiok.com` começam os dois no mesmo sítio:
+ * dois diagonais, dois eixos medianos, e um colapso em que os quatro cantos se
+ * juntam num ponto. Se o motor não conseguisse isto, não conseguiria nunca
+ * chegar a nenhum modelo tradicional, e valia a pena sabê-lo antes de tentar.
+ *
+ * Consegue. O que ainda não consegue é o passo seguinte — o *squash fold* —
+ * porque isso reordena camadas, e este solver não tem modelo de camadas nem de
+ * contacto. Ver `docs/ORIGAMI_RUNTIME.md` §5.
+ */
+describe("base preliminar", () => {
+  const centre = 0;
+  const vertices: Vec3[] = [
+    [0, 0, 0],
+    [0.5, 0, 0],
+    [0.5, 0.5, 0],
+    [0, 0.5, 0],
+    [-0.5, 0.5, 0],
+    [-0.5, 0, 0],
+    [-0.5, -0.5, 0],
+    [0, -0.5, 0],
+    [0.5, -0.5, 0],
+  ];
+
+  const edges = [
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 6],
+    [6, 7],
+    [7, 8],
+    [8, 1],
+    [0, 1],
+    [0, 3],
+    [0, 5],
+    [0, 7],
+    [0, 2],
+    [0, 4],
+    [0, 6],
+    [0, 8],
+  ] as [number, number][];
+
+  const MEDIANS = [8, 9, 10, 11];
+  const DIAGONALS = [12, 13, 14, 15];
+
+  function source(diagonal: number, median: number): FoldSource {
+    const angles: (number | null)[] = edges.map((_, index) =>
+      index < 8 ? null : 0,
+    );
+    const assignments: string[] = edges.map((_, index) =>
+      index < 8 ? "B" : "F",
+    );
+    for (const index of MEDIANS) {
+      angles[index] = median;
+      assignments[index] = median > 0 ? "V" : "M";
+    }
+    for (const index of DIAGONALS) {
+      angles[index] = diagonal;
+      assignments[index] = diagonal > 0 ? "V" : "M";
+    }
+
+    return {
+      ...METADATA,
+      vertices_coords: vertices,
+      edges_vertices: edges,
+      edges_assignment: assignments,
+      edges_foldAngle: angles,
+      faces_vertices: [
+        [0, 1, 2],
+        [0, 2, 3],
+        [0, 3, 4],
+        [0, 4, 5],
+        [0, 5, 6],
+        [0, 6, 7],
+        [0, 7, 8],
+        [0, 8, 1],
+      ],
+      file_frames: [
+        {
+          edges_foldAngle: angles.map((a) => (a === null ? null : a * 0.5)),
+          "ads:state": "forming",
+        },
+        { edges_foldAngle: angles, "ads:state": "formed" },
+      ],
+    } as unknown as FoldSource;
+  }
+
+  it("colapsa com os quatro cantos a juntarem-se, sem esticar nem atravessar", () => {
+    const built = source(178, -178);
+    validateFoldSource(built);
+
+    const mesh = buildMesh(built);
+    const result = bakeModel(mesh, stagesFromSource(built, mesh), {
+      lengthProjectionIterations: 30,
+      anchor: { origin: centre, toward: 1, plane: 2 },
+    });
+
+    expect(result.ok).toBe(true);
+    expect(result.diagnostics.worstEdgeStrain).toBeLessThan(0.0025);
+    expect(result.diagnostics.final.selfIntersectionCount).toBe(0);
+  });
+
+  /**
+   * O mecanismo só existe nos extremos: a meio caminho os oito vincos não têm
+   * uma configuração isométrica comum, e o solver assenta longe do que se lhe
+   * pediu. É a diferença entre uma base que colapsa e uma que se pode abrir a
+   * meio — e é por isso que o percurso de dobra desta base não é utilizável
+   * como animação sem etapas autoradas.
+   */
+  it("não assenta a meio caminho", () => {
+    const half = source(90, -90);
+    const mesh = buildMesh(half);
+    // Orçamento curto de propósito: o que se verifica é que **não** chega, e
+    // gastar quarenta mil passos a confirmá-lo só torna a suite lenta.
+    const result = bakeModel(mesh, stagesFromSource(half, mesh), {
+      lengthProjectionIterations: 30,
+      anchor: { origin: centre, toward: 1, plane: 2 },
+      angleToleranceDegrees: 180,
+      framesPerStage: 6,
+      relaxationSteps: 600,
+      settleSteps: 2400,
+    });
+
+    expect(result.diagnostics.finalAngleErrorDegrees).toBeGreaterThan(20);
   });
 });
