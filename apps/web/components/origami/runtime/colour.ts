@@ -17,6 +17,33 @@ export type LinearRgb = readonly [number, number, number];
 
 const CHANNEL = /-?\d*\.?\d+(?:e[-+]?\d+)?/gi;
 
+const HEX = /^#([0-9a-f]{3,8})$/i;
+
+/** `#rgb`, `#rrggbb` e as variantes com alfa, que se ignora. */
+function parseHexColour(text: string): LinearRgb | null {
+  const digits = HEX.exec(text)?.[1];
+  if (!digits) return null;
+
+  const expand =
+    digits.length === 3 || digits.length === 4
+      ? digits
+          .slice(0, 3)
+          .split("")
+          .map((d) => d + d)
+      : digits.length === 6 || digits.length === 8
+        ? [digits.slice(0, 2), digits.slice(2, 4), digits.slice(4, 6)]
+        : null;
+
+  if (!expand) return null;
+
+  const [r, g, b] = expand.map((pair) => srgbToLinear(parseInt(pair, 16))) as [
+    number,
+    number,
+    number,
+  ];
+  return [r, g, b];
+}
+
 function srgbToLinear(value: number): number {
   const normalized = value / 255;
   return normalized <= 0.04045
@@ -35,6 +62,13 @@ function srgbToLinear(value: number): number {
 export function parseCssColour(value: string): LinearRgb | null {
   const text = value.trim();
   if (!text) return null;
+
+  // Hex primeiro, e antes de qualquer coisa numérica: `#e0d9f2` tem dígitos lá
+  // dentro (`0`, `9`, `2`) que o regex de canais apanha com prazer, devolvendo
+  // um quase-preto plausível em vez de nada. Um valor errado que não falha é
+  // pior do que um erro — foi assim que o papel lilás saiu cinzento.
+  const hex = parseHexColour(text);
+  if (hex) return hex;
 
   const numbers = text.match(CHANNEL)?.map(Number);
   if (!numbers || numbers.length < 3) return null;
@@ -77,10 +111,41 @@ const FALLBACK: PaperColours = {
  * diferentes, e é o que o laboratório faz para as comparar lado a lado.
  */
 export function readPaperColours(element: Element): PaperColours {
-  const styles = getComputedStyle(element);
-  const read = (token: string, fallback: LinearRgb): LinearRgb =>
-    parseCssColour(styles.getPropertyValue(token)) ?? fallback;
+  /*
+    Não se lê a custom property; pede-se ao browser que a **use**.
 
+    `getComputedStyle(el).getPropertyValue("--paper-lit")` devolve o valor da
+    variável no formato em que foi escrita — aqui hex, noutro sítio podia ser
+    `color-mix(...)` ou um `light-dark()` por resolver, conforme o motor. Um
+    parser que tente cobrir esses formatos todos está sempre a uma sintaxe de
+    distância de devolver silenciosamente a cor errada.
+
+    Substituir a variável em `color` num elemento sonda passa o problema para
+    quem o sabe resolver: o valor computado de `color` é sempre `rgb(...)`,
+    seja qual for a sintaxe de origem.
+  */
+  const probe = element.ownerDocument.createElement("span");
+  probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText =
+    "position:absolute;width:0;height:0;overflow:hidden;pointer-events:none";
+  element.appendChild(probe);
+
+  const read = (token: string, fallback: LinearRgb): LinearRgb => {
+    probe.style.color = "";
+    probe.style.color = `var(${token})`;
+    return parseCssColour(getComputedStyle(probe).color) ?? fallback;
+  };
+
+  try {
+    return colours(read);
+  } finally {
+    probe.remove();
+  }
+}
+
+function colours(
+  read: (token: string, fallback: LinearRgb) => LinearRgb,
+): PaperColours {
   return {
     frontLit: read("--paper-lit", FALLBACK.frontLit),
     frontShade: read("--paper-shade", FALLBACK.frontShade),

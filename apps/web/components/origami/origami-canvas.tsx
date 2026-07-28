@@ -6,7 +6,7 @@ import {
   type CompiledOrigamiAsset,
   type OrigamiClipId,
 } from "./runtime/asset";
-import { OrigamiRenderer } from "./runtime/renderer";
+import { OrigamiRenderer, type RenderSnapshot } from "./runtime/renderer";
 import {
   OrigamiTimeline,
   useOrigamiAnimation,
@@ -33,6 +33,7 @@ import {
 export function OrigamiCanvas({
   modelId,
   clip,
+  paper,
   reducedMotionDefault = false,
   onReady,
   className,
@@ -43,6 +44,16 @@ export function OrigamiCanvas({
    * que conduz a cena, e não o contrário.
    */
   clip: OrigamiClipId;
+  /**
+   * A família de papel em vigor. O canvas não a usa para pintar — as cores vêm
+   * dos tokens CSS no elemento pai — mas precisa de saber **quando** mudou.
+   *
+   * Sem isto, as cores eram lidas uma vez ao carregar o asset e nunca mais: uma
+   * escolha que mudasse o papel sem trocar de modelo ficava a pintar o papel
+   * anterior, e a cena que muda de cor no meio de uma transição é a única que
+   * ninguém repara que está errada.
+   */
+  paper?: string;
   reducedMotionDefault?: boolean;
   onReady?: (ready: boolean) => void;
   className?: string;
@@ -109,13 +120,28 @@ export function OrigamiCanvas({
     return () => controller.abort();
   }, [modelId, near]);
 
+  /*
+    O último frame pedido, guardado para poder ser repintado sem a linha do
+    tempo. Uma mudança de papel não avança a dobragem — repinta o mesmo frame
+    com outra cor — e sem isto não havia como desenhar «outra vez o que já lá
+    está» fora do rAF.
+  */
+  const lastDrawRef = useRef<RenderSnapshot>({
+    frameA: 0,
+    frameB: 0,
+    mix: 0,
+    opacity: 1,
+  });
+
   const draw = useCallback((snapshot: TimelineSnapshot) => {
-    rendererRef.current?.render({
+    const state: RenderSnapshot = {
       frameA: snapshot.frameA,
       frameB: snapshot.frameB,
       mix: snapshot.mix,
       opacity: 1,
-    });
+    };
+    lastDrawRef.current = state;
+    rendererRef.current?.render(state);
   }, []);
 
   const play = useOrigamiAnimation(timeline, draw);
@@ -196,6 +222,13 @@ export function OrigamiCanvas({
     if (!ready || !timeline) return;
     play(clip);
   }, [clip, play, ready, timeline]);
+
+  // 5. O papel muda por escolha da pessoa, e não por troca de asset.
+  useEffect(() => {
+    if (!ready) return;
+    rendererRef.current?.readColours();
+    rendererRef.current?.render(lastDrawRef.current);
+  }, [paper, ready]);
 
   return (
     <canvas
