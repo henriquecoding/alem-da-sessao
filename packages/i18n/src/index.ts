@@ -1,4 +1,5 @@
 import { homeBR, homePT } from "./home";
+export type { HomeCopy } from "./home";
 
 export const locales = ["pt-PT", "pt-BR"] as const;
 export type Locale = (typeof locales)[number];

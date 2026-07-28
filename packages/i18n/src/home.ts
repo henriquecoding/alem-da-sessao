@@ -1,292 +1,287 @@
 /**
- * A homepage não descreve o intervalo. **É um intervalo.**
+ * A homepage é a primeira experiência do produto.
  *
- * Quem chega aterra dentro do espaço entre duas sessões e atravessa-o de cima
- * a baixo: a chegada, o que acontece lá dentro, por que é que ninguém o
- * modelou, o gesto que o produto inteiro é, e as duas portas.
+ * Em vez de explicar o intervalo numa sequência de secções, oferece um
+ * pequeno ensaio do modelo mental da plataforma: algo acontece, ganha forma
+ * e só atravessa para o profissional por decisão explícita. Nenhuma escolha
+ * sai do estado transitório do componente.
  *
- * A copy vive aqui, separada dos componentes, por duas razões. A primeira é
- * `check:i18n`, que exige as mesmas chaves nas duas variantes — texto dentro
- * de JSX escapa a essa verificação e foi assim que meia interface acabou só em
- * português de Portugal. A segunda é que as duas variantes não são uma
- * tradução: `Está aqui` e `Você está aqui` são a mesma frase em duas línguas
- * que tratam o leitor de maneira diferente, e isso escreve-se lado a lado ou
- * não se escreve de todo.
- *
- * Uma nota sobre a voz dos momentos (§7.5). Estão no infinitivo — «Acordar às
- * três com aquilo outra vez» — e não na segunda pessoa. Um site que diz «você
- * acordou às três» está a afirmar que sabe, e não sabe. O infinitivo nomeia a
- * experiência sem a atribuir a ninguém, que é exatamente a distância certa
- * para um primeiro parágrafo.
+ * As duas variantes são localizações editoriais completas. O tipo nasce da
+ * variante portuguesa e impede que uma alteração seja publicada apenas numa
+ * delas.
  */
-
 export const homePT = {
-  /* Tempo 1 — a chegada. */
-  arrival: {
-    fromDay: "Quarta, 14 de julho",
-    fromDetail: "50 minutos",
-    fromState: "terminou",
-    toDay: "Quarta, 21 de julho",
-    toDetail: "50 minutos",
-    toState: "ainda não",
-    hereLabel: "está aqui",
-    title: "Está aqui.",
-    lede: "Entre duas sessões. É onde vive quase todo um tratamento, e é o único sítio que nenhum produto de saúde mental modela — porque o intervalo não fatura.",
-    cue: "Atravessar",
-    span: "sete dias",
-    measureLabel: "do tratamento acontece aqui",
+  shell: {
+    eyebrow: "Um lugar entre duas sessões",
+    title: "A sessão termina. A vida continua.",
+    lede: "Além da Sessão dá forma ao que acontece nos dias entre duas conversas — sem substituir a relação, apressar o processo ou transformar cada momento num dado.",
+    exploreTab: "Conhecer o espaço",
+    returnTab: "Já utilizo",
+    privacy:
+      "Esta experiência é privada e efémera. Nada do que escolher fica guardado.",
   },
-
-  /* A pergunta de chegada. Reordena a página e não sai desta visita. */
-  question: {
-    label: "O que o traz aqui?",
-    forget: "Fica só nesta visita — nada é guardado.",
-    change: "Mudar",
-    options: {
-      professional: {
-        label: "Acompanho pessoas",
-        hint: "Psicologia, psicoterapia ou psiquiatria.",
+  scene: {
+    label: "Uma semana, sete dobras",
+    previous: "Sessão anterior",
+    next: "Próxima sessão",
+    privateSide: "Continua consigo",
+    sharedSide: "Atravessou por decisão",
+    days: ["Sessão", "Dia 2", "Dia 3", "Hoje", "Dia 5", "Dia 6", "Sessão"],
+    description:
+      "Uma folha de origami com sete dobras liga a sessão anterior à próxima. A folha ganha forma e abre uma ponte à medida que percorre a experiência.",
+  },
+  ritual: {
+    progress: "Passo {current} de {total}",
+    back: "Voltar",
+    next: "Continuar",
+    restart: "Recomeçar",
+    startTool: "Experimentar a experiência",
+    seeDemo: "Ver a plataforma completa",
+    steps: {
+      notice: {
+        number: "01",
+        name: "Notar",
+        title: "Alguma coisa ficou consigo.",
+        body: "Não precisa de escrever nem de explicar. Escolha apenas a forma que mais se aproxima do que aconteceu no intervalo.",
+        prompt: "O que encontrou pelo caminho?",
+        options: [
+          {
+            id: "echo",
+            label: "Algo ficou",
+            hint: "Um peso, uma frase ou uma sensação que regressou.",
+            object: "Eco",
+            response:
+              "Reconhecer que ficou já é diferente de o perder até à próxima sessão.",
+            tool: "Estruturas de Carga",
+            toolBody:
+              "Uma experiência visual para separar o que pesa, o que sustenta e o que já pode mudar de lugar.",
+          },
+          {
+            id: "clarity",
+            label: "Algo ganhou forma",
+            hint: "Uma ligação que só apareceu depois da conversa.",
+            object: "Clareza",
+            response:
+              "Uma perceção pode conservar a sua forma sem ser transformada imediatamente numa conclusão.",
+            tool: "Inventário da Sessão",
+            toolBody:
+              "Um percurso para reconstruir o que ficou da sessão sem depender de uma página em branco.",
+          },
+          {
+            id: "intention",
+            label: "Algo quer seguir",
+            hint: "Uma intenção que gostaria de levar consigo.",
+            object: "Intenção",
+            response:
+              "Chegar preparado não significa chegar com tudo resolvido.",
+            tool: "Inventário da Sessão",
+            toolBody:
+              "Um percurso que ajuda a escolher o que merece regressar à próxima conversa.",
+          },
+        ],
       },
-      client: {
-        label: "Estou em processo",
-        hint: "Tenho sessões com alguém.",
+      form: {
+        number: "02",
+        name: "Dar forma",
+        title: "Uma folha pode guardar mais do que uma resposta.",
+        body: "Cada experiência tem uma engine própria: dobras, objetos, relações, estados e pequenas decisões. A ferramenta adapta-se ao trabalho — o trabalho não é reduzido a um formulário.",
+        selectedLabel: "O que escolheu tornou-se",
+        recommendationLabel: "Um caminho possível",
       },
-      curious: {
-        label: "Só a olhar",
-        hint: "Ainda a decidir.",
+      decide: {
+        number: "03",
+        name: "Decidir",
+        title: "Existir não é o mesmo que partilhar.",
+        body: "O resultado continua privado. Só um resumo atravessa para o profissional quando a pessoa escolhe fazê-lo.",
+        privateAction: "Manter deste lado",
+        shareAction: "Fazer atravessar",
+        privateTitle: "Continua privado.",
+        privateBody:
+          "O profissional não vê atividade, rascunhos ou o facto de alguma coisa ter sido criada.",
+        sharedTitle: "Atravessou.",
+        sharedBody:
+          "Apenas o resumo escolhido chegaria ao profissional. Nesta demonstração, nada foi enviado.",
       },
     },
   },
-
-  /* Tempo 2 — o que acontece dentro do intervalo. */
-  moments: {
-    eyebrow: "Dentro do intervalo",
-    title: "O que acontece aqui não cabe numa nota de sessão.",
-    lede: "Sete dias entre duas conversas de cinquenta minutos. Isto é uma semana qualquer, e nenhuma destas linhas tem onde ficar.",
-    items: [
-      {
-        when: "Quinta · 03:14",
-        text: "Acordar com aquilo outra vez. Às nove, já não há palavras para o quê.",
-      },
-      {
-        when: "Sexta · 12:40",
-        text: "Ensaiar uma frase na fila do café e decidir que não vale a pena dizê-la.",
-      },
-      {
-        when: "Sábado",
-        text: "Um dia bom, sem motivo aparente. Ninguém regista os dias bons.",
-      },
-      {
-        when: "Domingo · 22:05",
-        text: "Perceber uma coisa inteira, no escuro, e não ter onde a pousar.",
-      },
-      {
-        when: "Terça · 18:40",
-        text: "Escolher as três coisas que vai contar. As outras nove ficam de fora.",
-      },
-      {
-        when: "Quarta · 09:58",
-        text: "Chegar, e começar por «não me lembro bem da semana».",
-      },
-    ],
-    closing:
-      "Nada disto é registo clínico. É o processo a acontecer sem testemunha, todas as semanas, em toda a gente.",
-  },
-
-  /* Tempo 3 — o argumento. */
-  why: {
-    eyebrow: "A pergunta óbvia",
-    title: "Não é que ninguém tenha pensado nisto.",
-    subtitle: "É que o modelo de negócio de todos os outros impede.",
-    rows: [
-      {
-        who: "Registos clínicos eletrónicos",
-        what: "modelam o encontro, porque é o encontro que fatura. O intervalo não fatura, logo não existe na base de dados.",
-      },
-      {
-        who: "Marketplaces de terapia",
-        what: "vivem de comissão por sessão. Um intervalo bem cuidado não gera comissão nenhuma.",
-      },
-      {
-        who: "Aplicações diretas ao consumidor",
-        what: "monetizam uso em escala. Pôr um profissional humano no circuito destrói a escala — por isso não põem.",
-      },
-    ],
-    conclusion:
-      "Aqui quem paga a assinatura é o profissional. É por isso que este produto pode recusar sequências, notificações diárias e pontuações de humor sem perder receita — e é por isso que pode dar forma ao intervalo.",
-  },
-
-  /* Tempo 4 — o gesto. */
-  crossing: {
-    eyebrow: "O gesto",
-    title: "Escrever é privado. Atravessar é uma decisão.",
-    lede: "Tudo o que se escreve fica deste lado. Nada chega ao profissional por existir: chega porque alguém o levou até lá, num gesto que demora o tempo da decisão.",
-    invite: "Experimente — não há nada em jogo.",
-    recipient: "Inês Almeida",
-    doneTitle: "Atravessou.",
-    doneBody:
-      "Numa sessão real, a Dra. Inês veria isto — e só isto — antes da próxima conversa. O resto continuava deste lado.",
-    again: "Outra vez",
-    access:
-      "Arrastar, Enter ou as setas do teclado. Os três caminhos valem o mesmo, por desenho.",
-  },
-
-  /* Tempo 5 — as duas portas. */
-  doors: {
-    eyebrow: "Duas portas",
-    title: "Ritmos opostos, e ainda bem.",
-    lede: "Quem acompanha chega com pressa e precisa de decidir. Quem está em processo chega devagar e precisa de espaço. A mesma plataforma não pode ter o mesmo ritmo para os dois.",
+  returning: {
+    eyebrow: "A porta certa, sem desvios",
+    title: "Retome onde o seu dia realmente está.",
+    body: "A mesma entrada reconhece dois ritmos. O espaço do cliente abre devagar; a área profissional leva diretamente ao que pede atenção.",
+    client: {
+      label: "Estou em processo",
+      title: "Retomar o meu intervalo",
+      body: "Voltar à experiência em curso, à próxima sessão e ao que continua privado.",
+      cta: "Entrar no meu espaço",
+    },
     professional: {
-      eyebrow: "Acompanha pessoas",
-      body: "Densidade alta, tudo numa vista, latência baixa. A gestão da prática é o bilhete de entrada; o intervalo é o argumento.",
+      label: "Acompanho pessoas",
+      title: "Abrir o meu dia",
+      body: "Ver agenda, contexto, partilhas por rever e gestão da prática numa superfície compacta.",
       cta: "Entrar na área profissional",
     },
+  },
+  roles: {
+    eyebrow: "Uma plataforma, dois ritmos",
+    title: "A tecnologia fica à volta. A relação permanece no centro.",
+    lede: "Não é um terapeuta artificial, um mural de respostas ou outra aplicação a pedir uso diário. É uma infraestrutura conduzida por profissionais para prolongar continuidade, autonomia e contexto.",
     client: {
-      eyebrow: "Está em processo",
-      body: "Uma decisão por ecrã, ritmo lento, sem contagens nem sequências a manter. Não é um registo clínico reduzido — é um lugar.",
-      cta: "Entrar na área do cliente",
+      index: "01 · Para quem está em processo",
+      title: "Um espaço que não exige desempenho.",
+      body: "Experiências guiadas, progresso sem streaks e privacidade por defeito. Cada resultado pode permanecer só consigo.",
+      cta: "Explorar experiências",
     },
-    already: {
-      title: "Já tem sessões com alguém?",
-      body: "Então o intervalo já existe — só não tinha forma. Quem o abre é o seu profissional, e o que lá puser continua seu até decidir o contrário.",
-      cta: "Ver como funciona a partilha",
+    professional: {
+      index: "02 · Para quem acompanha",
+      title: "O contexto certo antes da próxima conversa.",
+      body: "Agenda, clientes, sessões, experiências e partilhas deliberadas sem transformar a prática num feed de vigilância.",
+      cta: "Conhecer a área profissional",
     },
-    open: "Experimentar sem conta",
+  },
+  close: {
+    eyebrow: "Além da sessão, não além do profissional",
+    title: "Uma presença digital que devolve a conversa às pessoas.",
+    body: "A plataforma organiza o intervalo. O cuidado, a interpretação e as decisões clínicas continuam onde devem estar: na relação entre cliente e profissional.",
+    primary: "Entrar na demonstração",
+    secondary: "Ver segurança e privacidade",
   },
 };
 
-/**
- * O tipo vem da variante de Portugal e é imposto à do Brasil. `check:i18n`
- * compara as chaves em tempo de execução; isto falha antes, na compilação, e
- * com o nome da chave que falta.
- */
 export type HomeCopy = typeof homePT;
 
 export const homeBR: HomeCopy = {
-  arrival: {
-    fromDay: "Quarta, 14 de julho",
-    fromDetail: "50 minutos",
-    fromState: "terminou",
-    toDay: "Quarta, 21 de julho",
-    toDetail: "50 minutos",
-    toState: "ainda não",
-    hereLabel: "você está aqui",
-    title: "Você está aqui.",
-    lede: "Entre duas sessões. É onde vive quase todo um tratamento, e é o único lugar que nenhum produto de saúde mental modela — porque o intervalo não fatura.",
-    cue: "Atravessar",
-    span: "sete dias",
-    measureLabel: "do tratamento acontece aqui",
+  shell: {
+    eyebrow: "Um lugar entre duas sessões",
+    title: "A sessão termina. A vida continua.",
+    lede: "Além da Sessão dá forma ao que acontece nos dias entre duas conversas — sem substituir a relação, apressar o processo ou transformar cada momento em um dado.",
+    exploreTab: "Conhecer o espaço",
+    returnTab: "Já utilizo",
+    privacy:
+      "Esta experiência é privada e efêmera. Nada do que você escolher fica salvo.",
   },
-
-  question: {
-    label: "O que traz você aqui?",
-    forget: "Fica só nesta visita — nada é guardado.",
-    change: "Mudar",
-    options: {
-      professional: {
-        label: "Acompanho pessoas",
-        hint: "Psicologia, psicoterapia ou psiquiatria.",
+  scene: {
+    label: "Uma semana, sete dobras",
+    previous: "Sessão anterior",
+    next: "Próxima sessão",
+    privateSide: "Continua com você",
+    sharedSide: "Atravessou por decisão",
+    days: ["Sessão", "Dia 2", "Dia 3", "Hoje", "Dia 5", "Dia 6", "Sessão"],
+    description:
+      "Uma folha de origami com sete dobras liga a sessão anterior à próxima. A folha ganha forma e abre uma ponte à medida que percorre a experiência.",
+  },
+  ritual: {
+    progress: "Passo {current} de {total}",
+    back: "Voltar",
+    next: "Continuar",
+    restart: "Recomeçar",
+    startTool: "Experimentar a experiência",
+    seeDemo: "Ver a plataforma completa",
+    steps: {
+      notice: {
+        number: "01",
+        name: "Notar",
+        title: "Alguma coisa ficou com você.",
+        body: "Você não precisa escrever nem explicar. Escolha apenas a forma que mais se aproxima do que aconteceu no intervalo.",
+        prompt: "O que você encontrou pelo caminho?",
+        options: [
+          {
+            id: "echo",
+            label: "Algo ficou",
+            hint: "Um peso, uma frase ou uma sensação que voltou.",
+            object: "Eco",
+            response:
+              "Reconhecer que ficou já é diferente de perder isso até a próxima sessão.",
+            tool: "Estruturas de Carga",
+            toolBody:
+              "Uma experiência visual para separar o que pesa, o que sustenta e o que já pode mudar de lugar.",
+          },
+          {
+            id: "clarity",
+            label: "Algo ganhou forma",
+            hint: "Uma ligação que só apareceu depois da conversa.",
+            object: "Clareza",
+            response:
+              "Uma percepção pode conservar sua forma sem ser transformada imediatamente em uma conclusão.",
+            tool: "Inventário da Sessão",
+            toolBody:
+              "Um percurso para reconstruir o que ficou da sessão sem depender de uma página em branco.",
+          },
+          {
+            id: "intention",
+            label: "Algo quer seguir",
+            hint: "Uma intenção que você gostaria de levar consigo.",
+            object: "Intenção",
+            response:
+              "Chegar preparado não significa chegar com tudo resolvido.",
+            tool: "Inventário da Sessão",
+            toolBody:
+              "Um percurso que ajuda a escolher o que merece voltar à próxima conversa.",
+          },
+        ],
       },
-      client: {
-        label: "Estou em processo",
-        hint: "Tenho sessões com alguém.",
+      form: {
+        number: "02",
+        name: "Dar forma",
+        title: "Uma folha pode guardar mais do que uma resposta.",
+        body: "Cada experiência tem uma engine própria: dobras, objetos, relações, estados e pequenas decisões. A ferramenta se adapta ao trabalho — o trabalho não é reduzido a um formulário.",
+        selectedLabel: "O que você escolheu se tornou",
+        recommendationLabel: "Um caminho possível",
       },
-      curious: {
-        label: "Só olhando",
-        hint: "Ainda decidindo.",
+      decide: {
+        number: "03",
+        name: "Decidir",
+        title: "Existir não é o mesmo que compartilhar.",
+        body: "O resultado continua privado. Só um resumo atravessa para o profissional quando a pessoa escolhe fazer isso.",
+        privateAction: "Manter deste lado",
+        shareAction: "Fazer atravessar",
+        privateTitle: "Continua privado.",
+        privateBody:
+          "O profissional não vê atividade, rascunhos ou o fato de alguma coisa ter sido criada.",
+        sharedTitle: "Atravessou.",
+        sharedBody:
+          "Apenas o resumo escolhido chegaria ao profissional. Nesta demonstração, nada foi enviado.",
       },
     },
   },
-
-  moments: {
-    eyebrow: "Dentro do intervalo",
-    title: "O que acontece aqui não cabe numa nota de sessão.",
-    lede: "Sete dias entre duas conversas de cinquenta minutos. Isto é uma semana qualquer, e nenhuma dessas linhas tem onde ficar.",
-    items: [
-      {
-        when: "Quinta · 03:14",
-        text: "Acordar com aquilo de novo. Às nove, já não há palavras para o quê.",
-      },
-      {
-        when: "Sexta · 12:40",
-        text: "Ensaiar uma frase na fila do café e decidir que não vale a pena falar.",
-      },
-      {
-        when: "Sábado",
-        text: "Um dia bom, sem motivo aparente. Ninguém registra os dias bons.",
-      },
-      {
-        when: "Domingo · 22:05",
-        text: "Entender uma coisa inteira, no escuro, e não ter onde deixá-la.",
-      },
-      {
-        when: "Terça · 18:40",
-        text: "Escolher as três coisas que vai contar. As outras nove ficam de fora.",
-      },
-      {
-        when: "Quarta · 09:58",
-        text: "Chegar, e começar por “não lembro bem da semana”.",
-      },
-    ],
-    closing:
-      "Nada disso é registro clínico. É o processo acontecendo sem testemunha, toda semana, em todo mundo.",
-  },
-
-  why: {
-    eyebrow: "A pergunta óbvia",
-    title: "Não é que ninguém tenha pensado nisso.",
-    subtitle: "É que o modelo de negócio de todos os outros impede.",
-    rows: [
-      {
-        who: "Prontuários eletrônicos",
-        what: "modelam o encontro, porque é o encontro que fatura. O intervalo não fatura, logo não existe no banco de dados.",
-      },
-      {
-        who: "Marketplaces de terapia",
-        what: "vivem de comissão por sessão. Um intervalo bem cuidado não gera comissão nenhuma.",
-      },
-      {
-        who: "Aplicativos diretos ao consumidor",
-        what: "monetizam uso em escala. Colocar um profissional humano no circuito destrói a escala — por isso não colocam.",
-      },
-    ],
-    conclusion:
-      "Aqui quem paga a assinatura é o profissional. É por isso que este produto pode recusar sequências, notificações diárias e pontuações de humor sem perder receita — e é por isso que pode dar forma ao intervalo.",
-  },
-
-  crossing: {
-    eyebrow: "O gesto",
-    title: "Escrever é privado. Atravessar é uma decisão.",
-    lede: "Tudo o que você escreve fica deste lado. Nada chega ao profissional por existir: chega porque alguém levou até lá, num gesto que dura o tempo da decisão.",
-    invite: "Experimente — não há nada em jogo.",
-    recipient: "Inês Almeida",
-    doneTitle: "Atravessou.",
-    doneBody:
-      "Numa sessão real, a Dra. Inês veria isso — e só isso — antes da próxima conversa. O resto continuava deste lado.",
-    again: "De novo",
-    access:
-      "Arrastar, Enter ou as setas do teclado. Os três caminhos valem o mesmo, por design.",
-  },
-
-  doors: {
-    eyebrow: "Duas portas",
-    title: "Ritmos opostos, e ainda bem.",
-    lede: "Quem acompanha chega com pressa e precisa decidir. Quem está em processo chega devagar e precisa de espaço. A mesma plataforma não pode ter o mesmo ritmo para os dois.",
+  returning: {
+    eyebrow: "A porta certa, sem desvios",
+    title: "Retome onde o seu dia realmente está.",
+    body: "A mesma entrada reconhece dois ritmos. O espaço do cliente abre devagar; a área profissional leva diretamente ao que pede atenção.",
+    client: {
+      label: "Estou em processo",
+      title: "Retomar o meu intervalo",
+      body: "Voltar à experiência em curso, à próxima sessão e ao que continua privado.",
+      cta: "Entrar no meu espaço",
+    },
     professional: {
-      eyebrow: "Acompanha pessoas",
-      body: "Densidade alta, tudo numa visão, latência baixa. A gestão da prática é o bilhete de entrada; o intervalo é o argumento.",
+      label: "Acompanho pessoas",
+      title: "Abrir o meu dia",
+      body: "Ver agenda, contexto, compartilhamentos para revisar e gestão da prática em uma superfície compacta.",
       cta: "Entrar na área profissional",
     },
+  },
+  roles: {
+    eyebrow: "Uma plataforma, dois ritmos",
+    title: "A tecnologia fica ao redor. A relação permanece no centro.",
+    lede: "Não é um terapeuta artificial, um mural de respostas ou outro aplicativo pedindo uso diário. É uma infraestrutura conduzida por profissionais para prolongar continuidade, autonomia e contexto.",
     client: {
-      eyebrow: "Está em processo",
-      body: "Uma decisão por tela, ritmo lento, sem contagens nem sequências a manter. Não é um prontuário reduzido — é um lugar.",
-      cta: "Entrar na área do cliente",
+      index: "01 · Para quem está em processo",
+      title: "Um espaço que não exige desempenho.",
+      body: "Experiências guiadas, progresso sem streaks e privacidade por padrão. Cada resultado pode permanecer só com você.",
+      cta: "Explorar experiências",
     },
-    already: {
-      title: "Você já tem sessões com alguém?",
-      body: "Então o intervalo já existe — só não tinha forma. Quem abre é o seu profissional, e o que você colocar lá continua seu até decidir o contrário.",
-      cta: "Ver como funciona o compartilhamento",
+    professional: {
+      index: "02 · Para quem acompanha",
+      title: "O contexto certo antes da próxima conversa.",
+      body: "Agenda, clientes, sessões, experiências e compartilhamentos deliberados sem transformar a prática em um feed de vigilância.",
+      cta: "Conhecer a área profissional",
     },
-    open: "Experimentar sem conta",
+  },
+  close: {
+    eyebrow: "Além da sessão, não além do profissional",
+    title: "Uma presença digital que devolve a conversa às pessoas.",
+    body: "A plataforma organiza o intervalo. O cuidado, a interpretação e as decisões clínicas continuam onde devem estar: na relação entre cliente e profissional.",
+    primary: "Entrar na demonstração",
+    secondary: "Ver segurança e privacidade",
   },
 };
