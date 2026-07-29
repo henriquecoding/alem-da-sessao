@@ -399,5 +399,61 @@ rigidez de vinco na ordem do `kfold` do paper, e o limite de deformação a
 _medir_ em vez de reprovar. As três juntas são a receita publicada. Nenhuma
 delas é `faceOrders`.
 
+### 8.2 O grou tradicional, tentado a sério
+
+A pergunta deixou de ser teórica quando o padrão apareceu: o
+`assets/Origami/traditionalCrane.svg` do OrigamiSimulator — 84 `<line>` e um
+`<rect>`, exportado do Illustrator, MIT. É o padrão real, não uma reconstrução.
+
+**O importador lê-o por inteiro.** 88 segmentos → 60 vértices, 149 vincos, 76
+faces, com o erro de área do arranjo a dar exatamente zero. A geometria do
+ficheiro atravessa o pipeline. Isso já não é a parte difícil.
+
+Três gates de autoria reprovaram-no pelo caminho, e cada um ensinou uma coisa
+diferente:
+
+1. **Tolerância de soldadura.** A de omissão (1e-4) é apertada de mais para um
+   ficheiro de desenho. Medido neste padrão: depois de colapsar o
+   arredondamento, os vértices distintos ficam todos a 4,5e-4 ou menos uns dos
+   outros por ruído de traçado, e o primeiro espaçamento real está a 3,05e-2 —
+   um salto de 68×. Qualquer tolerância nessa banda separa os dois regimes;
+   `--weld 3e-3` fica dez vezes acima do ruído e dez vezes abaixo da geometria.
+2. **`SHEET_NOT_SQUARE`, e era um defeito nosso.** A folha media 1,0000 ×
+   1,0002 porque um vinco a acabar um décimo de pixel fora do bordo entrava na
+   tolerância e partia o contorno **sem** ser posto sobre ele. Decidir que um
+   ponto está no bordo obriga a pô-lo lá; corrigido em `planar.ts`.
+3. **`DEGENERATE_TRIANGLE`.** O padrão tem faces cuja triangulação desce a
+   0,013 — abaixo do piso de 0,05, que foi escolhido para modelos escritos à
+   mão. É o caso que o paper descreve como _«high-aspect-ratio triangles»_ e
+   que não recusa.
+
+**E depois não dobra.** Com tudo isso ultrapassado, nenhum dos quatro regimes
+testados chega ao grou:
+
+| regime                           | strain | erro de ângulo | interseções |
+| -------------------------------- | -----: | -------------: | ----------: |
+| paper (sem projeção, vinco mole) |  34,6% |          85,4° |         164 |
+| projeção 8, vinco mole           |  0,71% |         178,0° |         130 |
+| projeção 30, vinco mole          |  0,16% |         178,8° |          62 |
+| rígido (defaults do repositório) |  0,71% |         179,3° |         135 |
+
+Ou a folha estica um terço do seu tamanho, ou os vincos ficam praticamente por
+dobrar. Não há regime intermédio que dê a forma.
+
+**O que falta está identificado, e não é `faceOrders`.** É a §2.4 do paper da
+Ghassaei: **restrições de face** — molas sobre os ângulos interiores de cada
+triângulo, com `kface`. Este motor nunca as implementou; substituiu-as por
+projeção de comprimento, que é outra coisa (fixa comprimentos de aresta, não
+ângulos internos). O paper diz para que servem em termos que descrevem
+exatamente o que aqui se mediu: _«face constraints increase the stability of
+the simulation across a variety of input crease patterns»_, e em particular
+para triângulos de razão de aspeto alta — que é do que o grou é feito. Sem
+elas, a malha corta em vez de dobrar, e 34% de deformação é o corte a
+acontecer.
+
+`kface = 0,2` aparece em todas as configurações que o paper reporta. Enquanto
+não existir aqui, o grou não fecha — e a borboleta e a canoa, que são da mesma
+família, também não.
+
 Os papers validam a fundação. Dois deles confirmam onde ela acaba; o terceiro
 diz por onde se passa, e o preço.

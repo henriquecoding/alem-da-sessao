@@ -117,7 +117,30 @@ function assertFinite(point: Vec3, context: string): void {
  * partida produz erros derivados que escondem o primeiro, e o primeiro é o
  * único que interessa a quem está a autorar.
  */
-export function validateFoldSource(source: FoldSource): ValidationReport {
+export type ValidationOptions = {
+  /**
+   * Abaixo desta qualidade um triângulo é recusado.
+   *
+   * Tem 0,05 por omissão, e para modelos autorados aqui é o valor certo: um
+   * triângulo fino num modelo escrito à mão é um erro de autoria, e o solver
+   * trata-o mal.
+   *
+   * Um padrão de vincos real não obedece a isto. O grou tradicional do
+   * OrigamiSimulator tem faces cuja triangulação desce a 0,013 — e o paper
+   * deles descreve exatamente este caso («high-aspect-ratio triangles may pose
+   * a problem in simulation»), sem o recusar: mitiga-o com rigidez e com
+   * triangulação escolhida à mão. Baixar o valor é como se importa um padrão
+   * que não foi desenhado para este gate, e sabendo o que se está a aceitar.
+   */
+  readonly triangleQualityReject?: number;
+};
+
+export function validateFoldSource(
+  source: FoldSource,
+  options: ValidationOptions = {},
+): ValidationReport {
+  const qualityReject =
+    options.triangleQualityReject ?? TRIANGLE_QUALITY_REJECT;
   if (source.file_spec !== 1.2) {
     throw new OrigamiValidationError(
       "FOLD_SPEC",
@@ -334,10 +357,10 @@ export function validateFoldSource(source: FoldSource): ValidationReport {
     );
     worstQuality = Math.min(worstQuality, quality);
 
-    if (quality < TRIANGLE_QUALITY_REJECT) {
+    if (quality < qualityReject) {
       throw new OrigamiValidationError(
         "DEGENERATE_TRIANGLE",
-        `triângulo ${index} (face ${triangle.faceIndex}) tem qualidade ${quality.toFixed(4)}, abaixo de ${TRIANGLE_QUALITY_REJECT}`,
+        `triângulo ${index} (face ${triangle.faceIndex}) tem qualidade ${quality.toFixed(4)}, abaixo de ${qualityReject}`,
       );
     }
     if (quality < TRIANGLE_QUALITY_WARN) {
