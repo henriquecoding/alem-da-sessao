@@ -190,9 +190,15 @@ dobradiças: sabe levar um ângulo diedro de A a B, e não tem modelo de camadas
 nem de contacto. Um squash fold não é um conjunto de ângulos-alvo; é uma
 mudança de que camada está por cima de qual.
 
-Essa é a fronteira real do motor, e é estrutural e não de afinação. Atravessá-la
-exige ordenação de faces (`faceOrders`, que o formato FOLD já prevê e que este
-compilador ainda ignora) e deteção de contacto no solver.
+Essa é a fronteira real do motor para uma dobragem **fisicamente válida**, e é
+estrutural e não de afinação: atravessá-la exige ordenação de faces
+(`faceOrders`, que o formato FOLD já prevê e que este compilador ainda ignora) e
+deteção de contacto no solver.
+
+Para uma **forma reconhecível** o preço é outro, e mais barato — a §8.1 mostra,
+com o paper do próprio OrigamiSimulator, que ele dobra o grou sem modelo de
+camadas e sem deteção de colisão, deixando o papel esticar e atravessar-se. O
+que bloqueia o grou aqui não é a falta de `faceOrders`: é a rigidez.
 
 **Consequência para o produto, e a escolha que se seguiu.** Havia duas saídas:
 manter figuras desenhadas à mão para os dois nomes que o motor não serve, ou
@@ -334,12 +340,64 @@ valores arbitrários é pedir uma configuração que não existe. O `origami:ins
 --angles` existe para dizer quais é que a folha aceita; é uma sonda ao mesmo
 espaço de soluções, feita por amostragem em vez de por pseudo-inversa.
 
-**O que isto quer dizer sobre o grou.** Nenhum dos dois papers atravessa a
-fronteira da §5. Ambos modelam folha sem espessura e sem contacto: Tachi
+**O que isto quer dizer sobre o grou.** Nenhum destes **dois** papers atravessa
+a fronteira da §5. Ambos modelam folha sem espessura e sem contacto: Tachi
 enumera as condições de validade e diz explicitamente que uma delas é _«that a
 valid overlapping ordering exists»_ — a ordenação de camadas — e trata-a como
 condição a verificar, não como coisa que o solver resolve. Um _squash fold_ é
-uma mudança dessa ordenação. Continua a ser trabalho de motor: `faceOrders` e
-deteção de contacto, como já dizia a §5.
+uma mudança dessa ordenação.
 
-Os papers validam a fundação e confirmam onde ela acaba. Não dão o grou.
+### 8.1 O terceiro paper diz o contrário, e é o que este motor copiou
+
+Ghassaei, Demaine e Gershenfeld, _Fast, Interactive Origami Simulation using
+GPU Computation_ (Origami⁷, 2018) — o paper do OrigamiSimulator, que o
+`NOTICE.md` já citava mas que não tinha sido lido contra esta questão. A
+Figura 11 responde-lhe diretamente, e a resposta contraria o que a §5 e a ADR
+0034 afirmavam:
+
+> **(C)** _The compliance of our method allows non-rigidly foldable designs like
+> the crane to ﬁnd their ﬁnal folded state (allowing for some self-intersection)._
+>
+> **(D)** _Even with collision detection and planar constraints (inﬁnitely stiff
+> facet creases) turned off, Freeform Origami is not able to correctly fold a
+> crane._
+>
+> **(E)** _Similarly, increasing the material stiffness in our solver prevents
+> the crane from reaching the correct folded state._
+
+E, em «Future Work»: _«Future work may also grow to include collision
+detection»_ — ou seja, **o OrigamiSimulator não tem deteção de colisão nenhuma,
+e não tem modelo de camadas.** Mesmo assim dobra o grou.
+
+O que isto corrige: a §5 dizia que atravessar a fronteira _«exige `faceOrders` e
+deteção de contacto»_. Para uma dobragem **fisicamente válida**, exige. Para uma
+**forma reconhecível**, que é o que o produto quer, não exige nada disso — exige
+o contrário. O grou aparece porque o papel é deixado esticar um pouco e
+atravessar-se; e desaparece assim que se aperta o material (11E) ou se impõe
+rigidez exata (11D).
+
+**A consequência incómoda: o que este motor tem de melhor é o que bloqueia o
+grou.** A ADR 0034 apresenta o limite de deformação de 0,25% como uma virtude,
+e diz que é _«mais apertado do que o OrigamiSimulator alcança»_. As duas coisas
+são verdade e a segunda explica a primeira ao contrário do que parecia: a
+projeção de comprimento que põe o strain a 0,001% é exatamente o regime rígido
+da Figura 11E, onde o grou não fecha.
+
+Medido neste motor, com um hipar — quadrados concêntricos alternados mais as
+duas diagonais, o padrão que a Figura 7 do paper usa precisamente para mostrar
+strain: com os parâmetros do paper (`EA = 20`, `kfold = kfacet = 0,7`, `ζ = 0,45`,
+sem projeção de comprimento) o modelo assenta com **16,7%** de deformação. O
+gate deste repositório rejeita acima de 0,25% — cerca de setenta vezes menos.
+Nenhuma das duas execuções chegou ao alvo, portanto isto **não** é uma
+demonstração de que o hipar dobra aqui; é a medição da distância entre os dois
+regimes, e ela é de duas ordens de grandeza.
+
+Falta, portanto, uma terceira coisa além das duas que já foram feitas
+(atribuições vindas de um padrão real, e interseção medida em vez de
+bloqueante): **um modo complacente** — projeção de comprimento desligada,
+rigidez de vinco na ordem do `kfold` do paper, e o limite de deformação a
+_medir_ em vez de reprovar. As três juntas são a receita publicada. Nenhuma
+delas é `faceOrders`.
+
+Os papers validam a fundação. Dois deles confirmam onde ela acaba; o terceiro
+diz por onde se passa, e o preço.

@@ -264,6 +264,93 @@ describe("leitura do SVG", () => {
   });
 });
 
+/**
+ * A outra metade da convenção.
+ *
+ * A cor diz o sentido; a **opacidade diz a amplitude**. `pattern.js` calcula
+ * `targetAngle = ±opacity × 180`, e a app exporta padrões com a opacidade a
+ * codificar o ângulo final de cada vinco. Ler só a cor faria todo o padrão
+ * dobrar até ao fim — um modelo diferente do desenhado, e sem nada a
+ * assinalá-lo.
+ */
+describe("opacidade como amplitude", () => {
+  const creaseOf = (body: string) =>
+    parseCreasePatternSvg(svg(body)).filter((s) => s.assignment !== "B")[0]!;
+
+  it("lê o atributo opacity", () => {
+    expect(
+      creaseOf(
+        `<line x1="0" y1="0" x2="10" y2="0" stroke="${RED}" opacity="0.5"/>`,
+      ).foldFraction,
+    ).toBeCloseTo(0.5, 9);
+  });
+
+  it("lê stroke-opacity", () => {
+    expect(
+      creaseOf(
+        `<line x1="0" y1="0" x2="10" y2="0" stroke="${RED}" stroke-opacity="0.25"/>`,
+      ).foldFraction,
+    ).toBeCloseTo(0.25, 9);
+  });
+
+  /** «If both are present, they get multiplied together» — `pattern.js`. */
+  it("multiplica as duas quando ambas estão presentes", () => {
+    expect(
+      creaseOf(
+        `<line x1="0" y1="0" x2="10" y2="0" stroke="${RED}" opacity="0.5" stroke-opacity="0.5"/>`,
+      ).foldFraction,
+    ).toBeCloseTo(0.25, 9);
+  });
+
+  it("compõe a opacidade dos grupos e herda stroke-opacity", () => {
+    expect(
+      creaseOf(
+        `<g opacity="0.5"><g stroke-opacity="0.5">
+           <line x1="0" y1="0" x2="10" y2="0" stroke="${RED}"/>
+         </g></g>`,
+      ).foldFraction,
+    ).toBeCloseTo(0.25, 9);
+  });
+
+  it("é 1 quando nada é declarado", () => {
+    expect(
+      creaseOf(`<line x1="0" y1="0" x2="10" y2="0" stroke="${RED}"/>`)
+        .foldFraction,
+    ).toBe(1);
+  });
+
+  /**
+   * Numa fronteira a opacidade é transparência e não amplitude. Lê-la como
+   * ângulo inventaria uma dobra numa aresta que não dobra.
+   */
+  it("não lê amplitude numa fronteira", () => {
+    const [boundary] = parseCreasePatternSvg(
+      `<svg><rect x="0" y="0" width="10" height="10" stroke="#000000" opacity="0.3"/></svg>`,
+    );
+    expect(boundary!.foldFraction).toBe(1);
+  });
+
+  it("leva a amplitude até ao ângulo do modelo", () => {
+    // Metade das medianas a 100% e metade a 50%: os ângulos têm de sair na
+    // mesma proporção, e não todos iguais.
+    const pattern = preliminaryBase(
+      [RED, RED, RED, BLUE],
+      [BLUE, BLUE, BLUE, `${BLUE}" stroke-opacity="0.5`],
+    );
+    const imported = importCreasePattern(pattern, {
+      stageFractions: [1],
+      foldAngleDegrees: 180,
+    });
+
+    const angles = Object.values(imported.model.stages[0]!.angles!)
+      .map((value) => Math.abs(Math.round(value)))
+      .sort((a, b) => a - b);
+
+    expect(angles.filter((a) => a === 90)).toHaveLength(1);
+    expect(angles.filter((a) => a === 180)).toHaveLength(7);
+  });
+});
+
 describe("arranjo planar", () => {
   const square = [
     { a: [0, 0], b: [1, 0] },
@@ -276,6 +363,7 @@ describe("arranjo planar", () => {
     a: edge.a as [number, number],
     b: edge.b as [number, number],
     assignment: "B" as const,
+    foldFraction: 1,
     source: "teste",
   }));
 
@@ -283,10 +371,16 @@ describe("arranjo planar", () => {
     // O canto superior direito chega com um desvio de 1e-6 em cada linha.
     const result = buildPlanarSubdivision(
       [
-        { a: [0, 0], b: [1, 0], assignment: "B", source: "t" },
-        { a: [1.000001, 0.000001], b: [1, 1], assignment: "B", source: "t" },
-        { a: [1, 1], b: [0, 1], assignment: "B", source: "t" },
-        { a: [0, 1], b: [0, 0], assignment: "B", source: "t" },
+        { a: [0, 0], b: [1, 0], assignment: "B", foldFraction: 1, source: "t" },
+        {
+          a: [1.000001, 0.000001],
+          b: [1, 1],
+          assignment: "B",
+          foldFraction: 1,
+          source: "t",
+        },
+        { a: [1, 1], b: [0, 1], assignment: "B", foldFraction: 1, source: "t" },
+        { a: [0, 1], b: [0, 0], assignment: "B", foldFraction: 1, source: "t" },
       ],
       1e-4,
     );
@@ -303,8 +397,20 @@ describe("arranjo planar", () => {
     const result = buildPlanarSubdivision(
       [
         ...boundary,
-        { a: [0, 0.5], b: [1, 0.5], assignment: "M", source: "t" },
-        { a: [0.5, 0], b: [0.5, 1], assignment: "V", source: "t" },
+        {
+          a: [0, 0.5],
+          b: [1, 0.5],
+          assignment: "M",
+          foldFraction: 1,
+          source: "t",
+        },
+        {
+          a: [0.5, 0],
+          b: [0.5, 1],
+          assignment: "V",
+          foldFraction: 1,
+          source: "t",
+        },
       ],
       1e-4,
     );
@@ -317,8 +423,20 @@ describe("arranjo planar", () => {
     const result = buildPlanarSubdivision(
       [
         ...boundary,
-        { a: [0.5, 0], b: [0.5, 1], assignment: "M", source: "t" },
-        { a: [0.5, 0.5], b: [1, 0.5], assignment: "V", source: "t" },
+        {
+          a: [0.5, 0],
+          b: [0.5, 1],
+          assignment: "M",
+          foldFraction: 1,
+          source: "t",
+        },
+        {
+          a: [0.5, 0.5],
+          b: [1, 0.5],
+          assignment: "V",
+          foldFraction: 1,
+          source: "t",
+        },
       ],
       1e-4,
     );
@@ -332,7 +450,13 @@ describe("arranjo planar", () => {
         buildPlanarSubdivision(
           [
             ...boundary,
-            { a: [0.5, 0.5], b: [1, 0.5], assignment: "M", source: "t" },
+            {
+              a: [0.5, 0.5],
+              b: [1, 0.5],
+              assignment: "M",
+              foldFraction: 1,
+              source: "t",
+            },
           ],
           1e-4,
         ),
@@ -346,8 +470,20 @@ describe("arranjo planar", () => {
         buildPlanarSubdivision(
           [
             ...boundary,
-            { a: [0, 0], b: [1, 1], assignment: "M", source: "t" },
-            { a: [0, 0], b: [1, 1], assignment: "V", source: "t" },
+            {
+              a: [0, 0],
+              b: [1, 1],
+              assignment: "M",
+              foldFraction: 1,
+              source: "t",
+            },
+            {
+              a: [0, 0],
+              b: [1, 1],
+              assignment: "V",
+              foldFraction: 1,
+              source: "t",
+            },
           ],
           1e-4,
         ),
@@ -359,7 +495,16 @@ describe("arranjo planar", () => {
     expect(
       codeOf(() =>
         buildPlanarSubdivision(
-          [...boundary, { a: [0, 0], b: [1, 1], assignment: "B", source: "t" }],
+          [
+            ...boundary,
+            {
+              a: [0, 0],
+              b: [1, 1],
+              assignment: "B",
+              foldFraction: 1,
+              source: "t",
+            },
+          ],
           1e-4,
         ),
       ),

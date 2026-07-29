@@ -50,10 +50,18 @@ implementação de referência é usado.
 
 ## Padrões de vincos importados
 
-`pnpm origami:import` lê um padrão de vincos em SVG pela convenção de cor do
-traço — a mesma do OrigamiSimulator: `#ff0000` monte, `#0000ff` vale, `#000000`
-fronteira, `#ffff00` triangulação. A convenção foi lida em `js/pattern.js` do
+`pnpm origami:import` lê um padrão de vincos em SVG pela convenção do
+OrigamiSimulator, que tem duas metades: a **cor do traço** dá o sentido
+(`#ff0000` monte, `#0000ff` vale, `#000000` fronteira, `#ffff00` triangulação) e
+a **opacidade** dá a amplitude (`±opacity × 180°`, com `opacity` e
+`stroke-opacity` a multiplicarem-se). A convenção foi lida em `js/pattern.js` do
 repositório citado acima; nenhum código foi copiado.
+
+Uma divergência deliberada: em `pattern.js`, o ramo que trata a ausência de
+`stroke-opacity` repõe a variável errada e o produto sai `NaN` — defeito latente,
+porque no browser o valor computado é sempre `"1"` e o ramo nunca corre. Aqui
+implementa-se o que o comentário do próprio ficheiro descreve: as duas valem 1
+por omissão e multiplicam-se.
 
 **Um padrão importado vem de alguém.** O comando exige `--attribution` e
 `--license`, e os dois ficam gravados em `provenance.json` junto ao hash do SVG

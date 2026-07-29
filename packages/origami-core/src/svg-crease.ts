@@ -21,6 +21,19 @@ import type { Assignment, Vec2 } from "./fold-types";
  * permanecer inteira, e uma folha cortada é outra coisa. Recusa-se com o nome
  * da cor e a posição da linha, para que quem autorou saiba o que apagar.
  *
+ * ## A opacidade é a outra metade da convenção
+ *
+ * A cor diz o **sentido**; a opacidade diz a **amplitude**. Em `pattern.js`:
+ * `targetAngle = ±opacity × 180`, com `opacity × stroke-opacity` e ambas a
+ * valerem 1 por omissão. A app exporta padrões assim — o próprio paper descreve
+ * o SVG _«with opacity mapped to final fold angle and color mapped to crease
+ * type»_.
+ *
+ * É fácil não a ver, e ignorá-la não falha: faz todo o padrão dobrar até ao
+ * fim, incluindo os vincos que o autor marcou como parciais. O modelo que sai é
+ * outro, e nada o assinala. Por isso `foldFraction` acompanha cada segmento
+ * desde aqui até ao ângulo-alvo.
+ *
  * ## Porque é que a correspondência é exata
  *
  * `#fe0000` não é vermelho aqui. Aceitar quase-vermelho obrigaria a escolher um
@@ -71,6 +84,17 @@ export type CreaseSegment = {
   readonly a: Vec2;
   readonly b: Vec2;
   readonly assignment: Assignment;
+  /**
+   * Fração do ângulo total a que este vinco dobra, de 0 a 1.
+   *
+   * Vem da opacidade do traço, que é a outra metade da convenção — a que é
+   * fácil não ver. `pattern.js` calcula `targetAngle = ±opacity × 180`, e a
+   * app exporta padrões com a opacidade a codificar o ângulo final de cada
+   * vinco. Ignorá-la faria com que todo o padrão importado dobrasse até ao
+   * fim, incluindo os vincos que o autor marcou como parciais — um modelo
+   * diferente do desenhado, sem nada a assinalá-lo.
+   */
+  readonly foldFraction: number;
   /** Elemento de origem, para as mensagens de erro serem acionáveis. */
   readonly source: string;
 };
@@ -408,7 +432,7 @@ type CssRule = {
   readonly tag?: string;
   readonly className?: string;
   readonly id?: string;
-  readonly stroke: string;
+  readonly declarations: Readonly<Record<string, string>>;
 };
 
 /**
@@ -422,8 +446,8 @@ type CssRule = {
 function readStyleRules(css: string): CssRule[] {
   const rules: CssRule[] = [];
   for (const match of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
-    const stroke = readDeclarations(match[2]!).stroke;
-    if (!stroke) continue;
+    const declarations = readDeclarations(match[2]!);
+    if (!Object.keys(declarations).length) continue;
     for (const selector of match[1]!.split(",")) {
       const trimmed = selector.trim();
       const parsed = /^([a-zA-Z][\w-]*)?(?:\.([\w-]+))?(?:#([\w-]+))?$/.exec(
@@ -436,17 +460,18 @@ function readStyleRules(css: string): CssRule[] {
         tag: parsed[1]?.toLowerCase(),
         className: parsed[2],
         id: parsed[3],
-        stroke,
+        declarations,
       });
     }
   }
   return rules;
 }
 
-function strokeFromRules(
+function fromRules(
   rules: readonly CssRule[],
   tag: string,
   attributes: Attributes,
+  property: string,
 ): string | undefined {
   const classes = new Set(
     (attributes.class ?? "").split(/\s+/).filter(Boolean),
@@ -456,28 +481,50 @@ function strokeFromRules(
     if (rule.tag && rule.tag !== tag) continue;
     if (rule.className && !classes.has(rule.className)) continue;
     if (rule.id && rule.id !== attributes.id) continue;
-    found = rule.stroke;
+    found = rule.declarations[property] ?? found;
   }
   return found;
 }
 
-/** Ordem de resolução: `style` inline, regra CSS, atributo, herança. */
-function resolveStroke(
+/** Ordem de resolução: `style` inline, regra CSS, atributo de apresentação. */
+function resolveProperty(
   rules: readonly CssRule[],
   tag: string,
   attributes: Attributes,
-  inherited: string | undefined,
+  property: string,
 ): string | undefined {
-  const inline = readDeclarations(attributes.style ?? "").stroke;
   return (
-    inline ??
-    strokeFromRules(rules, tag, attributes) ??
-    attributes.stroke ??
-    inherited
+    readDeclarations(attributes.style ?? "")[property] ??
+    fromRules(rules, tag, attributes, property) ??
+    attributes[property]
   );
 }
 
-type Frame = { readonly matrix: Matrix; readonly stroke: string | undefined };
+/**
+ * Lê uma opacidade declarada, com 1 por omissão.
+ *
+ * Uma divergência deliberada em relação a `pattern.js`: lá, o ramo que trata a
+ * ausência de `stroke-opacity` repõe a variável errada (`opacity = 1` em vez de
+ * `strokeOpacity = 1`) e o produto sai `NaN`. No browser o defeito não aparece,
+ * porque o `getComputedStyle` do jQuery devolve `"1"` e o ramo nunca corre.
+ * Aqui não há browser, e o que se implementa é o que o comentário do próprio
+ * ficheiro diz: **as duas têm 1 por omissão e multiplicam-se**.
+ */
+function readOpacity(value: string | undefined): number {
+  if (value === undefined) return 1;
+  const parsed = Number.parseFloat(value);
+  if (!Number.isFinite(parsed)) return 1;
+  return Math.min(1, Math.max(0, parsed));
+}
+
+type Frame = {
+  readonly matrix: Matrix;
+  readonly stroke: string | undefined;
+  /** `opacity` acumulada pelos ancestrais — não é herdada, mas compõe-se. */
+  readonly groupOpacity: number;
+  /** `stroke-opacity`, que é uma propriedade herdada. */
+  readonly strokeOpacity: number;
+};
 
 const SHAPES = new Set(["line", "polyline", "polygon", "rect", "path"]);
 
@@ -532,7 +579,9 @@ export function parseCreasePatternSvg(svg: string): CreaseSegment[] {
     .replace(/<!DOCTYPE[^>]*>/gi, "");
 
   const segments: CreaseSegment[] = [];
-  const stack: Frame[] = [{ matrix: IDENTITY, stroke: undefined }];
+  const stack: Frame[] = [
+    { matrix: IDENTITY, stroke: undefined, groupOpacity: 1, strokeOpacity: 1 },
+  ];
   /** Profundidade a partir da qual tudo é ignorado (`<defs>` e afins). */
   let skipDepth: number | null = null;
   let elementIndex = 0;
@@ -557,8 +606,23 @@ export function parseCreasePatternSvg(svg: string): CreaseSegment[] {
     const transform = attributes.transform
       ? multiply(parent.matrix, parseTransform(attributes.transform))
       : parent.matrix;
-    const stroke = resolveStroke(rules, tag, attributes, parent.stroke);
-    const frame: Frame = { matrix: transform, stroke };
+    const stroke =
+      resolveProperty(rules, tag, attributes, "stroke") ?? parent.stroke;
+    const groupOpacity =
+      parent.groupOpacity *
+      readOpacity(resolveProperty(rules, tag, attributes, "opacity"));
+    const strokeOpacity =
+      resolveProperty(rules, tag, attributes, "stroke-opacity") === undefined
+        ? parent.strokeOpacity
+        : readOpacity(
+            resolveProperty(rules, tag, attributes, "stroke-opacity"),
+          );
+    const frame: Frame = {
+      matrix: transform,
+      stroke,
+      groupOpacity,
+      strokeOpacity,
+    };
 
     if (!selfClosing) stack.push(frame);
 
@@ -588,6 +652,13 @@ export function parseCreasePatternSvg(svg: string): CreaseSegment[] {
       );
     }
     const assignment = assignmentForColour(colour, where);
+    // A opacidade só carrega ângulo num vinco verdadeiro. Numa fronteira ou
+    // numa linha de triangulação ela é o que aparenta ser — transparência — e
+    // lê-la como amplitude inventaria um ângulo onde não há nenhum.
+    const foldFraction =
+      assignment === "M" || assignment === "V"
+        ? groupOpacity * strokeOpacity
+        : 1;
 
     /** Emite a linha poligonal já transformada, ligando o fecho se for o caso. */
     const emit = (points: readonly Vec2[], closed: boolean): void => {
@@ -605,7 +676,7 @@ export function parseCreasePatternSvg(svg: string): CreaseSegment[] {
             `${where} produz uma coordenada não finita`,
           );
         }
-        segments.push({ a, b, assignment, source: where });
+        segments.push({ a, b, assignment, foldFraction, source: where });
       }
     };
 
