@@ -155,6 +155,98 @@ export type DihedralResult = {
  * rígida não gera momento. Um vinco que empurrasse só os dois vértices opostos
  * — a simplificação tentadora — acelera o modelo inteiro e estica a aresta.
  */
+export type CornerVertices = {
+  /** O vértice onde o ângulo é medido. */
+  readonly apex: Vec3;
+  readonly a: Vec3;
+  readonly b: Vec3;
+};
+
+export type CornerResult = {
+  readonly angle: number;
+  /** Na ordem `[apex, a, b]`. */
+  readonly gradients: readonly [Vec3, Vec3, Vec3];
+};
+
+/**
+ * O ângulo interior de um triângulo, e o seu gradiente exato.
+ *
+ * É a §2.4 do paper da Ghassaei — a restrição que faltava aqui, e cuja falta se
+ * viu no grou tradicional: sem ela a malha **corta** em vez de dobrar, e a
+ * medição foi 34% de deformação com os vincos ainda a 85° do alvo.
+ *
+ * A barra impede uma aresta de mudar de comprimento e a dobradiça impede duas
+ * faces de se afastarem do ângulo pedido. Nenhuma das duas impede um triângulo
+ * de **deslizar sobre si próprio** mantendo os três lados: é o modo de corte, e
+ * num triângulo fino ele é quase livre. O paper diz exatamente isto — as
+ * restrições de face existem para «prevent shearing of the folding surface,
+ * especially for high-aspect-ratio triangles» — e um padrão de vincos real está
+ * cheio deles.
+ *
+ * ## A convenção de sinal
+ *
+ * Com `u = a − apex`, `v = b − apex` e a normal `n̂ = û × v̂`:
+ *
+ * ```text
+ * ∇_a θ = −(n̂ × u) / |u|²
+ * ```
+ *
+ * `n̂ × u` aponta *para* `v`, portanto o sinal negativo diz que afastar `a` de
+ * `b` aumenta o ângulo — que é o que a palavra «ângulo» quer dizer. O gradiente
+ * em `b` é simétrico, e o do vértice do ângulo é o que sobra, para que a soma
+ * dos três seja zero: uma translação rígida não pode gerar força.
+ *
+ * Verificado por diferenças finitas, como o ângulo diedro. Um sinal trocado
+ * aqui não falha nenhum invariante — deforma a malha na direção errada e o
+ * modelo assenta torto, que é a classe de defeito mais cara deste ficheiro.
+ */
+export function cornerAngleAndGradients(
+  vertices: CornerVertices,
+): CornerResult {
+  const { apex, a, b } = vertices;
+
+  const u = subtract(a, apex);
+  const v = subtract(b, apex);
+  const lengthU = norm(u);
+  const lengthV = norm(v);
+
+  const flat: CornerResult = {
+    angle: 0,
+    gradients: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ],
+  };
+
+  if (lengthU < EPSILON || lengthV < EPSILON) return flat;
+
+  const normal = cross(u, v);
+  const normalLength = norm(normal);
+  // Colinear: o ângulo é 0 ou π e o gradiente não está definido — não há plano
+  // em que rodar. Devolver zero é preferível a propagar NaN pela malha toda.
+  if (normalLength < EPSILON) return flat;
+
+  const angle = Math.atan2(normalLength, dot(u, v));
+  const unitNormal = scale(normal, 1 / normalLength);
+
+  const gradientA = scale(cross(unitNormal, u), -1 / (lengthU * lengthU));
+  const gradientB = scale(cross(unitNormal, v), 1 / (lengthV * lengthV));
+
+  return {
+    angle,
+    gradients: [
+      [
+        -(gradientA[0] + gradientB[0]),
+        -(gradientA[1] + gradientB[1]),
+        -(gradientA[2] + gradientB[2]),
+      ],
+      gradientA,
+      gradientB,
+    ],
+  };
+}
+
 export function dihedralAngleAndGradients(
   vertices: CreaseVertices,
 ): DihedralResult {

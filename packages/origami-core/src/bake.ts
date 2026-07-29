@@ -105,6 +105,7 @@ export const DEFAULT_BAKE_OPTIONS: BakeOptions = {
   axialStiffness: 20,
   creaseStiffness: 6,
   facetStiffness: 18,
+  faceAngleStiffness: 0,
   dampingRatio: 0.45,
   lengthProjectionIterations: 8,
   framesPerStage: 12,

@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { basename } from "node:path";
 import {
   authorFoldSource,
   bakeModel,
@@ -5,6 +7,7 @@ import {
   compileModel,
   createSolverState,
   dihedralAngleAndGradients,
+  importCreasePattern,
   readPositions,
   stagesFromSource,
   step,
@@ -91,21 +94,58 @@ function silhouette(
   return grid.map((row) => row.join("")).join("\n");
 }
 
-async function inspectOne(id: string): Promise<void> {
-  const entry = findModelEntry(id);
-  const source = authorFoldSource(entry.model, entry.metadata);
-  const report = validateFoldSource(source);
+/**
+ * O regime complacente, que é o do paper do OrigamiSimulator.
+ *
+ * `EA = 20`, `kfold = kfacet = 0,7`, `ζ = 0,45`, sem projeção de comprimento e
+ * sem limite de deformação a reprovar. A Figura 11 desse paper mostra que é
+ * **isto** — e não ordenação de camadas — que deixa um modelo não rigidamente
+ * dobrável, como o grou, chegar à sua forma. O preço vem junto: o papel estica
+ * uns por cento e atravessa-se, e os dois números ficam à vista por baixo da
+ * silhueta. Ver `docs/ORIGAMI_RUNTIME.md` §8.1.
+ */
+const COMPLIANT = {
+  lengthProjectionIterations: 0,
+  axialStiffness: 20,
+  creaseStiffness: 0.7,
+  facetStiffness: 0.7,
+  faceAngleStiffness: 0.2,
+  dampingRatio: 0.45,
+  strainLimit: 1,
+  angleToleranceDegrees: 180,
+  selfIntersection: "measure",
+} as const;
+
+const RIGID = {
+  lengthProjectionIterations: 30,
+} as const;
+
+function bakeOverrides(): Record<string, unknown> {
+  return process.argv.includes("--compliant") ? { ...COMPLIANT } : { ...RIGID };
+}
+
+async function render(
+  title: string,
+  id: string,
+  source: ReturnType<typeof authorFoldSource>,
+): Promise<void> {
+  const quality = flagValue("min-quality");
+  const report = validateFoldSource(
+    source,
+    quality ? { triangleQualityReject: Number(quality) } : {},
+  );
   const mesh = buildMesh(source);
 
   const baked = bakeModel(mesh, stagesFromSource(source, mesh), {
     anchor: source["ads:anchor"],
-    lengthProjectionIterations: 30,
+    ...bakeOverrides(),
   });
 
   console.log(`\n${"═".repeat(74)}`);
   console.log(
-    `${entry.metadata.file_title}  ·  ${id}  ·  ${report.vertexCount} vértices, ` +
-      `${report.creaseCount} vincos, ${report.faceCount} faces`,
+    `${title}  ·  ${id}  ·  ${report.vertexCount} vértices, ` +
+      `${report.creaseCount} vincos, ${report.faceCount} faces` +
+      `${process.argv.includes("--compliant") ? "  ·  complacente" : ""}`,
   );
   console.log("═".repeat(74));
 
@@ -216,7 +256,68 @@ function reportAchievedAngles(
   }
 }
 
+async function inspectOne(id: string): Promise<void> {
+  const entry = findModelEntry(id);
+  await render(
+    entry.metadata.file_title,
+    id,
+    authorFoldSource(entry.model, entry.metadata),
+  );
+}
+
+/**
+ * A mesma silhueta, para um padrão que veio de um SVG.
+ *
+ * Existe pela razão que fez existir a versão para modelos autorados: importar um
+ * padrão é um ciclo de tentativa e erro, e a pergunta no fim do ciclo — «isto
+ * lê-se como a coisa que devia ser?» — não tem resposta em números nenhuns.
+ */
+async function inspectSvg(path: string): Promise<void> {
+  const svg = await readFile(path, "utf8");
+  const weld = flagValue("weld");
+  const imported = importCreasePattern(svg, {
+    stageFractions: process.argv.includes("--one-stage") ? [1] : [0.5, 1],
+    ...(weld ? { weldTolerance: Number(weld) } : {}),
+  });
+
+  console.log(
+    `\n${basename(path)}: ${imported.report.segmentsRead} segmentos → ` +
+      `${imported.report.mountainCount}M ${imported.report.valleyCount}V ` +
+      `${imported.report.boundaryCount}B, ${imported.report.faceCount} faces`,
+  );
+
+  await render(basename(path), "importado", {
+    ...authorFoldSource(imported.model, {
+      file_spec: 1.2,
+      file_creator: "tools/origami/inspect.ts",
+      file_author: "inspect",
+      file_title: basename(path),
+      file_classes: ["singleModel", "animation"],
+      "ads:modelId": "sheet",
+      "ads:paper": {
+        aspect: 1,
+        uncut: true,
+        frontFamily: "apricot",
+        backFamily: "mist",
+      },
+      "ads:license": { id: "PROJETO", attribution: "inspect" },
+      "ads:presentation": { rotateX: Number(flagValue("rotate-x") ?? -90) },
+    }),
+  });
+}
+
+function flagValue(name: string): string | undefined {
+  const at = process.argv.indexOf(`--${name}`);
+  return at >= 0 ? process.argv[at + 1] : undefined;
+}
+
 async function main() {
+  const svgPath = flagValue("svg");
+  if (svgPath) {
+    await inspectSvg(svgPath);
+    return;
+  }
+
   const requested = process.argv.includes("--model")
     ? [process.argv[process.argv.indexOf("--model") + 1]!]
     : origamiModelEntries.map((entry) => entry.id);

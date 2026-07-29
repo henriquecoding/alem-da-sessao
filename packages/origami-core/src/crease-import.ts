@@ -53,7 +53,12 @@ export type CreaseImportOptions = {
    * a menor distância entre vincos de um padrão denso.
    */
   readonly weldTolerance?: number;
-  /** Amplitude de um vinco completamente dobrado, em graus. */
+  /**
+   * Amplitude de um vinco a opacidade 1, em graus.
+   *
+   * Cada vinco recebe esta amplitude multiplicada pela sua própria opacidade,
+   * que é como a convenção codifica ângulos parciais.
+   */
   readonly foldAngleDegrees?: number;
   /**
    * Por onde a dobragem passa: frações da amplitude total, por ordem.
@@ -254,6 +259,7 @@ export function importCreasePattern(
     a: place(segment.a),
     b: place(segment.b),
     assignment: segment.assignment,
+    foldFraction: segment.foldFraction,
     source: segment.source,
   }));
 
@@ -279,8 +285,12 @@ export function importCreasePattern(
   const stages: AuthoredStage[] = fractions.map((fraction, index) => {
     const angles: Record<number, number> = {};
     for (const entry of creaseEdges) {
+      // Três fatores, e cada um vem de um sítio diferente: o sinal da cor, a
+      // amplitude da opacidade do próprio vinco, e a fração desta etapa.
       angles[entry.index] =
-        (entry.assignment === "M" ? -foldAngle : foldAngle) * fraction;
+        (entry.assignment === "M" ? -foldAngle : foldAngle) *
+        subdivision.foldFractions[entry.index]! *
+        fraction;
     }
     const last = index === fractions.length - 1;
     return {

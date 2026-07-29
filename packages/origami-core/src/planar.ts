@@ -65,6 +65,8 @@ export type PlanarSegment = {
   readonly a: Vec2;
   readonly b: Vec2;
   readonly assignment: Assignment;
+  /** Fração do ângulo total, de 0 a 1. Ver `CreaseSegment.foldFraction`. */
+  readonly foldFraction: number;
   readonly source: string;
 };
 
@@ -72,6 +74,8 @@ export type PlanarSubdivision = {
   readonly vertices: readonly Vec2[];
   readonly edges: readonly (readonly [number, number])[];
   readonly assignments: readonly Assignment[];
+  /** Fração do ângulo total por índice de aresta. */
+  readonly foldFractions: readonly number[];
   /** Faces limitadas, cada uma no sentido anti-horário. */
   readonly faces: readonly (readonly number[])[];
   /** Índices das arestas do contorno exterior. */
@@ -209,6 +213,7 @@ type WorkSegment = {
   readonly a: number;
   readonly b: number;
   readonly assignment: Assignment;
+  readonly foldFraction: number;
   readonly source: string;
 };
 
@@ -225,12 +230,36 @@ export function buildPlanarSubdivision(
 ): PlanarSubdivision {
   const set = new WeldedPoints(tolerance);
 
+  // A fronteira solda primeiro, e a razão não é de estilo.
+  //
+  // Quem chega primeiro fica a ser o representante do grupo soldado. Se um
+  // vinco desenhado 0,08 px fora do bordo chegar antes do canto do papel, é a
+  // posição do vinco que passa a ser o canto — e a folha deixa de ser quadrada
+  // por uma fração da tolerância. Foi o que aconteceu ao grou tradicional:
+  // 1,0000 × 1,0002, recusado pelo validador com toda a razão.
+  //
+  // A ordem certa segue o significado: o contorno é que define o papel, e os
+  // vincos encostam-se a ele. Assim o bordo mantém as coordenadas que o
+  // desenho lhe deu, e a deriva da soldadura fica confinada ao interior, onde
+  // não altera a forma da folha.
+  for (const segment of segments) {
+    if (segment.assignment !== "B") continue;
+    set.add(segment.a);
+    set.add(segment.b);
+  }
+
   let work: WorkSegment[] = [];
   for (const segment of segments) {
     const a = set.add(segment.a);
     const b = set.add(segment.b);
     if (a === b) continue; // linha de comprimento nulo: o desenho tinha-a, a folha não.
-    work.push({ a, b, assignment: segment.assignment, source: segment.source });
+    work.push({
+      a,
+      b,
+      assignment: segment.assignment,
+      foldFraction: segment.foldFraction,
+      source: segment.source,
+    });
   }
 
   let crossings = 0;
@@ -273,6 +302,25 @@ export function buildPlanarSubdivision(
         // Perto de uma ponta não é interior — é a própria ponta, por soldar.
         const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
         if (t * length <= tolerance || (1 - t) * length <= tolerance) continue;
+
+        // Decidir que um ponto está sobre o bordo obriga a pô-lo lá.
+        //
+        // Um vinco desenhado a acabar uma décima de pixel fora do contorno cai
+        // dentro da tolerância e parte o bordo — mas fica com as coordenadas
+        // que tinha, e o contorno deixa de ser reto. A folha do grou
+        // tradicional media 1,0000 × 1,0002 por causa disto, e o validador
+        // recusava-a com razão: o quadrado canónico é uma afirmação sobre a
+        // folha, não uma aproximação.
+        //
+        // Só no bordo. Lá dentro a mesma deriva não muda a forma do papel, e
+        // projetar mexeria em vértices partilhados por vincos já tratados.
+        if (segment.assignment === "B") {
+          set.points[index] = [
+            a[0] + t * (b[0] - a[0]),
+            a[1] + t * (b[1] - a[1]),
+          ];
+        }
+
         interior.push({ index, t });
       }
 
@@ -294,6 +342,7 @@ export function buildPlanarSubdivision(
           a: chain[index]!,
           b: chain[index + 1]!,
           assignment: segment.assignment,
+          foldFraction: segment.foldFraction,
           source: segment.source,
         });
       }
@@ -321,6 +370,7 @@ export function buildPlanarSubdivision(
   //    naquela linha, e não há forma honesta de escolher uma.
   const edges: [number, number][] = [];
   const assignments: Assignment[] = [];
+  const foldFractions: number[] = [];
   const indexByKey = new Map<string, number>();
   let duplicates = 0;
 
@@ -331,12 +381,30 @@ export function buildPlanarSubdivision(
     const existing = indexByKey.get(key);
 
     if (existing !== undefined) {
+      const from = set.points[low]!;
+      const to = set.points[high]!;
+      // As duas pontas, e não só uma: quem vai corrigir o ficheiro precisa de
+      // encontrar a linha, e uma ponta sozinha pode ter meia dúzia de linhas.
+      const where =
+        `(${from[0].toFixed(4)}, ${from[1].toFixed(4)})–` +
+        `(${to[0].toFixed(4)}, ${to[1].toFixed(4)})`;
+
       if (assignments[existing] !== segment.assignment) {
-        const point = set.points[low]!;
         throw new PlanarSubdivisionError(
           "CONFLICTING_EDGE",
-          `a aresta em (${point[0].toFixed(4)}, ${point[1].toFixed(4)}) está desenhada como ` +
-            `"${assignments[existing]}" e como "${segment.assignment}" (${segment.source}).`,
+          `a aresta ${where} está desenhada como "${assignments[existing]}" e como ` +
+            `"${segment.assignment}" (${segment.source}).`,
+        );
+      }
+      // Mesma cor mas opacidades diferentes é a mesma contradição noutra
+      // variável: as duas linhas pedem ângulos finais diferentes para o mesmo
+      // vinco, e escolher uma seria decidir em silêncio.
+      if (Math.abs(foldFractions[existing]! - segment.foldFraction) > 1e-6) {
+        throw new PlanarSubdivisionError(
+          "CONFLICTING_EDGE",
+          `a aresta ${where} está desenhada com opacidade ` +
+            `${foldFractions[existing]!.toFixed(4)} e ${segment.foldFraction.toFixed(4)} ` +
+            `(${segment.source}); são dois ângulos finais para o mesmo vinco.`,
         );
       }
       duplicates += 1;
@@ -346,6 +414,7 @@ export function buildPlanarSubdivision(
     indexByKey.set(key, edges.length);
     edges.push([low, high]);
     assignments.push(segment.assignment);
+    foldFractions.push(segment.foldFraction);
   }
 
   const vertices = set.points;
@@ -545,6 +614,7 @@ export function buildPlanarSubdivision(
     vertices,
     edges: oriented,
     assignments,
+    foldFractions,
     faces: facesVertices,
     boundary,
     diagnostics: {

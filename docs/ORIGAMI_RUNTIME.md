@@ -190,9 +190,15 @@ dobradiças: sabe levar um ângulo diedro de A a B, e não tem modelo de camadas
 nem de contacto. Um squash fold não é um conjunto de ângulos-alvo; é uma
 mudança de que camada está por cima de qual.
 
-Essa é a fronteira real do motor, e é estrutural e não de afinação. Atravessá-la
-exige ordenação de faces (`faceOrders`, que o formato FOLD já prevê e que este
-compilador ainda ignora) e deteção de contacto no solver.
+Essa é a fronteira real do motor para uma dobragem **fisicamente válida**, e é
+estrutural e não de afinação: atravessá-la exige ordenação de faces
+(`faceOrders`, que o formato FOLD já prevê e que este compilador ainda ignora) e
+deteção de contacto no solver.
+
+Para uma **forma reconhecível** o preço é outro, e mais barato — a §8.1 mostra,
+com o paper do próprio OrigamiSimulator, que ele dobra o grou sem modelo de
+camadas e sem deteção de colisão, deixando o papel esticar e atravessar-se. O
+que bloqueia o grou aqui não é a falta de `faceOrders`: é a rigidez.
 
 **Consequência para o produto, e a escolha que se seguiu.** Havia duas saídas:
 manter figuras desenhadas à mão para os dois nomes que o motor não serve, ou
@@ -334,12 +340,155 @@ valores arbitrários é pedir uma configuração que não existe. O `origami:ins
 --angles` existe para dizer quais é que a folha aceita; é uma sonda ao mesmo
 espaço de soluções, feita por amostragem em vez de por pseudo-inversa.
 
-**O que isto quer dizer sobre o grou.** Nenhum dos dois papers atravessa a
-fronteira da §5. Ambos modelam folha sem espessura e sem contacto: Tachi
+**O que isto quer dizer sobre o grou.** Nenhum destes **dois** papers atravessa
+a fronteira da §5. Ambos modelam folha sem espessura e sem contacto: Tachi
 enumera as condições de validade e diz explicitamente que uma delas é _«that a
 valid overlapping ordering exists»_ — a ordenação de camadas — e trata-a como
 condição a verificar, não como coisa que o solver resolve. Um _squash fold_ é
-uma mudança dessa ordenação. Continua a ser trabalho de motor: `faceOrders` e
-deteção de contacto, como já dizia a §5.
+uma mudança dessa ordenação.
 
-Os papers validam a fundação e confirmam onde ela acaba. Não dão o grou.
+### 8.1 O terceiro paper diz o contrário, e é o que este motor copiou
+
+Ghassaei, Demaine e Gershenfeld, _Fast, Interactive Origami Simulation using
+GPU Computation_ (Origami⁷, 2018) — o paper do OrigamiSimulator, que o
+`NOTICE.md` já citava mas que não tinha sido lido contra esta questão. A
+Figura 11 responde-lhe diretamente, e a resposta contraria o que a §5 e a ADR
+0034 afirmavam:
+
+> **(C)** _The compliance of our method allows non-rigidly foldable designs like
+> the crane to ﬁnd their ﬁnal folded state (allowing for some self-intersection)._
+>
+> **(D)** _Even with collision detection and planar constraints (inﬁnitely stiff
+> facet creases) turned off, Freeform Origami is not able to correctly fold a
+> crane._
+>
+> **(E)** _Similarly, increasing the material stiffness in our solver prevents
+> the crane from reaching the correct folded state._
+
+E, em «Future Work»: _«Future work may also grow to include collision
+detection»_ — ou seja, **o OrigamiSimulator não tem deteção de colisão nenhuma,
+e não tem modelo de camadas.** Mesmo assim dobra o grou.
+
+O que isto corrige: a §5 dizia que atravessar a fronteira _«exige `faceOrders` e
+deteção de contacto»_. Para uma dobragem **fisicamente válida**, exige. Para uma
+**forma reconhecível**, que é o que o produto quer, não exige nada disso — exige
+o contrário. O grou aparece porque o papel é deixado esticar um pouco e
+atravessar-se; e desaparece assim que se aperta o material (11E) ou se impõe
+rigidez exata (11D).
+
+**A consequência incómoda: o que este motor tem de melhor é o que bloqueia o
+grou.** A ADR 0034 apresenta o limite de deformação de 0,25% como uma virtude,
+e diz que é _«mais apertado do que o OrigamiSimulator alcança»_. As duas coisas
+são verdade e a segunda explica a primeira ao contrário do que parecia: a
+projeção de comprimento que põe o strain a 0,001% é exatamente o regime rígido
+da Figura 11E, onde o grou não fecha.
+
+Medido neste motor, com um hipar — quadrados concêntricos alternados mais as
+duas diagonais, o padrão que a Figura 7 do paper usa precisamente para mostrar
+strain: com os parâmetros do paper (`EA = 20`, `kfold = kfacet = 0,7`, `ζ = 0,45`,
+sem projeção de comprimento) o modelo assenta com **16,7%** de deformação. O
+gate deste repositório rejeita acima de 0,25% — cerca de setenta vezes menos.
+Nenhuma das duas execuções chegou ao alvo, portanto isto **não** é uma
+demonstração de que o hipar dobra aqui; é a medição da distância entre os dois
+regimes, e ela é de duas ordens de grandeza.
+
+Falta, portanto, uma terceira coisa além das duas que já foram feitas
+(atribuições vindas de um padrão real, e interseção medida em vez de
+bloqueante): **um modo complacente** — projeção de comprimento desligada,
+rigidez de vinco na ordem do `kfold` do paper, e o limite de deformação a
+_medir_ em vez de reprovar. As três juntas são a receita publicada. Nenhuma
+delas é `faceOrders`.
+
+### 8.2 O grou tradicional, tentado a sério
+
+A pergunta deixou de ser teórica quando o padrão apareceu: o
+`assets/Origami/traditionalCrane.svg` do OrigamiSimulator — 84 `<line>` e um
+`<rect>`, exportado do Illustrator, MIT. É o padrão real, não uma reconstrução.
+
+**O importador lê-o por inteiro.** 88 segmentos → 60 vértices, 149 vincos, 76
+faces, com o erro de área do arranjo a dar exatamente zero. A geometria do
+ficheiro atravessa o pipeline. Isso já não é a parte difícil.
+
+Três gates de autoria reprovaram-no pelo caminho, e cada um ensinou uma coisa
+diferente:
+
+1. **Tolerância de soldadura.** A de omissão (1e-4) é apertada de mais para um
+   ficheiro de desenho. Medido neste padrão: depois de colapsar o
+   arredondamento, os vértices distintos ficam todos a 4,5e-4 ou menos uns dos
+   outros por ruído de traçado, e o primeiro espaçamento real está a 3,05e-2 —
+   um salto de 68×. Qualquer tolerância nessa banda separa os dois regimes;
+   `--weld 3e-3` fica dez vezes acima do ruído e dez vezes abaixo da geometria.
+2. **`SHEET_NOT_SQUARE`, e era um defeito nosso.** A folha media 1,0000 ×
+   1,0002 porque um vinco a acabar um décimo de pixel fora do bordo entrava na
+   tolerância e partia o contorno **sem** ser posto sobre ele. Decidir que um
+   ponto está no bordo obriga a pô-lo lá; corrigido em `planar.ts`.
+3. **`DEGENERATE_TRIANGLE`.** O padrão tem faces cuja triangulação desce a
+   0,013 — abaixo do piso de 0,05, que foi escolhido para modelos escritos à
+   mão. É o caso que o paper descreve como _«high-aspect-ratio triangles»_ e
+   que não recusa.
+
+**E depois não dobra.** Com tudo isso ultrapassado, nenhum dos quatro regimes
+testados chega ao grou:
+
+| regime                           | strain | erro de ângulo | interseções |
+| -------------------------------- | -----: | -------------: | ----------: |
+| paper (sem projeção, vinco mole) |  34,6% |          85,4° |         164 |
+| projeção 8, vinco mole           |  0,71% |         178,0° |         130 |
+| projeção 30, vinco mole          |  0,16% |         178,8° |          62 |
+| rígido (defaults do repositório) |  0,71% |         179,3° |         135 |
+
+Ou a folha estica um terço do seu tamanho, ou os vincos ficam praticamente por
+dobrar. Não há regime intermédio que dê a forma.
+
+**O que falta está identificado, e não é `faceOrders`.** É a §2.4 do paper da
+Ghassaei: **restrições de face** — molas sobre os ângulos interiores de cada
+triângulo, com `kface`. Este motor nunca as implementou; substituiu-as por
+projeção de comprimento, que é outra coisa (fixa comprimentos de aresta, não
+ângulos internos). O paper diz para que servem em termos que descrevem
+exatamente o que aqui se mediu: _«face constraints increase the stability of
+the simulation across a variety of input crease patterns»_, e em particular
+para triângulos de razão de aspeto alta — que é do que o grou é feito. Sem
+elas, a malha corta em vez de dobrar, e 34% de deformação é o corte a
+acontecer.
+
+`kface = 0,2` aparece em todas as configurações que o paper reporta.
+
+### 8.3 As restrições de face foram implementadas. O grou continua a não fechar.
+
+`cornerAngleAndGradients` está em `geometry.ts`, com o gradiente verificado por
+diferenças finitas como o do ângulo diedro, e `faceAngleStiffness` no solver.
+Fica a **zero por omissão**: os seis modelos autorados recompilam byte a byte
+iguais, o que é a prova de que nada do que já estava aprovado se mexeu.
+
+E funcionam. Medido no grou, variando só `kface`:
+
+| `kface` | projeção | strain | erro de ângulo | interseções |
+| ------: | -------: | -----: | -------------: | ----------: |
+|       0 |        0 | 34,73% |          85,4° |         164 |
+|     0,2 |        0 | 19,92% |          87,5° |         137 |
+|       1 |        0 | 16,86% |          88,4° |         209 |
+|       5 |        0 | 14,55% |          94,2° |         233 |
+|     0,2 |        8 |  0,81% |         178,9° |         150 |
+|     0,2 |       30 |  0,15% |         178,2° |          77 |
+
+A deformação cai para metade e continua a cair com a rigidez — a restrição faz
+exatamente o que o paper diz que faz, e o modo de corte era mesmo o que estava
+a consumir a folha. **Mas o erro de ângulo não se mexe:** fica entre 85° e 94°
+em todo o intervalo útil, e com projeção de comprimento os vincos ficam
+praticamente por dobrar.
+
+Ou seja: a restrição de face era **necessária e não é suficiente**. A hipótese
+da §8.1 — que faltava só complacência — está testada e é falsa; a da §8.2 —
+que faltavam as restrições de face — está implementada e também não chega. A
+fronteira é mais funda do que qualquer das duas, e o que a define já não é
+nenhuma peça em falta identificada neste relatório.
+
+O que sobra por investigar, por ordem de suspeita: o percurso de dobragem (a
+rampa linear por etapas pode não ser o caminho que este padrão admite), o
+orçamento de passos, e o modelo de massa e amortecimento, que aqui é escolhido
+para estabilidade com passo único e não é o do paper. Nenhuma destas é uma
+peça em falta — são afinações de um sistema que já tem todas as peças
+descritas.
+
+Os papers validam a fundação. Dois deles confirmam onde ela acaba; o terceiro
+diz por onde se passa, e o preço.

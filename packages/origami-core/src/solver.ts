@@ -1,5 +1,10 @@
 import type { Vec3 } from "./fold-types";
-import { dihedralAngleAndGradients, dot, wrapAngle } from "./geometry";
+import {
+  cornerAngleAndGradients,
+  dihedralAngleAndGradients,
+  dot,
+  wrapAngle,
+} from "./geometry";
 import type { OrigamiMesh } from "./topology";
 
 /**
@@ -45,6 +50,28 @@ export type SolverOptions = {
   readonly creaseStiffness: number;
   /** Rigidez das diagonais de triangulação. Mantém a face plana. */
   readonly facetStiffness: number;
+  /**
+   * Rigidez dos ângulos interiores de cada triângulo — o `kface` da §2.4.
+   *
+   * Não confundir com `facetStiffness`, que é o `kfacet` do mesmo paper e faz
+   * outra coisa: `kfacet` é a dobradiça das diagonais de triangulação, e impede
+   * uma face poligonal de **vergar** ao longo da diagonal. `kface` é uma mola
+   * sobre cada ângulo interno de cada triângulo, e impede o triângulo de
+   * **cortar** — de deslizar sobre si próprio mantendo os três lados.
+   *
+   * Uma barra fixa comprimentos, uma dobradiça fixa o ângulo entre faces, e
+   * nenhuma das duas fixa a forma de um triângulo no seu próprio plano. Num
+   * triângulo equilátero isso quase não importa; num triângulo fino o modo de
+   * corte é quase livre, e é por isso que o paper diz que estas restrições
+   * servem sobretudo para «high-aspect-ratio triangles».
+   *
+   * **Zero por omissão, e é uma decisão e não um esquecimento.** Os seis
+   * modelos autorados aqui não têm triângulos finos e os seus assets estão
+   * gravados e verificados; ligar isto por omissão mudava-lhes a geometria sem
+   * que ninguém tivesse pedido. Quem importa um padrão de vincos real liga-o —
+   * `0,2` é o valor que o paper usa em todas as configurações que reporta.
+   */
+  readonly faceAngleStiffness: number;
   /** `0` sem amortecimento, `1` criticamente amortecido. */
   readonly dampingRatio: number;
   /**
@@ -62,6 +89,7 @@ export const DEFAULT_SOLVER_OPTIONS: SolverOptions = {
   axialStiffness: 20,
   creaseStiffness: 6,
   facetStiffness: 18,
+  faceAngleStiffness: 0,
   dampingRatio: 0.45,
   lengthProjectionIterations: 8,
 };
@@ -82,6 +110,15 @@ type Hinge = {
   readonly stiffness: number;
 };
 
+/** Um ângulo interior de um triângulo, com o valor que tinha na folha plana. */
+type Corner = {
+  readonly apex: number;
+  readonly a: number;
+  readonly b: number;
+  readonly restAngle: number;
+  readonly stiffness: number;
+};
+
 export type SolverState = {
   readonly mesh: OrigamiMesh;
   readonly options: SolverOptions;
@@ -93,6 +130,7 @@ export type SolverState = {
   readonly mass: Float64Array;
   readonly beams: readonly Beam[];
   readonly hinges: readonly Hinge[];
+  readonly corners: readonly Corner[];
   time: number;
 };
 
@@ -157,6 +195,42 @@ export function createSolverState(
     };
   });
 
+  // Três ângulos por triângulo. O de repouso é lido na folha plana, uma vez —
+  // é a forma que o triângulo tem de conservar, e conservá-la é o que impede o
+  // corte.
+  const corners: Corner[] = [];
+  if (options.faceAngleStiffness > 0) {
+    const rest = mesh.restPositions;
+    for (const triangle of mesh.triangles) {
+      const [i, j, k] = triangle.indices;
+      for (const [apex, a, b] of [
+        [i, j, k],
+        [j, k, i],
+        [k, i, j],
+      ] as const) {
+        const corner = cornerAngleAndGradients({
+          apex: rest[apex]!,
+          a: rest[a]!,
+          b: rest[b]!,
+        });
+
+        const nodes = [apex, a, b] as const;
+        corner.gradients.forEach((gradient, slot) => {
+          mass[nodes[slot]!] +=
+            options.faceAngleStiffness * dot(gradient, gradient);
+        });
+
+        corners.push({
+          apex,
+          a,
+          b,
+          restAngle: corner.angle,
+          stiffness: options.faceAngleStiffness,
+        });
+      }
+    }
+  }
+
   // Um nó sem nada ligado não existe num modelo válido, mas uma divisão por
   // zero num passo de integração propaga NaN por toda a malha em três frames.
   for (let index = 0; index < count; index += 1) {
@@ -182,6 +256,7 @@ export function createSolverState(
     mass,
     beams: dampedBeams,
     hinges,
+    corners,
     time: 0,
   };
 }
@@ -254,6 +329,37 @@ function accumulateHingeForces(
       forces[base + 2] += gradient[2] * moment;
     }
   });
+}
+
+/**
+ * A força que impede um triângulo de cortar.
+ *
+ * Cada ângulo interior puxa de volta ao valor que tinha na folha plana, com a
+ * mesma forma das outras duas restrições: `F = k(α₀ − α)·∇α`. O alvo não vem de
+ * fora como nas dobradiças — é uma propriedade da folha e não da dobragem, e
+ * por isso vive na própria restrição.
+ */
+function accumulateCornerForces(state: SolverState): void {
+  const { positions, forces } = state;
+
+  for (const corner of state.corners) {
+    const result = cornerAngleAndGradients({
+      apex: readVec(positions, corner.apex),
+      a: readVec(positions, corner.a),
+      b: readVec(positions, corner.b),
+    });
+
+    const moment = corner.stiffness * (corner.restAngle - result.angle);
+    const nodes = [corner.apex, corner.a, corner.b] as const;
+
+    for (let slot = 0; slot < 3; slot += 1) {
+      const gradient = result.gradients[slot]!;
+      const base = nodes[slot]! * 3;
+      forces[base] += gradient[0] * moment;
+      forces[base + 1] += gradient[1] * moment;
+      forces[base + 2] += gradient[2] * moment;
+    }
+  }
 }
 
 /**
@@ -347,6 +453,7 @@ export function step(state: SolverState, targets: Float64Array): void {
   state.forces.fill(0);
   accumulateBeamForces(state);
   accumulateHingeForces(state, targets);
+  accumulateCornerForces(state);
   accumulateDamping(state);
 
   const { positions, velocities, forces, mass, previous, options } = state;
