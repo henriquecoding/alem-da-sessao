@@ -55,14 +55,39 @@ comportamento é idêntico em todo o lado.
 
 ## Os invariantes que substituem a igualdade de áreas
 
-| O que se conserva        | Como se mede                                   |
-| ------------------------ | ---------------------------------------------- |
-| a folha é uma só         | cada aresta tem 1 face (`B`) ou 2              |
-| a folha não foi cortada  | zero `C`, fronteira em circuito fechado        |
-| a matéria não estica     | comprimento de cada aresta, em todos os frames |
-| a topologia não muda     | todos os frames indexam a mesma tabela         |
-| monte e vale têm sentido | sinal do ângulo confere com a atribuição       |
-| nada se atravessa        | interseção triângulo-triângulo no frame final  |
+| O que se conserva        | Como se mede                                                                              |
+| ------------------------ | ----------------------------------------------------------------------------------------- |
+| a folha é uma só         | cada aresta tem 1 face (`B`) ou 2                                                         |
+| a folha não foi cortada  | zero `C`, fronteira em circuito fechado                                                   |
+| a matéria não estica     | comprimento de cada aresta, em todos os frames                                            |
+| a topologia não muda     | todos os frames indexam a mesma tabela                                                    |
+| monte e vale têm sentido | sinal do ângulo confere com a atribuição                                                  |
+| o papel atravessa-se?    | interseção triângulo-triângulo no frame final — **medida sempre, bloqueante por omissão** |
+
+A última linha mudou de natureza e vale a pena dizer porquê, porque antes desta
+revisão ela dizia «nada se atravessa» e isso deixou de ser verdade para todo o
+sistema.
+
+Continua a ser verdade para os modelos autorados aqui: `bakeModel` recusa por
+omissão qualquer modelo cujo frame final tenha um par de triângulos a
+atravessar-se, e os seis modelos do registo passam com zero. O que mudou é que
+a política passou a ser explícita — `selfIntersection: "reject" | "measure"` —
+e que existe um caminho, o importador de padrões de vincos, que usa
+`"measure"`.
+
+A razão é estrutural e não de conveniência. Um padrão tradicional qualquer só
+chega a uma forma reconhecível porque as camadas se empilham; este solver dobra
+uma malha triangulada fixa por dobradiças e não tem modelo de camadas nem
+deteção de contacto. Com `"reject"`, esses padrões não produzem nada. Com
+`"measure"`, produzem uma forma **e** a contagem que diz o quanto ela é
+fisicamente impossível — e a contagem vai para `provenance.json`, ao lado do
+campo `selfIntersectionPolicy` que regista com que política o asset foi
+produzido.
+
+A consequência que não é negociável: **nenhum texto deste produto pode afirmar
+que nada se atravessa.** A afirmação verdadeira é a que está na tabela — que a
+interseção é medida em todos os modelos, e que bloqueia nos que são autorados
+aqui.
 
 O limite de deformação é 0,25%. Vale a pena dizer que é **mais apertado do que
 o OrigamiSimulator alcança**: aquele projeto mostra uma visualização de strain

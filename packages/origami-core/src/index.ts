@@ -18,3 +18,6 @@ export * from "./solver";
 export * from "./bake";
 export * from "./compile";
 export * from "./quantize";
+export * from "./svg-crease";
+export * from "./planar";
+export * from "./crease-import";
