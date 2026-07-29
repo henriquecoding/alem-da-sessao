@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildMesh,
+  cornerAngleAndGradients,
   dihedralAngleAndGradients,
   triangleQuality,
   triangulatePolygon,
@@ -26,6 +27,88 @@ const FLAT = {
   apexA: [0, 1, 0],
   apexB: [0, -1, 0],
 } as const satisfies Record<string, Vec3>;
+
+/**
+ * O ângulo interior de um triângulo — a restrição de face da §2.4.
+ *
+ * Barras e dobradiças não impedem um triângulo de deslizar sobre si próprio
+ * mantendo os três lados. Esse modo de corte é quase livre num triângulo fino, e
+ * um padrão de vincos real está cheio deles: foi o que fez o grou tradicional
+ * esticar 34% em vez de dobrar. O gradiente leva o mesmo tratamento do ângulo
+ * diedro porque tem a mesma classe de defeito — um sinal trocado deforma a
+ * malha na direção errada sem falhar invariante nenhum.
+ */
+describe("ângulo interior", () => {
+  it("mede o ângulo do vértice", () => {
+    const right = cornerAngleAndGradients({
+      apex: [0, 0, 0],
+      a: [1, 0, 0],
+      b: [0, 1, 0],
+    });
+    expect(right.angle).toBeCloseTo(Math.PI / 2, 12);
+
+    const sixty = cornerAngleAndGradients({
+      apex: [0, 0, 0],
+      a: [1, 0, 0],
+      b: [Math.cos(Math.PI / 3), Math.sin(Math.PI / 3), 0],
+    });
+    expect(sixty.angle).toBeCloseTo(Math.PI / 3, 12);
+  });
+
+  it("tem gradiente que bate com a derivada numérica", () => {
+    const configuration: Record<string, Vec3> = {
+      apex: [0.07, -0.04, 0.11],
+      a: [1.02, 0.13, -0.06],
+      b: [0.21, 0.94, 0.27],
+    };
+
+    const slots = ["apex", "a", "b"] as const;
+    const analytic = cornerAngleAndGradients(configuration as never).gradients;
+    const h = 1e-6;
+
+    slots.forEach((slot, slotIndex) => {
+      for (let axis = 0; axis < 3; axis += 1) {
+        const shift = (delta: number) => {
+          const moved = [...configuration[slot]!] as [number, number, number];
+          moved[axis] += delta;
+          return cornerAngleAndGradients({
+            ...configuration,
+            [slot]: moved,
+          } as never).angle;
+        };
+
+        const numeric = (shift(h) - shift(-h)) / (2 * h);
+        expect(numeric, `∂α/∂${slot}[${axis}]`).toBeCloseTo(
+          analytic[slotIndex]![axis]!,
+          5,
+        );
+      }
+    });
+  });
+
+  /** Uma translação rígida não pode gerar força. */
+  it("soma zero nos três gradientes", () => {
+    const { gradients } = cornerAngleAndGradients({
+      apex: [0.07, -0.04, 0.11],
+      a: [1.02, 0.13, -0.06],
+      b: [0.21, 0.94, 0.27],
+    });
+    for (let axis = 0; axis < 3; axis += 1) {
+      const sum = gradients.reduce((total, g) => total + g[axis]!, 0);
+      expect(sum).toBeCloseTo(0, 12);
+    }
+  });
+
+  it("devolve zero quando os três pontos são colineares", () => {
+    const { angle, gradients } = cornerAngleAndGradients({
+      apex: [0, 0, 0],
+      a: [1, 0, 0],
+      b: [2, 0, 0],
+    });
+    expect(angle).toBe(0);
+    expect(gradients.every((g) => g.every((v) => v === 0))).toBe(true);
+  });
+});
 
 describe("ângulo diedro", () => {
   it("dá zero na folha plana", () => {

@@ -109,6 +109,7 @@ const COMPLIANT = {
   axialStiffness: 20,
   creaseStiffness: 0.7,
   facetStiffness: 0.7,
+  faceAngleStiffness: 0.2,
   dampingRatio: 0.45,
   strainLimit: 1,
   angleToleranceDegrees: 180,

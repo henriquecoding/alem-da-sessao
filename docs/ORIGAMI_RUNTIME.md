@@ -451,9 +451,44 @@ para triângulos de razão de aspeto alta — que é do que o grou é feito. Sem
 elas, a malha corta em vez de dobrar, e 34% de deformação é o corte a
 acontecer.
 
-`kface = 0,2` aparece em todas as configurações que o paper reporta. Enquanto
-não existir aqui, o grou não fecha — e a borboleta e a canoa, que são da mesma
-família, também não.
+`kface = 0,2` aparece em todas as configurações que o paper reporta.
+
+### 8.3 As restrições de face foram implementadas. O grou continua a não fechar.
+
+`cornerAngleAndGradients` está em `geometry.ts`, com o gradiente verificado por
+diferenças finitas como o do ângulo diedro, e `faceAngleStiffness` no solver.
+Fica a **zero por omissão**: os seis modelos autorados recompilam byte a byte
+iguais, o que é a prova de que nada do que já estava aprovado se mexeu.
+
+E funcionam. Medido no grou, variando só `kface`:
+
+| `kface` | projeção | strain | erro de ângulo | interseções |
+| ------: | -------: | -----: | -------------: | ----------: |
+|       0 |        0 | 34,73% |          85,4° |         164 |
+|     0,2 |        0 | 19,92% |          87,5° |         137 |
+|       1 |        0 | 16,86% |          88,4° |         209 |
+|       5 |        0 | 14,55% |          94,2° |         233 |
+|     0,2 |        8 |  0,81% |         178,9° |         150 |
+|     0,2 |       30 |  0,15% |         178,2° |          77 |
+
+A deformação cai para metade e continua a cair com a rigidez — a restrição faz
+exatamente o que o paper diz que faz, e o modo de corte era mesmo o que estava
+a consumir a folha. **Mas o erro de ângulo não se mexe:** fica entre 85° e 94°
+em todo o intervalo útil, e com projeção de comprimento os vincos ficam
+praticamente por dobrar.
+
+Ou seja: a restrição de face era **necessária e não é suficiente**. A hipótese
+da §8.1 — que faltava só complacência — está testada e é falsa; a da §8.2 —
+que faltavam as restrições de face — está implementada e também não chega. A
+fronteira é mais funda do que qualquer das duas, e o que a define já não é
+nenhuma peça em falta identificada neste relatório.
+
+O que sobra por investigar, por ordem de suspeita: o percurso de dobragem (a
+rampa linear por etapas pode não ser o caminho que este padrão admite), o
+orçamento de passos, e o modelo de massa e amortecimento, que aqui é escolhido
+para estabilidade com passo único e não é o do paper. Nenhuma destas é uma
+peça em falta — são afinações de um sistema que já tem todas as peças
+descritas.
 
 Os papers validam a fundação. Dois deles confirmam onde ela acaba; o terceiro
 diz por onde se passa, e o preço.
