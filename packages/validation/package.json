@@ -7,6 +7,6 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "zod": "^4.1.9"
+    "zod": "^4.6.6"
   }
 }
